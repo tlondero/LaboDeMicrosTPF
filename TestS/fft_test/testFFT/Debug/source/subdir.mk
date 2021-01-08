@@ -6,21 +6,21 @@
 C_SRCS += \
 ../source/arm_fft_bin_data.c \
 ../source/arm_fft_bin_example_f32.c \
-../source/cfft.c \
+../source/fft.c \
 ../source/math_helper.c \
 ../source/semihost_hardfault.c 
 
 OBJS += \
 ./source/arm_fft_bin_data.o \
 ./source/arm_fft_bin_example_f32.o \
-./source/cfft.o \
+./source/fft.o \
 ./source/math_helper.o \
 ./source/semihost_hardfault.o 
 
 C_DEPS += \
 ./source/arm_fft_bin_data.d \
 ./source/arm_fft_bin_example_f32.d \
-./source/cfft.d \
+./source/fft.d \
 ./source/math_helper.d \
 ./source/semihost_hardfault.d 
 

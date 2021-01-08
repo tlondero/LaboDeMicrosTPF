@@ -1,18 +1,6 @@
-12:37:40 **** Incremental Build of configuration Debug for project testFFT ****
+13:26:18 **** Incremental Build of configuration Debug for project testFFT ****
 make -r -j4 all 
-Building target: testFFT.axf
-Invoking: MCU Linker
-arm-none-eabi-gcc -nostdlib -L"C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs" -Xlinker -Map="testFFT.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -Xlinker --sort-section=alignment -Xlinker --cref -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T testFFT_Debug.ld -o "testFFT.axf"  ./utilities/fsl_debug_console.o ./utilities/fsl_str.o  ./startup/startup_mk64f12.o  ./source/arm_fft_bin_data.o ./source/arm_fft_bin_example_f32.o ./source/cfft.o ./source/math_helper.o ./source/semihost_hardfault.o  ./drivers/fsl_adc16.o ./drivers/fsl_clock.o ./drivers/fsl_common.o ./drivers/fsl_gpio.o ./drivers/fsl_i2c.o ./drivers/fsl_smc.o ./drivers/fsl_uart.o  ./device/system_MK64F12.o  ./component/uart/uart_adapter.o  ./component/serial_manager/serial_manager.o ./component/serial_manager/serial_port_uart.o  ./component/lists/generic_list.o  ./board/board.o ./board/clock_config.o ./board/peripherals.o ./board/pin_mux.o   -larm_cortexM4lf_math -larm_cortexM7l_math
-Memory region         Used Size  Region Size  %age Used
-   PROGRAM_FLASH:      105160 B         1 MB     10.03%
-      SRAM_UPPER:        8768 B       192 KB      4.46%
-      SRAM_LOWER:          0 GB        64 KB      0.00%
-c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/bin/ld.exe: ./source/arm_fft_bin_example_f32.o: in function `main':
-        FLEX_RAM:          0 GB         4 KB      0.00%
-C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\Debug/../source/arm_fft_bin_example_f32.c:161: undefined reference to `PRINTF'
-collect2.exe: error: ld returned 1 exit status
-make: *** [makefile:40: testFFT.axf] Error 1
-"make -r -j4 all" terminated with exit code 2. Build might be incomplete.
+make: Nothing to be done for 'all'.
 
-12:37:41 Build Failed. 3 errors, 0 warnings. (took 434ms)
+13:26:18 Build Finished. 0 errors, 0 warnings. (took 160ms)
 
