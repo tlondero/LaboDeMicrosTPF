@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="ASCII"?>
 <application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_O8jZoVE0Eeua7pAznklOYQ" elementId="org.eclipse.e4.legacy.ide.application" contributorURI="platform:/plugin/org.eclipse.ui.workbench" selectedElement="_O8jZolE0Eeua7pAznklOYQ" bindingContexts="_O8jZq1E0Eeua7pAznklOYQ">
-  <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;&#xA;&lt;workbench>&#xD;&#xA;&lt;mruList>&#xD;&#xA;&lt;file factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; id=&quot;org.eclipse.cdt.ui.editor.CEditor&quot; name=&quot;testFFT.c&quot; tooltip=&quot;testFFT/source/testFFT.c&quot;>&#xD;&#xA;&lt;persistable path=&quot;/testFFT/source/testFFT.c&quot;/>&#xD;&#xA;&lt;/file>&#xD;&#xA;&lt;file factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; id=&quot;org.eclipse.cdt.ui.editor.CEditor&quot; name=&quot;arm_math.h&quot; tooltip=&quot;testFFT/CMSIS/arm_math.h&quot;>&#xD;&#xA;&lt;persistable path=&quot;/testFFT/CMSIS/arm_math.h&quot;/>&#xD;&#xA;&lt;/file>&#xD;&#xA;&lt;file factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; id=&quot;org.eclipse.cdt.ui.editor.CEditor&quot; name=&quot;MK64FN1M0xxx12_Project.c&quot; tooltip=&quot;MK64FN1M0xxx12_Project/source/MK64FN1M0xxx12_Project.c&quot;>&#xD;&#xA;&lt;persistable path=&quot;/MK64FN1M0xxx12_Project/source/MK64FN1M0xxx12_Project.c&quot;/>&#xD;&#xA;&lt;/file>&#xD;&#xA;&lt;/mruList>&#xD;&#xA;&lt;/workbench>"/>
+  <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;&#xA;&lt;workbench>&#xD;&#xA;&lt;mruList>&#xD;&#xA;&lt;file factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; id=&quot;org.eclipse.cdt.ui.editor.CEditor&quot; name=&quot;arm_fft_bin_example_f32.c&quot; tooltip=&quot;testFFT/source/arm_fft_bin_example_f32.c&quot;>&#xD;&#xA;&lt;persistable path=&quot;/testFFT/source/arm_fft_bin_example_f32.c&quot;/>&#xD;&#xA;&lt;/file>&#xD;&#xA;&lt;file factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; id=&quot;org.eclipse.cdt.ui.editor.CEditor&quot; name=&quot;cfft.c&quot; tooltip=&quot;testFFT/source/cfft.c&quot;>&#xD;&#xA;&lt;persistable path=&quot;/testFFT/source/cfft.c&quot;/>&#xD;&#xA;&lt;/file>&#xD;&#xA;&lt;file factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; id=&quot;org.eclipse.cdt.ui.editor.CEditor&quot; name=&quot;semihost_hardfault.c&quot; tooltip=&quot;testFFT/source/semihost_hardfault.c&quot;>&#xD;&#xA;&lt;persistable path=&quot;/testFFT/source/semihost_hardfault.c&quot;/>&#xD;&#xA;&lt;/file>&#xD;&#xA;&lt;file factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; id=&quot;org.eclipse.cdt.ui.editor.CEditor&quot; name=&quot;math_helper.c&quot; tooltip=&quot;testFFT/source/math_helper.c&quot;>&#xD;&#xA;&lt;persistable path=&quot;/testFFT/source/math_helper.c&quot;/>&#xD;&#xA;&lt;/file>&#xD;&#xA;&lt;file factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; id=&quot;org.eclipse.cdt.ui.editor.CEditor&quot; name=&quot;arm_const_structs.h&quot; tooltip=&quot;testFFT/CMSIS/arm_const_structs.h&quot;>&#xD;&#xA;&lt;persistable path=&quot;/testFFT/CMSIS/arm_const_structs.h&quot;/>&#xD;&#xA;&lt;/file>&#xD;&#xA;&lt;file factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; id=&quot;org.eclipse.cdt.ui.editor.CEditor&quot; name=&quot;arm_math.h&quot; tooltip=&quot;testFFT/CMSIS/arm_math.h&quot;>&#xD;&#xA;&lt;persistable path=&quot;/testFFT/CMSIS/arm_math.h&quot;/>&#xD;&#xA;&lt;/file>&#xD;&#xA;&lt;file factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; id=&quot;org.eclipse.cdt.ui.editor.CEditor&quot; name=&quot;cfft.h&quot; tooltip=&quot;testFFT/source/cfft.h&quot;>&#xD;&#xA;&lt;persistable path=&quot;/testFFT/source/cfft.h&quot;/>&#xD;&#xA;&lt;/file>&#xD;&#xA;&lt;file factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; id=&quot;org.eclipse.cdt.ui.editor.CEditor&quot; name=&quot;arm_fft_bin_data.c&quot; tooltip=&quot;testFFT/source/arm_fft_bin_data.c&quot;>&#xD;&#xA;&lt;persistable path=&quot;/testFFT/source/arm_fft_bin_data.c&quot;/>&#xD;&#xA;&lt;/file>&#xD;&#xA;&lt;file factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; id=&quot;org.eclipse.cdt.ui.editor.CEditor&quot; name=&quot;math_helper.h&quot; tooltip=&quot;testFFT/source/math_helper.h&quot;>&#xD;&#xA;&lt;persistable path=&quot;/testFFT/source/math_helper.h&quot;/>&#xD;&#xA;&lt;/file>&#xD;&#xA;&lt;file factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; id=&quot;org.eclipse.cdt.ui.editor.CEditor&quot; name=&quot;MK64FN1M0xxx12_Project.c&quot; tooltip=&quot;MK64FN1M0xxx12_Project/source/MK64FN1M0xxx12_Project.c&quot;>&#xD;&#xA;&lt;persistable path=&quot;/MK64FN1M0xxx12_Project/source/MK64FN1M0xxx12_Project.c&quot;/>&#xD;&#xA;&lt;/file>&#xD;&#xA;&lt;/mruList>&#xD;&#xA;&lt;/workbench>"/>
   <tags>activeSchemeId:org.eclipse.ui.defaultAcceleratorConfiguration</tags>
   <tags>ModelMigrationProcessor.001</tags>
-  <children xsi:type="basic:TrimmedWindow" xmi:id="_O8jZolE0Eeua7pAznklOYQ" elementId="IDEWindow" contributorURI="platform:/plugin/org.eclipse.ui.workbench" selectedElement="_QcWYc1E0Eeua7pAznklOYQ" x="182" y="182" width="1400" height="1000">
+  <children xsi:type="basic:TrimmedWindow" xmi:id="_O8jZolE0Eeua7pAznklOYQ" elementId="IDEWindow" contributorURI="platform:/plugin/org.eclipse.ui.workbench" selectedElement="_QcWYc1E0Eeua7pAznklOYQ" x="-8" y="-8" width="976" height="1056">
     <persistedState key="coolBarVisible" value="true"/>
     <persistedState key="perspectiveBarVisible" value="true"/>
     <persistedState key="isRestored" value="true"/>
@@ -102,8 +102,8 @@
               </children>
             </children>
             <children xsi:type="basic:PartSashContainer" xmi:id="_Q0MQvlE0Eeua7pAznklOYQ" containerData="7500" selectedElement="_Q0MQv1E0Eeua7pAznklOYQ">
-              <children xsi:type="basic:PartSashContainer" xmi:id="_Q0MQv1E0Eeua7pAznklOYQ" containerData="6000" selectedElement="_Q0MQwFE0Eeua7pAznklOYQ" horizontal="true">
-                <children xsi:type="basic:PartSashContainer" xmi:id="_Q0MQwFE0Eeua7pAznklOYQ" containerData="6500" selectedElement="_Q0MQw1E0Eeua7pAznklOYQ">
+              <children xsi:type="basic:PartSashContainer" xmi:id="_Q0MQv1E0Eeua7pAznklOYQ" containerData="5896" selectedElement="_Q0MQwFE0Eeua7pAznklOYQ" horizontal="true">
+                <children xsi:type="basic:PartSashContainer" xmi:id="_Q0MQwFE0Eeua7pAznklOYQ" containerData="5882" selectedElement="_Q0MQw1E0Eeua7pAznklOYQ">
                   <children xsi:type="basic:PartStack" xmi:id="_Q0MQwVE0Eeua7pAznklOYQ" elementId="perspective.area.debug" toBeRendered="false" containerData="2000">
                     <children xsi:type="advanced:Placeholder" xmi:id="_Q0MQwlE0Eeua7pAznklOYQ" elementId="org.eclipse.debug.ui.DebugView" toBeRendered="false" ref="_Q0H_QFE0Eeua7pAznklOYQ" closeable="true">
                       <tags>View</tags>
@@ -112,35 +112,15 @@
                   </children>
                   <children xsi:type="advanced:Placeholder" xmi:id="_Q0MQw1E0Eeua7pAznklOYQ" elementId="org.eclipse.ui.editorss" containerData="8000" ref="_Qz1rYFE0Eeua7pAznklOYQ"/>
                 </children>
-                <children xsi:type="basic:PartSashContainer" xmi:id="_Q0MQxFE0Eeua7pAznklOYQ" containerData="3500">
-                  <children xsi:type="basic:PartStack" xmi:id="_Q0MQxVE0Eeua7pAznklOYQ" elementId="perspective.area.outline" containerData="6000" selectedElement="_Q0MQxlE0Eeua7pAznklOYQ">
-                    <children xsi:type="advanced:Placeholder" xmi:id="_Q0MQxlE0Eeua7pAznklOYQ" elementId="org.eclipse.ui.views.ContentOutline" ref="_Q0GKEVE0Eeua7pAznklOYQ" closeable="true">
-                      <tags>View</tags>
-                      <tags>categoryTag:General</tags>
-                    </children>
-                    <children xsi:type="advanced:Placeholder" xmi:id="_Q0MQx1E0Eeua7pAznklOYQ" elementId="com.nxp.mcuxpresso.core.debug.ui.views.NXPGlobalVariablesView" ref="_Q0GxIFE0Eeua7pAznklOYQ" closeable="true">
-                      <tags>View</tags>
-                      <tags>categoryTag:MCUXpresso IDE</tags>
-                    </children>
-                    <children xsi:type="advanced:Placeholder" xmi:id="_Q0MQyFE0Eeua7pAznklOYQ" elementId="com.nxp.mcuxpresso.core.debug.ui.views.NXPGlobalVariablesView:*" toBeRendered="false" ref="_Q0HYMFE0Eeua7pAznklOYQ" closeable="true">
-                      <tags>View</tags>
-                      <tags>categoryTag:MCUXpresso IDE</tags>
-                    </children>
-                    <children xsi:type="advanced:Placeholder" xmi:id="_Q0MQyVE0Eeua7pAznklOYQ" elementId="org.eclipse.ui.views.minimap.MinimapView" toBeRendered="false" ref="_Q0LCkFE0Eeua7pAznklOYQ" closeable="true">
-                      <tags>View</tags>
-                      <tags>categoryTag:General</tags>
-                    </children>
-                  </children>
-                  <children xsi:type="basic:PartStack" xmi:id="_Q0MQylE0Eeua7pAznklOYQ" elementId="perspective.area.disassembly" toBeRendered="false" containerData="4000">
-                    <children xsi:type="advanced:Placeholder" xmi:id="_Q0MQy1E0Eeua7pAznklOYQ" elementId="org.eclipse.cdt.dsf.debug.ui.disassembly.view" toBeRendered="false" ref="_Q0H_QVE0Eeua7pAznklOYQ" closeable="true">
-                      <tags>View</tags>
-                      <tags>categoryTag:Debug</tags>
-                    </children>
+                <children xsi:type="basic:PartStack" xmi:id="_Q0MQylE0Eeua7pAznklOYQ" elementId="perspective.area.disassembly" toBeRendered="false" containerData="4118">
+                  <children xsi:type="advanced:Placeholder" xmi:id="_Q0MQy1E0Eeua7pAznklOYQ" elementId="org.eclipse.cdt.dsf.debug.ui.disassembly.view" toBeRendered="false" ref="_Q0H_QVE0Eeua7pAznklOYQ" closeable="true">
+                    <tags>View</tags>
+                    <tags>categoryTag:Debug</tags>
                   </children>
                 </children>
               </children>
-              <children xsi:type="basic:PartSashContainer" xmi:id="_Q0MQzFE0Eeua7pAznklOYQ" containerData="4000" selectedElement="_Q0MQzVE0Eeua7pAznklOYQ" horizontal="true">
-                <children xsi:type="basic:PartStack" xmi:id="_Q0MQzVE0Eeua7pAznklOYQ" elementId="perspective.area.sdk.view" containerData="9000" selectedElement="_Q0MQ0lE0Eeua7pAznklOYQ">
+              <children xsi:type="basic:PartSashContainer" xmi:id="_Q0MQzFE0Eeua7pAznklOYQ" containerData="4104" selectedElement="_Q0MQzVE0Eeua7pAznklOYQ" horizontal="true">
+                <children xsi:type="basic:PartStack" xmi:id="_Q0MQzVE0Eeua7pAznklOYQ" elementId="perspective.area.sdk.view" containerData="9000" selectedElement="_Q0MQ0FE0Eeua7pAznklOYQ">
                   <children xsi:type="advanced:Placeholder" xmi:id="_Q0MQzlE0Eeua7pAznklOYQ" elementId="com.nxp.mcuxpresso.core.datamodels.ui.views.SDKView" ref="_Q0Dt0FE0Eeua7pAznklOYQ" closeable="true">
                     <tags>View</tags>
                     <tags>categoryTag:MCUXpresso IDE</tags>
@@ -172,6 +152,22 @@
                   <children xsi:type="advanced:Placeholder" xmi:id="_Q0MQ1VE0Eeua7pAznklOYQ" elementId="org.eclipse.cdt.debug.ui.debuggerConsoleView" ref="_Q0GKEFE0Eeua7pAznklOYQ" closeable="true">
                     <tags>View</tags>
                     <tags>categoryTag:Debug</tags>
+                  </children>
+                  <children xsi:type="advanced:Placeholder" xmi:id="_Q0MQxlE0Eeua7pAznklOYQ" elementId="org.eclipse.ui.views.ContentOutline" ref="_Q0GKEVE0Eeua7pAznklOYQ" closeable="true">
+                    <tags>View</tags>
+                    <tags>categoryTag:General</tags>
+                  </children>
+                  <children xsi:type="advanced:Placeholder" xmi:id="_Q0MQx1E0Eeua7pAznklOYQ" elementId="com.nxp.mcuxpresso.core.debug.ui.views.NXPGlobalVariablesView" ref="_Q0GxIFE0Eeua7pAznklOYQ" closeable="true">
+                    <tags>View</tags>
+                    <tags>categoryTag:MCUXpresso IDE</tags>
+                  </children>
+                  <children xsi:type="advanced:Placeholder" xmi:id="_Q0MQyFE0Eeua7pAznklOYQ" elementId="com.nxp.mcuxpresso.core.debug.ui.views.NXPGlobalVariablesView:*" toBeRendered="false" ref="_Q0HYMFE0Eeua7pAznklOYQ" closeable="true">
+                    <tags>View</tags>
+                    <tags>categoryTag:MCUXpresso IDE</tags>
+                  </children>
+                  <children xsi:type="advanced:Placeholder" xmi:id="_Q0MQyVE0Eeua7pAznklOYQ" elementId="org.eclipse.ui.views.minimap.MinimapView" toBeRendered="false" ref="_Q0LCkFE0Eeua7pAznklOYQ" closeable="true">
+                    <tags>View</tags>
+                    <tags>categoryTag:General</tags>
                   </children>
                 </children>
                 <children xsi:type="basic:PartStack" xmi:id="_Q0MQ1lE0Eeua7pAznklOYQ" elementId="perspective.area.memory" visible="false" containerData="1000" selectedElement="_Q0MQ11E0Eeua7pAznklOYQ">
@@ -240,20 +236,62 @@
       <tags>categoryTag:Help</tags>
     </sharedElements>
     <sharedElements xsi:type="advanced:Area" xmi:id="_Qz1rYFE0Eeua7pAznklOYQ" elementId="org.eclipse.ui.editorss" selectedElement="_Qz1rYVE0Eeua7pAznklOYQ">
-      <children xsi:type="basic:PartStack" xmi:id="_Qz1rYVE0Eeua7pAznklOYQ" elementId="org.eclipse.e4.primaryDataStack" selectedElement="_thPD8FE0Eeua7pAznklOYQ">
+      <children xsi:type="basic:PartStack" xmi:id="_Qz1rYVE0Eeua7pAznklOYQ" elementId="org.eclipse.e4.primaryDataStack" selectedElement="_WB94gFG1EeuC4MJOfwNxpA">
         <tags>org.eclipse.e4.primaryDataStack</tags>
         <tags>EditorStack</tags>
         <tags>active</tags>
-        <children xsi:type="basic:Part" xmi:id="_thPD8FE0Eeua7pAznklOYQ" elementId="org.eclipse.e4.ui.compatibility.editor" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor" label="testFFT.c" iconURI="platform:/plugin/org.eclipse.cdt.ui/icons/obj16/c_file_obj.gif" closeable="true">
-          <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;&#xA;&lt;editor id=&quot;org.eclipse.cdt.ui.editor.CEditor&quot; name=&quot;testFFT.c&quot; partName=&quot;testFFT.c&quot; title=&quot;testFFT.c&quot; tooltip=&quot;testFFT/source/testFFT.c&quot;>&#xD;&#xA;&lt;input factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; path=&quot;/testFFT/source/testFFT.c&quot;/>&#xD;&#xA;&lt;editorState selectionHorizontalPixel=&quot;0&quot; selectionLength=&quot;0&quot; selectionOffset=&quot;75267&quot; selectionTopPixel=&quot;11775&quot;/>&#xD;&#xA;&lt;/editor>"/>
+        <children xsi:type="basic:Part" xmi:id="_LONqMFE1Eeua7pAznklOYQ" elementId="org.eclipse.e4.ui.compatibility.editor" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor" label="arm_math.h" iconURI="platform:/plugin/org.eclipse.cdt.ui/icons/obj16/c_file_obj.gif" closeable="true">
+          <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;&#xA;&lt;editor id=&quot;org.eclipse.cdt.ui.editor.CEditor&quot; name=&quot;arm_math.h&quot; partName=&quot;arm_math.h&quot; title=&quot;arm_math.h&quot; tooltip=&quot;testFFT/CMSIS/arm_math.h&quot;>&#xD;&#xA;&lt;input factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; path=&quot;/testFFT/CMSIS/arm_math.h&quot;/>&#xD;&#xA;&lt;editorState selectionHorizontalPixel=&quot;0&quot; selectionLength=&quot;0&quot; selectionOffset=&quot;79364&quot; selectionTopPixel=&quot;32820&quot;/>&#xD;&#xA;&lt;/editor>"/>
+          <tags>Editor</tags>
+          <tags>removeOnHide</tags>
+          <tags>org.eclipse.cdt.ui.editor.CEditor</tags>
+        </children>
+        <children xsi:type="basic:Part" xmi:id="_Vz1V4FG1EeuC4MJOfwNxpA" elementId="org.eclipse.e4.ui.compatibility.editor" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor" label="cfft.c" iconURI="platform:/plugin/org.eclipse.cdt.ui/icons/obj16/c_file_obj.gif" closeable="true">
+          <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;&#xA;&lt;editor id=&quot;org.eclipse.cdt.ui.editor.CEditor&quot; name=&quot;cfft.c&quot; partName=&quot;cfft.c&quot; title=&quot;cfft.c&quot; tooltip=&quot;testFFT/source/cfft.c&quot;>&#xD;&#xA;&lt;input factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; path=&quot;/testFFT/source/cfft.c&quot;/>&#xD;&#xA;&lt;editorState selectionHorizontalPixel=&quot;0&quot; selectionLength=&quot;0&quot; selectionOffset=&quot;2700&quot; selectionTopPixel=&quot;585&quot;/>&#xD;&#xA;&lt;/editor>"/>
+          <tags>Editor</tags>
+          <tags>removeOnHide</tags>
+          <tags>org.eclipse.cdt.ui.editor.CEditor</tags>
+        </children>
+        <children xsi:type="basic:Part" xmi:id="_WB94gFG1EeuC4MJOfwNxpA" elementId="org.eclipse.e4.ui.compatibility.editor" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor" label="arm_fft_bin_example_f32.c" iconURI="platform:/plugin/org.eclipse.cdt.ui/icons/obj16/c_file_obj.gif" closeable="true">
+          <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;&#xA;&lt;editor id=&quot;org.eclipse.cdt.ui.editor.CEditor&quot; name=&quot;arm_fft_bin_example_f32.c&quot; partName=&quot;arm_fft_bin_example_f32.c&quot; title=&quot;arm_fft_bin_example_f32.c&quot; tooltip=&quot;testFFT/source/arm_fft_bin_example_f32.c&quot;>&#xD;&#xA;&lt;input factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; path=&quot;/testFFT/source/arm_fft_bin_example_f32.c&quot;/>&#xD;&#xA;&lt;editorState selectionHorizontalPixel=&quot;0&quot; selectionLength=&quot;0&quot; selectionOffset=&quot;6025&quot; selectionTopPixel=&quot;1879&quot;/>&#xD;&#xA;&lt;/editor>"/>
           <tags>Editor</tags>
           <tags>removeOnHide</tags>
           <tags>org.eclipse.cdt.ui.editor.CEditor</tags>
           <tags>active</tags>
           <tags>activeOnClose</tags>
         </children>
-        <children xsi:type="basic:Part" xmi:id="_LONqMFE1Eeua7pAznklOYQ" elementId="org.eclipse.e4.ui.compatibility.editor" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor" label="arm_math.h" iconURI="platform:/plugin/org.eclipse.cdt.ui/icons/obj16/c_file_obj.gif" closeable="true">
-          <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;&#xA;&lt;editor id=&quot;org.eclipse.cdt.ui.editor.CEditor&quot; name=&quot;arm_math.h&quot; partName=&quot;arm_math.h&quot; title=&quot;arm_math.h&quot; tooltip=&quot;testFFT/CMSIS/arm_math.h&quot;>&#xD;&#xA;&lt;input factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; path=&quot;/testFFT/CMSIS/arm_math.h&quot;/>&#xD;&#xA;&lt;editorState selectionHorizontalPixel=&quot;0&quot; selectionLength=&quot;0&quot; selectionOffset=&quot;1071&quot; selectionTopPixel=&quot;1890&quot;/>&#xD;&#xA;&lt;/editor>"/>
+        <children xsi:type="basic:Part" xmi:id="_XhcuQFG1EeuC4MJOfwNxpA" elementId="org.eclipse.e4.ui.compatibility.editor" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor" label="arm_fft_bin_data.c" iconURI="platform:/plugin/org.eclipse.cdt.ui/icons/obj16/c_file_obj.gif" closeable="true">
+          <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;&#xA;&lt;editor id=&quot;org.eclipse.cdt.ui.editor.CEditor&quot; name=&quot;arm_fft_bin_data.c&quot; partName=&quot;arm_fft_bin_data.c&quot; title=&quot;arm_fft_bin_data.c&quot; tooltip=&quot;testFFT/source/arm_fft_bin_data.c&quot;>&#xD;&#xA;&lt;input factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; path=&quot;/testFFT/source/arm_fft_bin_data.c&quot;/>&#xD;&#xA;&lt;editorState selectionHorizontalPixel=&quot;0&quot; selectionLength=&quot;0&quot; selectionOffset=&quot;44362&quot; selectionTopPixel=&quot;426&quot;/>&#xD;&#xA;&lt;/editor>"/>
+          <tags>Editor</tags>
+          <tags>removeOnHide</tags>
+          <tags>org.eclipse.cdt.ui.editor.CEditor</tags>
+        </children>
+        <children xsi:type="basic:Part" xmi:id="_ZEcyEFG1EeuC4MJOfwNxpA" elementId="org.eclipse.e4.ui.compatibility.editor" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor" label="cfft.h" iconURI="platform:/plugin/org.eclipse.cdt.ui/icons/obj16/c_file_obj.gif" closeable="true">
+          <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;&#xA;&lt;editor id=&quot;org.eclipse.cdt.ui.editor.CEditor&quot; name=&quot;cfft.h&quot; partName=&quot;cfft.h&quot; title=&quot;cfft.h&quot; tooltip=&quot;testFFT/source/cfft.h&quot;>&#xD;&#xA;&lt;input factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; path=&quot;/testFFT/source/cfft.h&quot;/>&#xD;&#xA;&lt;editorState selectionHorizontalPixel=&quot;0&quot; selectionLength=&quot;10&quot; selectionOffset=&quot;1015&quot; selectionTopPixel=&quot;666&quot;/>&#xD;&#xA;&lt;/editor>"/>
+          <tags>Editor</tags>
+          <tags>removeOnHide</tags>
+          <tags>org.eclipse.cdt.ui.editor.CEditor</tags>
+        </children>
+        <children xsi:type="basic:Part" xmi:id="_Z1TAMFG1EeuC4MJOfwNxpA" elementId="org.eclipse.e4.ui.compatibility.editor" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor" label="math_helper.c" iconURI="platform:/plugin/org.eclipse.cdt.ui/icons/obj16/c_file_obj.gif" closeable="true">
+          <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;&#xA;&lt;editor id=&quot;org.eclipse.cdt.ui.editor.CEditor&quot; name=&quot;math_helper.c&quot; partName=&quot;math_helper.c&quot; title=&quot;math_helper.c&quot; tooltip=&quot;testFFT/source/math_helper.c&quot;>&#xD;&#xA;&lt;input factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; path=&quot;/testFFT/source/math_helper.c&quot;/>&#xD;&#xA;&lt;editorState selectionHorizontalPixel=&quot;0&quot; selectionLength=&quot;8&quot; selectionOffset=&quot;2750&quot; selectionTopPixel=&quot;810&quot;/>&#xD;&#xA;&lt;/editor>"/>
+          <tags>Editor</tags>
+          <tags>removeOnHide</tags>
+          <tags>org.eclipse.cdt.ui.editor.CEditor</tags>
+        </children>
+        <children xsi:type="basic:Part" xmi:id="_aaoh4FG1EeuC4MJOfwNxpA" elementId="org.eclipse.e4.ui.compatibility.editor" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor" label="math_helper.h" iconURI="platform:/plugin/org.eclipse.cdt.ui/icons/obj16/c_file_obj.gif" closeable="true">
+          <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;&#xA;&lt;editor id=&quot;org.eclipse.cdt.ui.editor.CEditor&quot; name=&quot;math_helper.h&quot; partName=&quot;math_helper.h&quot; title=&quot;math_helper.h&quot; tooltip=&quot;testFFT/source/math_helper.h&quot;>&#xD;&#xA;&lt;input factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; path=&quot;/testFFT/source/math_helper.h&quot;/>&#xD;&#xA;&lt;editorState selectionHorizontalPixel=&quot;0&quot; selectionLength=&quot;0&quot; selectionOffset=&quot;0&quot; selectionTopPixel=&quot;445&quot;/>&#xD;&#xA;&lt;/editor>"/>
+          <tags>Editor</tags>
+          <tags>removeOnHide</tags>
+          <tags>org.eclipse.cdt.ui.editor.CEditor</tags>
+        </children>
+        <children xsi:type="basic:Part" xmi:id="_aztwQFG1EeuC4MJOfwNxpA" elementId="org.eclipse.e4.ui.compatibility.editor" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor" label="semihost_hardfault.c" iconURI="platform:/plugin/org.eclipse.cdt.ui/icons/obj16/c_file_obj.gif" closeable="true">
+          <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;&#xA;&lt;editor id=&quot;org.eclipse.cdt.ui.editor.CEditor&quot; name=&quot;semihost_hardfault.c&quot; partName=&quot;semihost_hardfault.c&quot; title=&quot;semihost_hardfault.c&quot; tooltip=&quot;testFFT/source/semihost_hardfault.c&quot;>&#xD;&#xA;&lt;input factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; path=&quot;/testFFT/source/semihost_hardfault.c&quot;/>&#xD;&#xA;&lt;editorState selectionHorizontalPixel=&quot;0&quot; selectionLength=&quot;0&quot; selectionOffset=&quot;3130&quot; selectionTopPixel=&quot;720&quot;/>&#xD;&#xA;&lt;/editor>"/>
+          <tags>Editor</tags>
+          <tags>removeOnHide</tags>
+          <tags>org.eclipse.cdt.ui.editor.CEditor</tags>
+        </children>
+        <children xsi:type="basic:Part" xmi:id="_nPzrQFG6EeuC4MJOfwNxpA" elementId="org.eclipse.e4.ui.compatibility.editor" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor" label="arm_const_structs.h" iconURI="platform:/plugin/org.eclipse.cdt.ui/icons/obj16/c_file_obj.gif" closeable="true">
+          <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;&#xA;&lt;editor id=&quot;org.eclipse.cdt.ui.editor.CEditor&quot; name=&quot;arm_const_structs.h&quot; partName=&quot;arm_const_structs.h&quot; title=&quot;arm_const_structs.h&quot; tooltip=&quot;testFFT/CMSIS/arm_const_structs.h&quot;>&#xD;&#xA;&lt;input factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; path=&quot;/testFFT/CMSIS/arm_const_structs.h&quot;/>&#xD;&#xA;&lt;editorState selectionHorizontalPixel=&quot;0&quot; selectionLength=&quot;21&quot; selectionOffset=&quot;1350&quot; selectionTopPixel=&quot;360&quot;/>&#xD;&#xA;&lt;/editor>"/>
           <tags>Editor</tags>
           <tags>removeOnHide</tags>
           <tags>org.eclipse.cdt.ui.editor.CEditor</tags>
@@ -299,8 +337,14 @@
     <sharedElements xsi:type="basic:Part" xmi:id="_Q0B4oVE0Eeua7pAznklOYQ" elementId="com.nxp.mcuxpresso.core.debug.ui.views.FaultsView" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="Faults" iconURI="platform:/plugin/com.nxp.mcuxpresso.core.debug/icons/fault.png" tooltip="" closeable="true">
       <persistedState key="originalCompatibilityViewClass" value="com.nxp.mcuxpresso.core.debug.ui.views.FaultsView"/>
       <persistedState key="originalCompatibilityViewBundle" value="com.nxp.mcuxpresso.core.debug"/>
+      <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;&#xA;&lt;view/>"/>
       <tags>View</tags>
       <tags>categoryTag:MCUXpresso IDE</tags>
+      <menus xmi:id="_HBEuYFHEEeuC4MJOfwNxpA" elementId="com.nxp.mcuxpresso.core.debug.ui.views.FaultsView">
+        <tags>ViewMenu</tags>
+        <tags>menuContribution:menu</tags>
+      </menus>
+      <toolbar xmi:id="_HBEuYVHEEeuC4MJOfwNxpA" elementId="com.nxp.mcuxpresso.core.debug.ui.views.FaultsView" visible="false"/>
     </sharedElements>
     <sharedElements xsi:type="basic:Part" xmi:id="_Q0CfsFE0Eeua7pAznklOYQ" elementId="com.crt.quickstart.views.QuickstartView" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="Quickstart Panel" iconURI="platform:/plugin/com.crt.quickstart/icons/quickstart.gif" tooltip="" closeable="true">
       <persistedState key="originalCompatibilityViewClass" value="com.crt.quickstart.views.QuickstartView"/>
@@ -317,8 +361,14 @@
     <sharedElements xsi:type="basic:Part" xmi:id="_Q0DGwFE0Eeua7pAznklOYQ" elementId="org.eclipse.debug.ui.VariableView" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="Variables" iconURI="platform:/plugin/org.eclipse.debug.ui/icons/full/eview16/variable_view.png" tooltip="" closeable="true">
       <persistedState key="originalCompatibilityViewClass" value="org.eclipse.debug.internal.ui.views.variables.VariablesView"/>
       <persistedState key="originalCompatibilityViewBundle" value="org.eclipse.debug.ui"/>
+      <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;&#xA;&lt;view/>"/>
       <tags>View</tags>
       <tags>categoryTag:Debug</tags>
+      <menus xmi:id="__GJ5gFGzEeuC4MJOfwNxpA" elementId="org.eclipse.debug.ui.VariableView">
+        <tags>ViewMenu</tags>
+        <tags>menuContribution:menu</tags>
+      </menus>
+      <toolbar xmi:id="__GJ5gVGzEeuC4MJOfwNxpA" elementId="org.eclipse.debug.ui.VariableView"/>
     </sharedElements>
     <sharedElements xsi:type="basic:Part" xmi:id="_Q0DGwVE0Eeua7pAznklOYQ" elementId="org.eclipse.debug.ui.BreakpointView" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="Breakpoints" iconURI="platform:/plugin/org.eclipse.debug.ui/icons/full/eview16/breakpoint_view.png" tooltip="" closeable="true">
       <persistedState key="originalCompatibilityViewClass" value="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView"/>
@@ -347,14 +397,14 @@
     <sharedElements xsi:type="basic:Part" xmi:id="_Q0EU4VE0Eeua7pAznklOYQ" elementId="org.eclipse.ui.views.ProblemView" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="Problems" iconURI="platform:/plugin/org.eclipse.ui.ide/icons/full/eview16/problems_view.png" tooltip="" closeable="true">
       <persistedState key="originalCompatibilityViewClass" value="org.eclipse.ui.internal.views.markers.ProblemsView"/>
       <persistedState key="originalCompatibilityViewBundle" value="org.eclipse.ui.ide"/>
-      <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;&#xA;&lt;view PRIMARY_SORT_FIELD=&quot;org.eclipse.ui.ide.severityAndDescriptionField&quot; categoryGroup=&quot;org.eclipse.ui.ide.severity&quot; markerContentGenerator=&quot;org.eclipse.ui.ide.problemsGenerator&quot; partName=&quot;Problems&quot;>&#xD;&#xA;&lt;expanded>&#xD;&#xA;&lt;category IMemento.internal.id=&quot;Errors&quot;/>&#xD;&#xA;&lt;/expanded>&#xD;&#xA;&lt;columnWidths org.eclipse.ui.ide.locationField=&quot;90&quot; org.eclipse.ui.ide.markerType=&quot;90&quot; org.eclipse.ui.ide.pathField=&quot;120&quot; org.eclipse.ui.ide.resourceField=&quot;90&quot; org.eclipse.ui.ide.severityAndDescriptionField=&quot;300&quot;/>&#xD;&#xA;&lt;visible IMemento.internal.id=&quot;org.eclipse.ui.ide.severityAndDescriptionField&quot;/>&#xD;&#xA;&lt;visible IMemento.internal.id=&quot;org.eclipse.ui.ide.resourceField&quot;/>&#xD;&#xA;&lt;visible IMemento.internal.id=&quot;org.eclipse.ui.ide.pathField&quot;/>&#xD;&#xA;&lt;visible IMemento.internal.id=&quot;org.eclipse.ui.ide.locationField&quot;/>&#xD;&#xA;&lt;visible IMemento.internal.id=&quot;org.eclipse.ui.ide.markerType&quot;/>&#xD;&#xA;&lt;/view>"/>
+      <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;&#xA;&lt;view PRIMARY_SORT_FIELD=&quot;org.eclipse.ui.ide.severityAndDescriptionField&quot; categoryGroup=&quot;org.eclipse.ui.ide.severity&quot; markerContentGenerator=&quot;org.eclipse.ui.ide.problemsGenerator&quot; partName=&quot;Problems&quot;>&#xD;&#xA;&lt;expanded>&#xD;&#xA;&lt;category IMemento.internal.id=&quot;Errors&quot;/>&#xD;&#xA;&lt;category IMemento.internal.id=&quot;Errors (3 items)&quot;/>&#xD;&#xA;&lt;/expanded>&#xD;&#xA;&lt;columnWidths org.eclipse.ui.ide.locationField=&quot;90&quot; org.eclipse.ui.ide.markerType=&quot;90&quot; org.eclipse.ui.ide.pathField=&quot;120&quot; org.eclipse.ui.ide.resourceField=&quot;90&quot; org.eclipse.ui.ide.severityAndDescriptionField=&quot;1251&quot;/>&#xD;&#xA;&lt;visible IMemento.internal.id=&quot;org.eclipse.ui.ide.severityAndDescriptionField&quot;/>&#xD;&#xA;&lt;visible IMemento.internal.id=&quot;org.eclipse.ui.ide.resourceField&quot;/>&#xD;&#xA;&lt;visible IMemento.internal.id=&quot;org.eclipse.ui.ide.pathField&quot;/>&#xD;&#xA;&lt;visible IMemento.internal.id=&quot;org.eclipse.ui.ide.locationField&quot;/>&#xD;&#xA;&lt;visible IMemento.internal.id=&quot;org.eclipse.ui.ide.markerType&quot;/>&#xD;&#xA;&lt;/view>"/>
       <tags>View</tags>
       <tags>categoryTag:General</tags>
       <menus xmi:id="_gN5JIFE1Eeua7pAznklOYQ" elementId="org.eclipse.ui.views.ProblemView">
         <tags>ViewMenu</tags>
         <tags>menuContribution:menu</tags>
       </menus>
-      <toolbar xmi:id="_gN5JIVE1Eeua7pAznklOYQ" elementId="org.eclipse.ui.views.ProblemView" visible="false"/>
+      <toolbar xmi:id="_gN5JIVE1Eeua7pAznklOYQ" elementId="org.eclipse.ui.views.ProblemView"/>
     </sharedElements>
     <sharedElements xsi:type="basic:Part" xmi:id="_Q0E78FE0Eeua7pAznklOYQ" elementId="org.eclipse.ui.views.ProgressView" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="Progress" iconURI="platform:/plugin/org.eclipse.ui.ide/icons/full/eview16/pview.png" tooltip="" closeable="true">
       <persistedState key="originalCompatibilityViewClass" value="org.eclipse.ui.internal.progress.ProgressView"/>
@@ -372,7 +422,7 @@
         <tags>ViewMenu</tags>
         <tags>menuContribution:menu</tags>
       </menus>
-      <toolbar xmi:id="_B6qbMVE1Eeua7pAznklOYQ" elementId="org.eclipse.ui.console.ConsoleView"/>
+      <toolbar xmi:id="_B6qbMVE1Eeua7pAznklOYQ" elementId="org.eclipse.ui.console.ConsoleView" visible="false"/>
     </sharedElements>
     <sharedElements xsi:type="basic:Part" xmi:id="_Q0FjAVE0Eeua7pAznklOYQ" elementId="org.eclipse.tm.terminal.view.ui.TerminalsView" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="Terminal" iconURI="platform:/plugin/org.eclipse.tm.terminal.view.ui/icons/eview16/terminal_view.gif" tooltip="" closeable="true">
       <persistedState key="originalCompatibilityViewClass" value="org.eclipse.tm.terminal.view.ui.view.TerminalsView"/>
@@ -383,8 +433,14 @@
     <sharedElements xsi:type="basic:Part" xmi:id="_Q0GKEFE0Eeua7pAznklOYQ" elementId="org.eclipse.cdt.debug.ui.debuggerConsoleView" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="Debugger Console" iconURI="platform:/plugin/org.eclipse.cdt.debug.ui/icons/view16/debugger_console_view.png" tooltip="" closeable="true">
       <persistedState key="originalCompatibilityViewClass" value="org.eclipse.cdt.debug.internal.ui.views.debuggerconsole.DebuggerConsoleView"/>
       <persistedState key="originalCompatibilityViewBundle" value="org.eclipse.cdt.debug.ui"/>
+      <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;&#xA;&lt;view/>"/>
       <tags>View</tags>
       <tags>categoryTag:Debug</tags>
+      <menus xmi:id="_BWdvQFG0EeuC4MJOfwNxpA" elementId="org.eclipse.cdt.debug.ui.debuggerConsoleView">
+        <tags>ViewMenu</tags>
+        <tags>menuContribution:menu</tags>
+      </menus>
+      <toolbar xmi:id="_BWdvQVG0EeuC4MJOfwNxpA" elementId="org.eclipse.cdt.debug.ui.debuggerConsoleView" visible="false"/>
     </sharedElements>
     <sharedElements xsi:type="basic:Part" xmi:id="_Q0GKEVE0Eeua7pAznklOYQ" elementId="org.eclipse.ui.views.ContentOutline" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="Outline" iconURI="platform:/plugin/org.eclipse.ui.views/icons/full/eview16/outline_co.png" tooltip="" closeable="true">
       <persistedState key="originalCompatibilityViewClass" value="org.eclipse.ui.views.contentoutline.ContentOutline"/>
@@ -396,13 +452,19 @@
         <tags>ViewMenu</tags>
         <tags>menuContribution:menu</tags>
       </menus>
-      <toolbar xmi:id="_R2gCQVE0Eeua7pAznklOYQ" elementId="org.eclipse.ui.views.ContentOutline"/>
+      <toolbar xmi:id="_R2gCQVE0Eeua7pAznklOYQ" elementId="org.eclipse.ui.views.ContentOutline" visible="false"/>
     </sharedElements>
     <sharedElements xsi:type="basic:Part" xmi:id="_Q0GxIFE0Eeua7pAznklOYQ" elementId="com.nxp.mcuxpresso.core.debug.ui.views.NXPGlobalVariablesView" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="Global Variables" iconURI="platform:/plugin/org.eclipse.debug.ui/icons/full/eview16/variable_view.gif" tooltip="" closeable="true">
       <persistedState key="originalCompatibilityViewClass" value="com.nxp.mcuxpresso.core.debug.ui.views.GlobalVariablesDumpView"/>
       <persistedState key="originalCompatibilityViewBundle" value="com.nxp.mcuxpresso.core.debug"/>
+      <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;&#xA;&lt;view memento.delay=&quot;1000&quot;/>"/>
       <tags>View</tags>
       <tags>categoryTag:MCUXpresso IDE</tags>
+      <menus xmi:id="_Fn-AsFG0EeuC4MJOfwNxpA" elementId="com.nxp.mcuxpresso.core.debug.ui.views.NXPGlobalVariablesView">
+        <tags>ViewMenu</tags>
+        <tags>menuContribution:menu</tags>
+      </menus>
+      <toolbar xmi:id="_Fn-AsVG0EeuC4MJOfwNxpA" elementId="com.nxp.mcuxpresso.core.debug.ui.views.NXPGlobalVariablesView" visible="false"/>
     </sharedElements>
     <sharedElements xsi:type="basic:Part" xmi:id="_Q0HYMFE0Eeua7pAznklOYQ" elementId="com.nxp.mcuxpresso.core.debug.ui.views.NXPGlobalVariablesView:*" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="Global Variables" iconURI="platform:/plugin/org.eclipse.debug.ui/icons/full/eview16/variable_view.gif" tooltip="" closeable="true">
       <persistedState key="originalCompatibilityViewClass" value="com.nxp.mcuxpresso.core.debug.ui.views.GlobalVariablesDumpView"/>
@@ -431,8 +493,14 @@
     <sharedElements xsi:type="basic:Part" xmi:id="_Q0H_QFE0Eeua7pAznklOYQ" elementId="org.eclipse.debug.ui.DebugView" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="Debug" iconURI="platform:/plugin/org.eclipse.debug.ui/icons/full/eview16/debug_view.png" tooltip="" closeable="true">
       <persistedState key="originalCompatibilityViewClass" value="org.eclipse.debug.internal.ui.views.launch.LaunchView"/>
       <persistedState key="originalCompatibilityViewBundle" value="org.eclipse.debug.ui"/>
+      <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;&#xA;&lt;view/>"/>
       <tags>View</tags>
       <tags>categoryTag:Debug</tags>
+      <menus xmi:id="_2nV6IFGzEeuC4MJOfwNxpA" elementId="org.eclipse.debug.ui.DebugView">
+        <tags>ViewMenu</tags>
+        <tags>menuContribution:menu</tags>
+      </menus>
+      <toolbar xmi:id="_2nV6IVGzEeuC4MJOfwNxpA" elementId="org.eclipse.debug.ui.DebugView" visible="false"/>
     </sharedElements>
     <sharedElements xsi:type="basic:Part" xmi:id="_Q0H_QVE0Eeua7pAznklOYQ" elementId="org.eclipse.cdt.dsf.debug.ui.disassembly.view" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="Disassembly" iconURI="platform:/plugin/org.eclipse.cdt.dsf.ui/icons/disassembly.gif" tooltip="" closeable="true">
       <persistedState key="originalCompatibilityViewClass" value="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyView"/>
@@ -459,7 +527,7 @@
       </children>
       <children xsi:type="menu:ToolBar" xmi:id="_QhpvMFE0Eeua7pAznklOYQ" elementId="org.eclipse.ui.workbench.file">
         <tags>Draggable</tags>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_bysMUFE5Eeuzh8_tef0AUQ" elementId="print" visible="false" iconURI="platform:/plugin/org.eclipse.ui/icons/full/etool16/print_edit.png" tooltip="Print" command="_O94PflE0Eeua7pAznklOYQ"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_LMMRsFHJEeuM88dQNUfHNA" elementId="print" visible="false" iconURI="platform:/plugin/org.eclipse.ui/icons/full/etool16/print_edit.png" tooltip="Print" command="_O94PflE0Eeua7pAznklOYQ"/>
       </children>
       <children xsi:type="menu:ToolBar" xmi:id="_QhpvMVE0Eeua7pAznklOYQ" elementId="group.edit" toBeRendered="false">
         <tags>toolbarSeparator</tags>
@@ -487,7 +555,7 @@
       </children>
       <children xsi:type="menu:ToolBar" xmi:id="_QhqWRlE0Eeua7pAznklOYQ" elementId="org.eclipse.ui.workbench.navigate">
         <tags>Draggable</tags>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_bywdwFE5Eeuzh8_tef0AUQ" elementId="org.eclipse.ui.window.pinEditor" iconURI="platform:/plugin/org.eclipse.ui/icons/full/etool16/pin_editor.png" tooltip="Pin Editor" type="Check" command="_O93oc1E0Eeua7pAznklOYQ"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_LMPVAFHJEeuM88dQNUfHNA" elementId="org.eclipse.ui.window.pinEditor" iconURI="platform:/plugin/org.eclipse.ui/icons/full/etool16/pin_editor.png" tooltip="Pin Editor" type="Check" command="_O93oc1E0Eeua7pAznklOYQ"/>
       </children>
       <children xsi:type="menu:ToolBar" xmi:id="_QhqWR1E0Eeua7pAznklOYQ" elementId="group.editor" toBeRendered="false">
         <tags>toolbarSeparator</tags>
@@ -529,6 +597,14 @@
     </trimBars>
     <trimBars xmi:id="_O8jZqVE0Eeua7pAznklOYQ" elementId="org.eclipse.ui.trim.vertical2" contributorURI="platform:/plugin/org.eclipse.ui.workbench" side="Right">
       <children xsi:type="menu:ToolControl" xmi:id="_F8YkMFE1Eeua7pAznklOYQ" elementId="perspective.area.memory(IDEWindow).(com.nxp.mcuxpresso.swo.ui.perspective.MCXDevelopPerspective)" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.minmax.TrimStack">
+        <tags>TrimStack</tags>
+        <tags>Draggable</tags>
+      </children>
+      <children xsi:type="menu:ToolControl" xmi:id="_TXPlYFG6EeuC4MJOfwNxpA" elementId="perspective.area.outline(IDEWindow).(com.nxp.mcuxpresso.swo.ui.perspective.MCXDevelopPerspective)" toBeRendered="false" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.minmax.TrimStack">
+        <tags>TrimStack</tags>
+        <tags>Draggable</tags>
+      </children>
+      <children xsi:type="menu:ToolControl" xmi:id="_xMwKoFG8EeuC4MJOfwNxpA" elementId="perspective.area.debug(IDEWindow).(com.nxp.mcuxpresso.swo.ui.perspective.MCXDevelopPerspective)" toBeRendered="false" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.minmax.TrimStack">
         <tags>TrimStack</tags>
         <tags>Draggable</tags>
       </children>
@@ -1074,6 +1150,7 @@
   <bindingTables xmi:id="_Qz7K9FE0Eeua7pAznklOYQ" bindingContext="_Qz7K81E0Eeua7pAznklOYQ"/>
   <bindingTables xmi:id="_Qz7K9lE0Eeua7pAznklOYQ" bindingContext="_Qz7K9VE0Eeua7pAznklOYQ"/>
   <bindingTables xmi:id="_Qz7K-FE0Eeua7pAznklOYQ" bindingContext="_Qz7K91E0Eeua7pAznklOYQ"/>
+  <bindingTables xmi:id="_2mBEcVGzEeuC4MJOfwNxpA" bindingContext="_2mBEcFGzEeuC4MJOfwNxpA"/>
   <rootContext xmi:id="_O8jZq1E0Eeua7pAznklOYQ" elementId="org.eclipse.ui.contexts.dialogAndWindow" contributorURI="platform:/plugin/org.eclipse.ui.workbench" name="In Dialogs and Windows" description="Either a dialog or a window is open">
     <children xmi:id="_O8jZrFE0Eeua7pAznklOYQ" elementId="org.eclipse.ui.contexts.window" contributorURI="platform:/plugin/org.eclipse.ui.workbench" name="In Windows" description="A window is open">
       <children xmi:id="_O8jZrVE0Eeua7pAznklOYQ" elementId="org.eclipse.e4.ui.contexts.views" contributorURI="platform:/plugin/org.eclipse.ui.workbench" name="%bindingcontext.name.bindingView"/>
@@ -1178,6 +1255,7 @@
   <rootContext xmi:id="_Qz7K81E0Eeua7pAznklOYQ" elementId="org.eclipse.ui.WorkingSetActionSet" name="Auto::org.eclipse.ui.WorkingSetActionSet"/>
   <rootContext xmi:id="_Qz7K9VE0Eeua7pAznklOYQ" elementId="org.eclipse.ui.actionSet.openFiles" name="Auto::org.eclipse.ui.actionSet.openFiles"/>
   <rootContext xmi:id="_Qz7K91E0Eeua7pAznklOYQ" elementId="org.eclipse.ui.edit.text.actionSet.presentation" name="Auto::org.eclipse.ui.edit.text.actionSet.presentation"/>
+  <rootContext xmi:id="_2mBEcFGzEeuC4MJOfwNxpA" elementId="com.pemicro.debug.gdbjtag.pne.launchConfigurationType.internal.org.eclipse.debug.ui.DebugPerspective" name="Auto::com.pemicro.debug.gdbjtag.pne.launchConfigurationType.internal.org.eclipse.debug.ui.DebugPerspective"/>
   <descriptors xmi:id="_PPPFEFE0Eeua7pAznklOYQ" elementId="org.eclipse.e4.ui.compatibility.editor" allowMultiple="true" category="org.eclipse.e4.primaryDataStack" closeable="true" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor">
     <tags>Editor</tags>
     <tags>removeOnHide</tags>
@@ -3249,6 +3327,123 @@
   <commands xmi:id="_QapIRlE0Eeua7pAznklOYQ" elementId="AUTOGEN:::org.eclipse.jdt.debug.ui.DisplayViewActions/org.eclipse.jdt.debug.ui.displayViewToolbar.Execute" commandName="Execute" description="Execute the Selected Text" category="_O9tQQVE0Eeua7pAznklOYQ"/>
   <commands xmi:id="_QapIR1E0Eeua7pAznklOYQ" elementId="AUTOGEN:::org.eclipse.jdt.debug.ui.DisplayViewActions/org.eclipse.jdt.debug.ui.displayViewToolbar.Display" commandName="Display" description="Display Result of Evaluating Selected Text" category="_O9tQQVE0Eeua7pAznklOYQ"/>
   <commands xmi:id="_QapISFE0Eeua7pAznklOYQ" elementId="AUTOGEN:::org.eclipse.jdt.debug.ui.DisplayViewActions/org.eclipse.jdt.debug.ui.displayViewToolbar.Inspect" commandName="Inspect" description="Inspect Result of Evaluating Selected Text" category="_O9tQQVE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_1h-0kFGzEeuC4MJOfwNxpA" elementId="com.pemicro.commands.4" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_16zkQFGzEeuC4MJOfwNxpA" elementId="com.pemicro.commands.7" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_165q4FGzEeuC4MJOfwNxpA" elementId="com.pemicro.commands.8" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_6o_KoFGzEeuC4MJOfwNxpA" elementId="com.pemicro.commands.14" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_60eB4FGzEeuC4MJOfwNxpA" elementId="com.pemicro.commands.17" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_60kIgFGzEeuC4MJOfwNxpA" elementId="com.pemicro.commands.18" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_ND2jcFG0EeuC4MJOfwNxpA" elementId="com.pemicro.commands.24" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_NPBRoFG0EeuC4MJOfwNxpA" elementId="com.pemicro.commands.27" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_NPFjEFG0EeuC4MJOfwNxpA" elementId="com.pemicro.commands.28" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_go2-sFG1EeuC4MJOfwNxpA" elementId="com.pemicro.commands.34" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_g0dKsFG1EeuC4MJOfwNxpA" elementId="com.pemicro.commands.37" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_g0hcIFG1EeuC4MJOfwNxpA" elementId="com.pemicro.commands.38" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_2narQFG2EeuC4MJOfwNxpA" elementId="com.pemicro.commands.44" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_24RKsFG2EeuC4MJOfwNxpA" elementId="com.pemicro.commands.47" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_24WDMFG2EeuC4MJOfwNxpA" elementId="com.pemicro.commands.48" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_1SLhMFG3EeuC4MJOfwNxpA" elementId="com.pemicro.commands.54" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_1lPAEFG3EeuC4MJOfwNxpA" elementId="com.pemicro.commands.57" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_1lTRgFG3EeuC4MJOfwNxpA" elementId="com.pemicro.commands.58" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_-KQVIFG3EeuC4MJOfwNxpA" elementId="com.pemicro.commands.64" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_-VetsFG3EeuC4MJOfwNxpA" elementId="com.pemicro.commands.67" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_-Vi_IFG3EeuC4MJOfwNxpA" elementId="com.pemicro.commands.68" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_GGVa4FG4EeuC4MJOfwNxpA" elementId="com.pemicro.commands.74" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_GZfncFG4EeuC4MJOfwNxpA" elementId="com.pemicro.commands.77" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_GZkf8FG4EeuC4MJOfwNxpA" elementId="com.pemicro.commands.78" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_OA8hAFG4EeuC4MJOfwNxpA" elementId="com.pemicro.commands.84" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_OMGoIFG4EeuC4MJOfwNxpA" elementId="com.pemicro.commands.87" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_OMLgoFG4EeuC4MJOfwNxpA" elementId="com.pemicro.commands.88" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_SQMTMFG5EeuC4MJOfwNxpA" elementId="com.pemicro.commands.94" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_Sah68FG5EeuC4MJOfwNxpA" elementId="com.pemicro.commands.97" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_SamzcFG5EeuC4MJOfwNxpA" elementId="com.pemicro.commands.98" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_62hMIFG6EeuC4MJOfwNxpA" elementId="com.pemicro.commands.104" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_7AdyUFG6EeuC4MJOfwNxpA" elementId="com.pemicro.commands.107" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_7AiDwFG6EeuC4MJOfwNxpA" elementId="com.pemicro.commands.108" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_RUE-UFG7EeuC4MJOfwNxpA" elementId="com.pemicro.commands.114" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_RfJl4FG7EeuC4MJOfwNxpA" elementId="com.pemicro.commands.117" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_RfNQQFG7EeuC4MJOfwNxpA" elementId="com.pemicro.commands.118" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_aaaQsFG7EeuC4MJOfwNxpA" elementId="com.pemicro.commands.124" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_al4g4FG7EeuC4MJOfwNxpA" elementId="com.pemicro.commands.127" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_al8LQFG7EeuC4MJOfwNxpA" elementId="com.pemicro.commands.128" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_oAivMFG7EeuC4MJOfwNxpA" elementId="com.pemicro.commands.134" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_oKv0EFG7EeuC4MJOfwNxpA" elementId="com.pemicro.commands.137" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_oK0skFG7EeuC4MJOfwNxpA" elementId="com.pemicro.commands.138" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_MMIXoFG8EeuC4MJOfwNxpA" elementId="com.pemicro.commands.144" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_MWtP8FG8EeuC4MJOfwNxpA" elementId="com.pemicro.commands.147" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_MWyIcFG8EeuC4MJOfwNxpA" elementId="com.pemicro.commands.148" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_TrsrEFG9EeuC4MJOfwNxpA" elementId="com.pemicro.commands.154" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_T9GkIFG9EeuC4MJOfwNxpA" elementId="com.pemicro.commands.157" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_T9LcoFG9EeuC4MJOfwNxpA" elementId="com.pemicro.commands.158" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_AoGzcFG_EeuC4MJOfwNxpA" elementId="com.pemicro.commands.164" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_AzI-wFG_EeuC4MJOfwNxpA" elementId="com.pemicro.commands.167" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_AzNQMFG_EeuC4MJOfwNxpA" elementId="com.pemicro.commands.168" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_C2R7MFG_EeuC4MJOfwNxpA" elementId="com.pemicro.commands.174" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_DGEDoFG_EeuC4MJOfwNxpA" elementId="com.pemicro.commands.177" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_DGHG8FG_EeuC4MJOfwNxpA" elementId="com.pemicro.commands.178" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_pGTgkFG_EeuC4MJOfwNxpA" elementId="com.pemicro.commands.184" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_pR00EFG_EeuC4MJOfwNxpA" elementId="com.pemicro.commands.187" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_pR33YFG_EeuC4MJOfwNxpA" elementId="com.pemicro.commands.188" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_b5RzsFHBEeuC4MJOfwNxpA" elementId="com.pemicro.commands.194" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_cHaWUFHBEeuC4MJOfwNxpA" elementId="com.pemicro.commands.197" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_cHdZoFHBEeuC4MJOfwNxpA" elementId="com.pemicro.commands.198" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_wqnUoFHBEeuC4MJOfwNxpA" elementId="com.pemicro.commands.204" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_w5HDoFHBEeuC4MJOfwNxpA" elementId="com.pemicro.commands.207" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_w5KuAFHBEeuC4MJOfwNxpA" elementId="com.pemicro.commands.208" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_8Og1oFHBEeuC4MJOfwNxpA" elementId="com.pemicro.commands.214" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_8ZXawFHBEeuC4MJOfwNxpA" elementId="com.pemicro.commands.217" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_8ZbsMFHBEeuC4MJOfwNxpA" elementId="com.pemicro.commands.218" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_DFlbIFHCEeuC4MJOfwNxpA" elementId="com.pemicro.commands.224" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_DRskgFHCEeuC4MJOfwNxpA" elementId="com.pemicro.commands.227" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_DRvn0FHCEeuC4MJOfwNxpA" elementId="com.pemicro.commands.228" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_PBz8kFHCEeuC4MJOfwNxpA" elementId="com.pemicro.commands.234" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_PTQ48FHCEeuC4MJOfwNxpA" elementId="com.pemicro.commands.237" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_PTVKYFHCEeuC4MJOfwNxpA" elementId="com.pemicro.commands.238" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_cYTckFHCEeuC4MJOfwNxpA" elementId="com.pemicro.commands.244" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_csPFMFHCEeuC4MJOfwNxpA" elementId="com.pemicro.commands.247" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_csTWoFHCEeuC4MJOfwNxpA" elementId="com.pemicro.commands.248" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_3QN6MFHCEeuC4MJOfwNxpA" elementId="com.pemicro.commands.254" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_3gsmMFHCEeuC4MJOfwNxpA" elementId="com.pemicro.commands.257" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_3gwQkFHCEeuC4MJOfwNxpA" elementId="com.pemicro.commands.258" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="__ftrMFHCEeuC4MJOfwNxpA" elementId="com.pemicro.commands.264" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="__yNJYFHCEeuC4MJOfwNxpA" elementId="com.pemicro.commands.267" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="__yQzwFHCEeuC4MJOfwNxpA" elementId="com.pemicro.commands.268" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_ecYXsFHDEeuC4MJOfwNxpA" elementId="com.pemicro.commands.274" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_evm1sFHDEeuC4MJOfwNxpA" elementId="com.pemicro.commands.277" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_evrHIFHDEeuC4MJOfwNxpA" elementId="com.pemicro.commands.278" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_zW5p0FHDEeuC4MJOfwNxpA" elementId="com.pemicro.commands.284" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_zjR48FHDEeuC4MJOfwNxpA" elementId="com.pemicro.commands.287" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_zjWKYFHDEeuC4MJOfwNxpA" elementId="com.pemicro.commands.288" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_E7pS8FHEEeuC4MJOfwNxpA" elementId="com.pemicro.commands.294" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_FG788FHEEeuC4MJOfwNxpA" elementId="com.pemicro.commands.297" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_FG_nUFHEEeuC4MJOfwNxpA" elementId="com.pemicro.commands.298" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_K7DQoFHEEeuC4MJOfwNxpA" elementId="com.pemicro.commands.304" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_LGRCIFHEEeuC4MJOfwNxpA" elementId="com.pemicro.commands.307" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_LGVTkFHEEeuC4MJOfwNxpA" elementId="com.pemicro.commands.308" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_OyFzoFHEEeuC4MJOfwNxpA" elementId="com.pemicro.commands.314" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_O_gkkFHEEeuC4MJOfwNxpA" elementId="com.pemicro.commands.317" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_O_kO8FHEEeuC4MJOfwNxpA" elementId="com.pemicro.commands.318" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_brjZYFHEEeuC4MJOfwNxpA" elementId="com.pemicro.commands.324" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_b2s5cFHEEeuC4MJOfwNxpA" elementId="com.pemicro.commands.327" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_b2v8wFHEEeuC4MJOfwNxpA" elementId="com.pemicro.commands.328" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_Va3B8FHFEeuC4MJOfwNxpA" elementId="com.pemicro.commands.334" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_VmEzcFHFEeuC4MJOfwNxpA" elementId="com.pemicro.commands.337" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_VmId0FHFEeuC4MJOfwNxpA" elementId="com.pemicro.commands.338" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_M3So8FHGEeuC4MJOfwNxpA" elementId="com.pemicro.commands.344" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_NLVmUFHGEeuC4MJOfwNxpA" elementId="com.pemicro.commands.347" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_NLZQsFHGEeuC4MJOfwNxpA" elementId="com.pemicro.commands.348" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_e5ylEFHGEeuC4MJOfwNxpA" elementId="com.pemicro.commands.354" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_fE1XcFHGEeuC4MJOfwNxpA" elementId="com.pemicro.commands.357" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_fE5B0FHGEeuC4MJOfwNxpA" elementId="com.pemicro.commands.358" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_3JBJMFHGEeuC4MJOfwNxpA" elementId="com.pemicro.commands.364" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_3UhOkFHGEeuC4MJOfwNxpA" elementId="com.pemicro.commands.367" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_3UlgAFHGEeuC4MJOfwNxpA" elementId="com.pemicro.commands.368" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_BJvnQFHHEeuC4MJOfwNxpA" elementId="com.pemicro.commands.374" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_BU3SIFHHEeuC4MJOfwNxpA" elementId="com.pemicro.commands.377" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_BU68gFHHEeuC4MJOfwNxpA" elementId="com.pemicro.commands.378" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_SLROkFHHEeuC4MJOfwNxpA" elementId="com.pemicro.commands.384" commandName="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" description="Mode : NXP_K6x_K64FN1M0M12 In-Circuit Debug" category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_SWXEQFHHEeuC4MJOfwNxpA" elementId="com.pemicro.commands.387" commandName="Compatible Hardware Interfaces ..." description="Compatible Hardware Interfaces ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
+  <commands xmi:id="_SWbVsFHHEeuC4MJOfwNxpA" elementId="com.pemicro.commands.388" commandName="PEMicro Homepage ..." description="PEMicro Homepage ..." category="_O9tQNlE0Eeua7pAznklOYQ"/>
   <addons xmi:id="_O8jZr1E0Eeua7pAznklOYQ" elementId="org.eclipse.e4.core.commands.service" contributorURI="platform:/plugin/org.eclipse.ui.workbench" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
   <addons xmi:id="_O8jZsFE0Eeua7pAznklOYQ" elementId="org.eclipse.e4.ui.contexts.service" contributorURI="platform:/plugin/org.eclipse.ui.workbench" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
   <addons xmi:id="_O8jZsVE0Eeua7pAznklOYQ" elementId="org.eclipse.e4.ui.bindings.service" contributorURI="platform:/plugin/org.eclipse.ui.workbench" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>
@@ -3260,7 +3455,7 @@
   <addons xmi:id="_O8jZt1E0Eeua7pAznklOYQ" elementId="MinMax Addon" contributorURI="platform:/plugin/org.eclipse.ui.workbench" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.minmax.MinMaxAddon"/>
   <addons xmi:id="_O8jZuFE0Eeua7pAznklOYQ" elementId="org.eclipse.ui.workbench.addon.0" contributorURI="platform:/plugin/org.eclipse.ui.workbench" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.HandlerProcessingAddon"/>
   <addons xmi:id="_O80fYFE0Eeua7pAznklOYQ" elementId="SplitterAddon" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.splitteraddon.SplitterAddon"/>
-  <addons xmi:id="_bFUI8VE5Eeuzh8_tef0AUQ" elementId="org.eclipse.ui.ide.addon.0" contributionURI="bundleclass://org.eclipse.ui.ide/org.eclipse.ui.internal.ide.addons.SaveAllDirtyPartsAddon"/>
+  <addons xmi:id="_IgaA4VHJEeuM88dQNUfHNA" elementId="org.eclipse.ui.ide.addon.0" contributionURI="bundleclass://org.eclipse.ui.ide/org.eclipse.ui.internal.ide.addons.SaveAllDirtyPartsAddon"/>
   <addons xmi:id="_dz0JgGOlEeSMMaPQU2nlzw" elementId="org.eclipse.ui.ide.application.addon.0" contributorURI="platform:/plugin/org.eclipse.ui.ide.application" contributionURI="bundleclass://org.eclipse.ui.ide.application/org.eclipse.ui.internal.ide.application.addons.ModelCleanupAddon"/>
   <categories xmi:id="_O9spIFE0Eeua7pAznklOYQ" elementId="org.eclipse.ui.category.edit" name="Edit"/>
   <categories xmi:id="_O9tQMFE0Eeua7pAznklOYQ" elementId="com.nxp.mcuxpresso.core.datamodels.ui.commands.category" name="SDK Commands"/>

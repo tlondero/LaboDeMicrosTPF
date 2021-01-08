@@ -2,4 +2,6 @@
 <sdk-packages>
 <package hash="1610048762913" path="C:\Users\Guido\mcuxpresso\02\SDKPackages\SDK_2.8.2_FRDM-K64F.zip" schema="manifest-schema/sdk_manifest_v3.6.xsd"/>
 <package hash="1609966798979" path="C:\Users\Guido\mcuxpresso\01\SDKPackages\SDK_2.4.1_FRDM-K64F.zip" schema="manifest-schema/sdk_manifest_v3.3.xsd"/>
+<package hash="1610115586337" path="C:\Users\Guido\mcuxpresso\02\SDKPackages\SDK_2.8.2_FRDM-K64F (1).zip" schema="manifest-schema/sdk_manifest_v3.6.xsd"/>
+<package hash="1610115666547" path="C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\part-support" schema="manifest-schema/sdk_manifest_v3.6.xsd"/>
 </sdk-packages>

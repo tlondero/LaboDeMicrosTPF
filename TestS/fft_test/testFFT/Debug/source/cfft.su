@@ -1,0 +1,6 @@
+cfft.c:50:6:cfftInit	16	static
+cfft.c:55:6:cfft	24	static
+cfft.c:61:6:icfft	24	static
+cfft.c:67:6:cfftGetMag	16	static
+cfft.c:77:25:cfftSizeToInstance	24	static
+cfft.c:97:10:cfftInstanceToSize	24	static
