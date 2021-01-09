@@ -1,0 +1,19 @@
+Fstop1 = 20, Fpass1 = 25, Fpass2 = 35, Fstop2 = 40
+
+Fstop1 = 40, Fpass1 = 50, Fpass2 = 71, Fstop2 = 80
+
+Fstop1 = 80, Fpass1 = 100, Fpass2 = 141, Fstop2 = 160
+
+Fstop1 = 160, Fpass1 = 200, Fpass2 = 273, Fstop2 = 300
+
+Fstop1 = 300, Fpass1 = 387, Fpass2 = 547, Fstop2 = 600
+
+Fstop1 = 600, Fpass1 = 774, Fpass2 = 1095, Fstop2 = 1200
+
+Fstop1 = 1200, Fpass1 = 1549, Fpass2 = 2190, Fstop2 = 2400
+
+Fstop1 = 2400, Fpass1 = 3098, Fpass2 = 4472, Fstop2 = 5000
+
+Fstop1 = 5000, Fpass1 = 6324, Fpass2 = 8944, Fstop2 = 10000
+
+Fstop1 = 10000, Fpass1 = 12649, Fpass2 = 17888, Fstop2 = 20000
