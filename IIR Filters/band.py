@@ -4,7 +4,7 @@ def med(fstop1, fmed, fstop2):
     fpass1 = np.sqrt(fstop1*fmed)
     fpass2 = np.sqrt(fstop2 * fmed)
 
-    print(f'Fstop1 = {int(fstop1)}, Fpass1 = {int(fpass1)}, Fpass2 = {int(fpass2)}, Fstop2 = {int(fstop2)}')
+    print(f'{fmed} - Fstop1 = {int(fstop1)}, Fpass1 = {int(fpass1)}, Fpass2 = {int(fpass2)}, Fstop2 = {int(fstop2)}')
 
 
 med(20, 32, 40)
