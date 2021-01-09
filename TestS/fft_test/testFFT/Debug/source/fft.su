@@ -1,0 +1,6 @@
+fft.c:44:6:fftInit	16	static
+fft.c:49:6:fft	24	static
+fft.c:55:6:icfft	24	static
+fft.c:61:6:fftGetMag	16	static
+fft.c:71:25:fftSizeToInstance	24	static
+fft.c:91:10:fftInstanceToSize	24	static

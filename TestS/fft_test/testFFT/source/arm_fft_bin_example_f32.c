@@ -94,7 +94,7 @@
   */
 
 
-#include "cfft.h"
+#include <fft.h>
 #include "math_helper.h"
 #define TEST_LENGTH_SAMPLES 	2048
 #define SNR_THRESHOLD_F32    	130.0f
@@ -130,19 +130,19 @@ int32_t main(void)
   arm_status status;
   float32_t maxValue;
   //cfftInit(CFFT_1024);
-  cfftInit(CFFT_16);
+  fftInit(CFFT_16);
 
 
   status = ARM_MATH_SUCCESS;
 
   /* Process the data through the CFFT/CIFFT module */
-  cfft(deltas, deltout, doBitReverse);//test de trolos
+  fft(deltas, deltout, doBitReverse);//test de trolos
 
   //cfft(testInput_f32_10khz, cfftOutput, doBitReverse);
 
   /* Process the data through the Complex Magnitude Module for
   calculating the magnitude at each bin */
-  cfftGetMag(deltout, magdelt);//test de trolos
+  fftGetMag(deltout, magdelt);//test de trolos
 
   //cfftGetMag(cfftOutput, testOutput);
 
