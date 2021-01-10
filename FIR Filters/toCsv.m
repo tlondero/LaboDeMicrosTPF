@@ -29,4 +29,4 @@ FileData = load('250/160-300.mat');
 csvwrite('250/160-300.csv', FileData.b);
 
 FileData = load('500/300-600.mat');
-csvwrite('500/300-600', FileData.b);
+csvwrite('500/300-600.csv', FileData.b);
