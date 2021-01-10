@@ -17,7 +17,7 @@
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
-#define EQ_NUM_OF_FILTERS			8
+#define EQ_NUM_OF_FILTERS			10
 
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
