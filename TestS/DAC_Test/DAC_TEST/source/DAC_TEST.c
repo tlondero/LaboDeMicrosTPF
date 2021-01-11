@@ -42,14 +42,13 @@
 #include "fsl_sdhc.h"
 #include "fsl_clock.h"
 
-
 #define TRANSFER_SIZE	0x02*0x01
 #define BUFFER_CANT		50
 #define NBYTES			0x02
 #define SIZE_OF_BUFFER	BUFFER_CANT*NBYTES
 
 uint16_t bufferPtr[BUFFER_CANT];
-uint16_t bufferXD[BUFFER_CANT] = {0};
+uint16_t bufferXD[BUFFER_CANT] = { 0 };
 
 void App_Run();
 void Init_Hardware();
@@ -64,9 +63,9 @@ int main(void) {
 	/* Init board hardware. */
 	Init_Hardware();
 
-	DAC_Init();
-	Dmamux_Init();
 	DMA_Init();
+	Dmamux_Init();
+	DAC_Init();
 	PIT_Init();
 
 	int i = 0;
@@ -103,11 +102,12 @@ void Init_Hardware() {
 
 void DAC_Init() {
 	//Dac init
-	SIM->SCGC2 |= SIM_SCGC2_DAC0_MASK;
+	SIM->SCGC2 |= SIM_SCGC2_DAC0(1);
+	SIM->SCGC2 |= SIM_SCGC2_DAC1(1);
 
-	DAC0->C0 = DAC_C0_DACEN_MASK | DAC_C0_DACRFS_MASK; // | DAC_C0_DACTRGSEL_MASK;
 	DAC0->C1 = DAC_C1_DMAEN_MASK;
-	//DAC0->C1 &= ~DAC_C1_DACBFEN_MASK;
+	DAC0->C0 = DAC_C0_DACEN_MASK | DAC_C0_DACRFS_MASK | DAC_C0_DACTRGSEL_MASK;
+	DAC0->C1 &= ~DAC_C1_DACBFEN_MASK;
 }
 
 void Dmamux_Init() {
@@ -115,8 +115,9 @@ void Dmamux_Init() {
 	//DMAMUX Init
 	SIM->SCGC6 |= SIM_SCGC6_DMAMUX_MASK;
 
-	DMAMUX->CHCFG[0] |= DMAMUX_CHCFG_ENBL_MASK | DMAMUX_CHCFG_SOURCE(58); // | DMAMUX_CHCFG_TRIG_MASK; //DAC0 CH0
-	//45
+	DMAMUX->CHCFG[0] |= DMAMUX_CHCFG_ENBL_MASK | DMAMUX_CHCFG_TRIG_MASK
+			| DMAMUX_CHCFG_SOURCE(45); // //DAC0 CH0
+	//58 TODO
 }
 
 void DMA_Init() {
@@ -132,11 +133,11 @@ void DMA_Init() {
 	DMA0->TCD[0].SADDR = (uint32_t) (bufferPtr);				//List of Duties
 
 	//DMA0->TCD[0].DADDR = (uint32_t)(destinationBuffer);
-	DMA0->TCD[0].DADDR = (uint32_t) (bufferXD);//(&(DAC0->DAT[0].DATL));
+	DMA0->TCD[0].DADDR = (uint32_t) (&(DAC0->DAT[0].DATL)); // (bufferXD)   TODO
 
 	/* Set an offset for source and destination address. */
 	DMA0->TCD[0].SOFF = 0x02; // Source address offset of 2 bytes per transaction.
-	DMA0->TCD[0].DOFF = 0x02; // Destination address offset is 0. (Siempre al mismo lugar)
+	DMA0->TCD[0].DOFF = 0x00; // Destination address offset is 0. (Siempre al mismo lugar)
 
 	/* Set source and destination data transfer size to 16 bits (CnV is 2 bytes wide). */
 	DMA0->TCD[0].ATTR = DMA_ATTR_SSIZE(1) | DMA_ATTR_DSIZE(1);
@@ -168,4 +169,9 @@ void PIT_Init() {
 
 	PIT->CHANNEL[0].LDVAL = 1133;
 	PIT->CHANNEL[0].TCTRL |= PIT_TCTRL_TEN_MASK;
+
+	PIT->MCR = PIT_MCR_MDIS(0);
+	NVIC_EnableIRQ(PIT1_IRQn);
+
+	PIT->CHANNEL[0].TCTRL = PIT_TCTRL_TEN(1); // start PIT (enable timer)
 }
