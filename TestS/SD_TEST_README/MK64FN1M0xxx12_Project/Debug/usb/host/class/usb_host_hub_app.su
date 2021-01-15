@@ -1,0 +1,14 @@
+usb_host_hub_app.c:120:31:USB_HostHubGetHubList	16	static
+usb_host_hub_app.c:155:13:USB_HostHubGetInterruptStatus	32	static
+usb_host_hub_app.c:183:13:USB_HostHubProcess	48	static
+usb_host_hub_app.c:385:13:USB_HostHubProcessPort	24	static
+usb_host_hub_app.c:400:13:USB_HostHubProcessPortAttach	56	static
+usb_host_hub_app.c:625:13:USB_HostHubProcessPortDetach	48	static
+usb_host_hub_app.c:781:13:USB_HostHubProcessData	32	static
+usb_host_hub_app.c:838:13:USB_HostHubControlCallback	32	static
+usb_host_hub_app.c:1110:6:USB_HostHubInterruptInCallback	32	static
+usb_host_hub_app.c:1157:14:USB_HostHubDeviceEvent	80	static
+usb_host_hub_app.c:1365:14:USB_HostHubRemovePort	32	static
+usb_host_hub_app.c:1409:10:USB_HostHubGetHsHubNumber	32	static
+usb_host_hub_app.c:1458:10:USB_HostHubGetHsHubPort	32	static
+usb_host_hub_app.c:1506:10:USB_HostHubGetTotalThinkTime	32	static

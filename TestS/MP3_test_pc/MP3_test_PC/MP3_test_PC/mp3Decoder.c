@@ -71,9 +71,9 @@ uint16_t readFile(void* buf, uint16_t cnt);
 void readID3Tag(void);
 
 //data management
-static void copyDataAndMovePointer();
+static void copyDataAndMovePointer(void);
 void copyFrameInfo(mp3_decoder_frame_data_t* mp3_data, MP3FrameInfo* helix_data);
-
+void resetContextData(void);
 /*******************************************************************************
  * STATIC VARIABLES AND CONST VARIABLES WITH FILE LEVEL SCOPE
  ******************************************************************************/
@@ -92,16 +92,9 @@ static FRESULT fr;
 
 
 void  MP3DecoderInit(void) {
-    context_data.bottom_index = 0;
-    context_data.top_index = 0;
-
-    context_data.bytes_remaining = 0;
-
+    resetContextData();
     context_data.Decoder = MP3InitDecoder();//Helix decoder init
     
-    context_data.has_ID3_Tag = false;
-    context_data.file_opened = false;//no file was opened
-    context_data.f_size = 0;
 #ifdef DEBUG
     printf("MP3 decoder initialized");
 #endif // DEBUG
@@ -111,11 +104,7 @@ void  MP3DecoderInit(void) {
 bool  MP3LoadFile(const char* file_name) {
     bool res=false;
     if (context_data.file_opened == true) {//if there was a opened file, i must close it before opening a new one
-        context_data.file_opened = false;
-        context_data.has_ID3_Tag = false;
-        context_data.bottom_index = 0;
-        context_data.top_index = 0;
-        context_data.bytes_remaining = 0;
+        resetContextData();
         close_file();
     }
     if (open_file(file_name)) {
@@ -124,13 +113,10 @@ bool  MP3LoadFile(const char* file_name) {
         context_data.bytes_remaining = context_data.f_size;
         readID3Tag();
 #ifdef DEBUG
-        printf("File opened successfully!\n");
-        printf("File size is %d bytes\n", context_data.f_size);
+        printf("File opened successfully!\nFile size is %d bytes\n", context_data.f_size);
 #endif
-
         res = true;
     }
-
     return res;
 
 }
@@ -177,6 +163,9 @@ mp3_decoder_result_t MP3GetDecodedFrame(short* outBuffer, uint16_t bufferSize, u
         if (!context_data.file_opened)
         {
             ret = MP3DECODER_NO_FILE;
+#ifdef DEBUG
+            printf("There is no opened file\n");
+#endif
         }
         else if (context_data.bytes_remaining) // check if there is remaining info to be decoded
         {
@@ -476,4 +465,12 @@ void copyFrameInfo(mp3_decoder_frame_data_t* mp3_data, MP3FrameInfo* helix_data)
     mp3_data->channelCount = helix_data->nChans;
     mp3_data->sampleRate = helix_data->samprate;
     mp3_data->sampleCount = helix_data->outputSamps;
+}
+void resetContextData(void) {
+    context_data.file_opened = false;
+    context_data.has_ID3_Tag = false;
+    context_data.bottom_index = 0;
+    context_data.top_index = 0;
+    context_data.bytes_remaining = 0;
+    context_data.f_size = 0;
 }
