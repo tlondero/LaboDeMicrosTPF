@@ -1,0 +1,4 @@
+#define FF_USE_LFN 1 //ffconf.h
+#define SD_DISK_ENABLE //diskio.c
+#define SD_DISK_ENABLE//fsl_sd_disk.c
+#define SD_ENABLED // sdmmc_config.h

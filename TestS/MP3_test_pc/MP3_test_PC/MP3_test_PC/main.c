@@ -81,12 +81,12 @@ int main(void) {
 				{
 					auxBuffer[j] = buffer[frameData.channelCount * j];
 				}
-				wav_write(wav, auxBuffer, sampleCount / frameData.channelCount);
+				//wav_write(wav, auxBuffer, sampleCount / frameData.channelCount);
 			}
 			else if (res == MP3DECODER_FILE_END)
 			{
 				printf("[APP] FILE ENDED. Decoded %d frames.\n", i - 1);
-				wav_close(wav);
+				//wav_close(wav);
 				if (MP3GetTagData(&ID3Data))
 				{
 					printf("\nSONG INFO\n");
