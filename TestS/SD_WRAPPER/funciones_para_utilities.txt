@@ -1,0 +1,2 @@
+funciones para utilities:
+concat();
