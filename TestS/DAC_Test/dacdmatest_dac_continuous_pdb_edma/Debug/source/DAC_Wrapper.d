@@ -1,5 +1,5 @@
-source/dac_continuous_pdb_edma.o source/dac_continuous_pdb_edma.d: \
- ../source/dac_continuous_pdb_edma.c \
+source/DAC_Wrapper.o source/DAC_Wrapper.d: ../source/DAC_Wrapper.c \
+ ../source/DAC_Wrapper.h \
  C:\Users\ellon\Documents\GitHub\LaboDeMicrosTPF\TestS\DAC_Test\dacdmatest_dac_continuous_pdb_edma\utilities/fsl_debug_console.h \
  C:\Users\ellon\Documents\GitHub\LaboDeMicrosTPF\TestS\DAC_Test\dacdmatest_dac_continuous_pdb_edma\drivers/fsl_common.h \
  C:\Users\ellon\Documents\GitHub\LaboDeMicrosTPF\TestS\DAC_Test\dacdmatest_dac_continuous_pdb_edma\device/fsl_device_registers.h \
@@ -19,9 +19,14 @@ source/dac_continuous_pdb_edma.o source/dac_continuous_pdb_edma.d: \
  C:\Users\ellon\Documents\GitHub\LaboDeMicrosTPF\TestS\DAC_Test\dacdmatest_dac_continuous_pdb_edma\board/clock_config.h \
  C:\Users\ellon\Documents\GitHub\LaboDeMicrosTPF\TestS\DAC_Test\dacdmatest_dac_continuous_pdb_edma\drivers/fsl_gpio.h \
  C:\Users\ellon\Documents\GitHub\LaboDeMicrosTPF\TestS\DAC_Test\dacdmatest_dac_continuous_pdb_edma\drivers/fsl_port.h \
- ../source/DAC_Wrapper.h \
  C:\Users\ellon\Documents\GitHub\LaboDeMicrosTPF\TestS\DAC_Test\dacdmatest_dac_continuous_pdb_edma\board/clock_config.h \
- C:\Users\ellon\Documents\GitHub\LaboDeMicrosTPF\TestS\DAC_Test\dacdmatest_dac_continuous_pdb_edma\board/pin_mux.h
+ C:\Users\ellon\Documents\GitHub\LaboDeMicrosTPF\TestS\DAC_Test\dacdmatest_dac_continuous_pdb_edma\board/pin_mux.h \
+ C:\Users\ellon\Documents\GitHub\LaboDeMicrosTPF\TestS\DAC_Test\dacdmatest_dac_continuous_pdb_edma\drivers/fsl_dac.h \
+ C:\Users\ellon\Documents\GitHub\LaboDeMicrosTPF\TestS\DAC_Test\dacdmatest_dac_continuous_pdb_edma\drivers/fsl_edma.h \
+ C:\Users\ellon\Documents\GitHub\LaboDeMicrosTPF\TestS\DAC_Test\dacdmatest_dac_continuous_pdb_edma\drivers/fsl_pdb.h \
+ C:\Users\ellon\Documents\GitHub\LaboDeMicrosTPF\TestS\DAC_Test\dacdmatest_dac_continuous_pdb_edma\drivers/fsl_dmamux.h
+
+../source/DAC_Wrapper.h:
 
 C:\Users\ellon\Documents\GitHub\LaboDeMicrosTPF\TestS\DAC_Test\dacdmatest_dac_continuous_pdb_edma\utilities/fsl_debug_console.h:
 
@@ -61,8 +66,14 @@ C:\Users\ellon\Documents\GitHub\LaboDeMicrosTPF\TestS\DAC_Test\dacdmatest_dac_co
 
 C:\Users\ellon\Documents\GitHub\LaboDeMicrosTPF\TestS\DAC_Test\dacdmatest_dac_continuous_pdb_edma\drivers/fsl_port.h:
 
-../source/DAC_Wrapper.h:
-
 C:\Users\ellon\Documents\GitHub\LaboDeMicrosTPF\TestS\DAC_Test\dacdmatest_dac_continuous_pdb_edma\board/clock_config.h:
 
 C:\Users\ellon\Documents\GitHub\LaboDeMicrosTPF\TestS\DAC_Test\dacdmatest_dac_continuous_pdb_edma\board/pin_mux.h:
+
+C:\Users\ellon\Documents\GitHub\LaboDeMicrosTPF\TestS\DAC_Test\dacdmatest_dac_continuous_pdb_edma\drivers/fsl_dac.h:
+
+C:\Users\ellon\Documents\GitHub\LaboDeMicrosTPF\TestS\DAC_Test\dacdmatest_dac_continuous_pdb_edma\drivers/fsl_edma.h:
+
+C:\Users\ellon\Documents\GitHub\LaboDeMicrosTPF\TestS\DAC_Test\dacdmatest_dac_continuous_pdb_edma\drivers/fsl_pdb.h:
+
+C:\Users\ellon\Documents\GitHub\LaboDeMicrosTPF\TestS\DAC_Test\dacdmatest_dac_continuous_pdb_edma\drivers/fsl_dmamux.h:
