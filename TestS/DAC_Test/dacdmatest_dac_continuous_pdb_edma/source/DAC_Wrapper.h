@@ -45,5 +45,5 @@ void DAC_Wrapper_Clear_Data_Array(void);
 
 void DAC_Wrapper_Start_Trigger(void);		//Start trigger signal to DAC
 
-
+void DAC_Wrapper_Loop(bool status);
 #endif /* DAC_WRAPER_H_ */

@@ -65,11 +65,14 @@ uint16_t (*g_dacDataArray);
 
 uint16_t nullData[DAC_USED_BUFFER_SIZE] = { 0U };
 
+bool loopBuffer;
+
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH GLOBAL SCOPE
  ******************************************************************************/
 void DAC_Wrapper_Init(void) {
 
+	loopBuffer = true;
 	DAC_Wrapper_Clear_Data_Array();
 
 	//Initialize DMAMUX
@@ -93,6 +96,11 @@ void DAC_Wrapper_Clear_Data_Array(void){
 void DAC_Wrapper_Start_Trigger(void) {
 	PDB_DoSoftwareTrigger(PDB_BASEADDR);
 }
+
+void DAC_Wrapper_Loop(bool status){
+	loopBuffer = status;
+}
+
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH FILE SCOPE
  ******************************************************************************/
@@ -187,6 +195,11 @@ static void Edma_Callback(edma_handle_t *handle, void *userData,
 	g_index += DAC_DATL_COUNT;
 	if (g_index == DAC_USED_BUFFER_SIZE) {
 		g_index = 0U;
+		if(!loopBuffer){
+			DAC_Wrapper_Clear_Data_Array();
+			//EDMA_StopTransfer(handle);		//Debería haber un start?
+			return;
+		}
 	}
 	EDMA_PrepareTransfer(&g_transferConfig, (void*) (g_dacDataArray + g_index),
 			sizeof(uint16_t), (void*) DAC_DATA_REG_ADDR, sizeof(uint16_t),
