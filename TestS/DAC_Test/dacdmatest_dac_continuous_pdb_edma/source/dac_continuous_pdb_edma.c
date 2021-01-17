@@ -14,6 +14,7 @@
 #include "fsl_common.h"
 #include "clock_config.h"
 #include "pin_mux.h"
+
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
@@ -29,16 +30,16 @@
 /*******************************************************************************
  * Code
  ******************************************************************************/
-/*!
- * @brief Main function
- */
+
 int main(void) {
-	/* Initialize hardware. */
+
 	BOARD_InitPins();
 	BOARD_BootClockRUN();
 	BOARD_InitDebugConsole();
 
 	DAC_Wrapper_Init();
+
+	// 4095U == 2 V
 
 	uint16_t arrayXD[DAC_USED_BUFFER_SIZE] = { 0U, 401U, 799U, 1188U, 1567U,
 			1930U, 2275U, 2598U, 2895U, 3165U, 3405U, 3611U, 3783U, 3918U,
@@ -62,5 +63,6 @@ int main(void) {
 	DAC_Wrapper_Start_Trigger();
 
 	while (1) {
+
 	}
 }
