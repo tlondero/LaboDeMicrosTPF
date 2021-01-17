@@ -67,12 +67,16 @@ uint16_t nullData[DAC_USED_BUFFER_SIZE] = { 0U };
 
 bool loopBuffer;
 
+uint16_t max_count;
+
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH GLOBAL SCOPE
  ******************************************************************************/
 void DAC_Wrapper_Init(void) {
 
 	loopBuffer = true;
+	max_count = DAC_USED_BUFFER_SIZE;
+	
 	DAC_Wrapper_Clear_Data_Array();
 
 	//Initialize DMAMUX
@@ -99,6 +103,16 @@ void DAC_Wrapper_Start_Trigger(void) {
 
 void DAC_Wrapper_Loop(bool status){
 	loopBuffer = status;
+}
+
+bool DAC_Wrapper_Set_Max_Count(uint16_t max){
+	bool ret = false;
+	if(max < DAC_USED_BUFFER_SIZE){
+		max_count = max;
+		ret = true;
+	}
+	
+	return ret;
 }
 
 /*******************************************************************************
@@ -193,7 +207,8 @@ static void Edma_Callback(edma_handle_t *handle, void *userData,
 			kEDMA_InterruptFlag);
 	/* Setup transfer */
 	g_index += DAC_DATL_COUNT;
-	if (g_index == DAC_USED_BUFFER_SIZE) {
+	//if ((g_index == max_count) || (g_index == DAC_USED_BUFFER_SIZE)) {
+	if (g_index == max_count) {
 		g_index = 0U;
 		if(!loopBuffer){
 			DAC_Wrapper_Clear_Data_Array();
