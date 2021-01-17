@@ -94,7 +94,7 @@ void DAC_Wrapper_Set_Data_Array(void * newDataArray){
 }
 
 void DAC_Wrapper_Clear_Data_Array(void){
-	g_dacDataArray = (uint16_t *) &nullData;
+	g_dacDataArray = (uint16_t *) nullData;
 }
 
 void DAC_Wrapper_Start_Trigger(void) {
@@ -208,7 +208,7 @@ static void Edma_Callback(edma_handle_t *handle, void *userData,
 	/* Setup transfer */
 	g_index += DAC_DATL_COUNT;
 	//if ((g_index == max_count) || (g_index == DAC_USED_BUFFER_SIZE)) {
-	if (g_index == max_count) {
+	if (g_index >= max_count) {
 		g_index = 0U;
 		if(!loopBuffer){
 			DAC_Wrapper_Clear_Data_Array();

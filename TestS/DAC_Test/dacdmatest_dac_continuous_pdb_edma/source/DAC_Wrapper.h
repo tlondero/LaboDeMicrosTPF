@@ -47,5 +47,6 @@ void DAC_Wrapper_Start_Trigger(void);		//Start trigger signal to DAC
 
 void DAC_Wrapper_Loop(bool status);
 
-bool DAC_Wrapper_Set_Max_Count(uint16_t max)
+bool DAC_Wrapper_Set_Max_Count(uint16_t max);
+
 #endif /* DAC_WRAPER_H_ */
