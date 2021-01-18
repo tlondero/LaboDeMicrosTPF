@@ -71,45 +71,34 @@ int main(void) {
 
 			if (MP3LoadFile("test.mp3")) {
 				int i = 0;
+				if (MP3GetTagData(&ID3Data)) {
+											printf("\nSONG INFO\n");
+											printf("TITLE: %s\n", ID3Data.title);
+											printf("ARTIST: %s\n", ID3Data.artist);
+											printf("ALBUM: %s\n", ID3Data.album);
+											printf("TRACK NUM: %s\n", ID3Data.trackNum);
+											printf("YEAR: %s\n", ID3Data.year);
+										}
+
 				while (1) {
-#ifdef MAIN_DEBUG
+
 					printf("\n[APP] Frame %d decoding started.\n", i);
-#endif
+
 					mp3_decoder_result_t res = MP3GetDecodedFrame(buffer,
 							MP3_DECODED_BUFFER_SIZE, &sampleCount, 0);
+
 					if (res == 0) {
 						MP3GetLastFrameData(&frameData);
-						if (sr != frameData.sampleRate) {
-							int huevo = 0;
-							huevo++;
-						}
-#ifdef MAIN_DEBUG
+
 						printf("[APP] Frame %d decoded.\n", i);
-#endif
+
 						i++;
 
 						sr = frameData.sampleRate;
-#ifdef MAIN_DEBUG
 						printf("[APP] FRAME SAMPLE RATE: %d \n", sr);
-#endif
 
-						int16_t auxBuffer[MP3_DECODED_BUFFER_SIZE];
-						for (uint32_t j = 0;
-								j < sampleCount / frameData.channelCount; j++) {
-							auxBuffer[j] = buffer[frameData.channelCount * j];
-						}
-						//wav_write(wav, auxBuffer, sampleCount / frameData.channelCount);
 					} else if (res == MP3DECODER_FILE_END) {
 						printf("[APP] FILE ENDED. Decoded %d frames.\n", i - 1);
-						//wav_close(wav);
-						if (MP3GetTagData(&ID3Data)) {
-							printf("\nSONG INFO\n");
-							printf("TITLE: %s\n", ID3Data.title);
-							printf("ARTIST: %s\n", ID3Data.artist);
-							printf("ALBUM: %s\n", ID3Data.album);
-							printf("TRACK NUM: %s\n", ID3Data.trackNum);
-							printf("YEAR: %s\n", ID3Data.year);
-						}
 						break;
 					} else {
 						int huevo = 0;
