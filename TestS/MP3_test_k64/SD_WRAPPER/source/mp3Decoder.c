@@ -113,6 +113,7 @@ bool  MP3LoadFile(const char* file_name) {
         context_data.f_size = getFileSize();
         context_data.bytes_remaining = context_data.f_size;
         readID3Tag();
+        copyDataAndMovePointer();
 #ifdef DEBUG
         printf("File opened successfully!\nFile size is %d bytes\n", context_data.f_size);
 #endif
@@ -314,6 +315,15 @@ mp3_decoder_result_t MP3GetDecodedFrame(short* outBuffer, uint16_t bufferSize, u
 
 }
 
+
+void printContextData(void){
+	printf("Bottom index %d\r\n",context_data.bottom_index);
+	printf("Top index %d\r\n",context_data.top_index);
+	printf("Bytes remaining %d\r\n",context_data.bytes_remaining);
+	printf("Dir ptr %p\r\n",file.dir_ptr);
+	printf("f ptr %p\r\n",file.fptr);
+}
+
 /*******************************************************************************
  *******************************************************************************
                         LOCAL FUNCTION DEFINITIONS
@@ -385,13 +395,9 @@ uint16_t readFile(void* buf, uint16_t cnt) {
     if (context_data.file_opened)
     {
 #ifdef __arm__
-//    	static short buffer[MP3_DECODED_BUFFER_SIZE];
-//    	static short buffer2[MP3_DECODED_BUFFER_SIZE];
-        fr = f_read(&file, ((uint8_t *)buf), cnt, &read);
-//    	FIL g_fileObject;
-//    	f_open(&g_fileObject, _T("test.mp3"), FA_READ);
-//        fr = f_read(&g_fileObject, buffer, sizeof(buffer), &read);
-//        fr = f_read(&file, ((uint8_t *)buffer2), sizeof(buffer2), &read);
+
+
+    	fr = f_read(&file, ((uint8_t *)buf), cnt, &read);
         if (fr == FR_OK)
         {
             ret = read;
@@ -437,10 +443,11 @@ void readID3Tag(void)
         printf("ID3 Track found.\n");
         printf("ID3 Tag is %d bytes long\n", tagSize);
 #endif
-//        fileSeek(tagSize);
-//        context_data.bytes_remaining -= tagSize;//TODO
-        fileRewind();//TODO
-        /*aca solo fuimos pa atras, no cre que esté bien
+        fileSeek(tagSize);
+        context_data.bytes_remaining -= tagSize;//TODO
+//        fileRewind();//TODO
+        /* *
+         * aca solo fuimos pa atras, no cre que esté bien
          *  pero podemos leer los archivos. deberiamos ver
          *   como hacer para saltear la id3 tag
          *   o para hacer lo mismo sin ser cabeza
@@ -457,8 +464,7 @@ void copyDataAndMovePointer() {
 
     // Fill buffer with info in mp3 file
     uint8_t* dst = context_data.encoded_frame_buffer + context_data.bottom_index;
-    if (MP3_FRAME_BUFFER_BYTES - context_data.bottom_index > 0)
-    {
+    if (MP3_FRAME_BUFFER_BYTES - context_data.bottom_index > 0){
     bytes_read = readFile(dst, (MP3_FRAME_BUFFER_BYTES - context_data.bottom_index));
     // Update bottom_index pointer
     context_data.bottom_index += bytes_read;
@@ -482,6 +488,7 @@ void copyFrameInfo(mp3_decoder_frame_data_t* mp3_data, MP3FrameInfo* helix_data)
 }
 void resetContextData(void) {
     context_data.file_opened = false;
+    mp3File=NULL;
     context_data.has_ID3_Tag = false;
     context_data.bottom_index = 0;
     context_data.top_index = 0;

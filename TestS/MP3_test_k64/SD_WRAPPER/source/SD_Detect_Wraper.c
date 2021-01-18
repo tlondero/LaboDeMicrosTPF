@@ -128,11 +128,12 @@ void interruptRoutine(void){
 		{
 			error = FR_DISK_ERR;
 		}
-
 		if ((card->usrParam.cd->cardDetected() == true)
 				&& (old_status != kSD_Inserted)) {
+
 			SDMMC_OSADelay(card->usrParam.cd->cdDebounce_ms);
 			if (card->usrParam.cd->cardDetected() == true) {
+				SD_SetCardPower(&g_sd, true);
 				if (f_mount(&g_fileSystem, driverNumberBuffer, 0U)) {
 					error = FR_DISK_ERR;
 							}
@@ -156,6 +157,7 @@ void interruptRoutine(void){
 				&& (old_status != kSD_Removed)) {
 			old_status = kSD_Removed;
 			removed_flag=true;
+			SD_SetCardPower(&g_sd, false);
 			inserted_flag=false;
 			if(extractedCback){
 				extractedCback();

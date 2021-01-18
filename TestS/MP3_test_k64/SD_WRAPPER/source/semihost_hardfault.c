@@ -53,12 +53,13 @@
 // semihosted code in a production build of your application!
 //
 // ****************************************************************************
-
+#include "mp3Decoder.h"
 // Allow handler to be removed by setting a define (via command line)
 #if !defined (__SEMIHOST_HARDFAULT_DISABLE)
 
 __attribute__((naked))
 void HardFault_Handler(void){
+	printContextData();
     __asm(  ".syntax unified\n"
         // Check which stack is in use
             "MOVS   R0, #4  \n"
@@ -93,6 +94,7 @@ void HardFault_Handler(void){
     	// Return from hard fault handler to application
             "BX LR \n"
         ".syntax divided\n") ;
+	__asm("BKPT #0");
 }
 
 #endif
