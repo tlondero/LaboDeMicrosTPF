@@ -39,11 +39,12 @@
 
 void DAC_Wrapper_Init(void);
 
-void DAC_Wrapper_Set_Data_Array(void * newDataArray);
+void DAC_Wrapper_Set_Data_Array(void * newDataArray, uint32_t newSizeOf);
 
 void DAC_Wrapper_Clear_Data_Array(void);
 
 void DAC_Wrapper_Start_Trigger(void);		//Start trigger signal to DAC
 
+void DAC_Wrapper_Loop(bool status);
 
 #endif /* DAC_WRAPER_H_ */

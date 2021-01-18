@@ -49,7 +49,7 @@ static void PDB_Configuration(void);
 static void DAC_Configuration(void);
 
 static void Edma_Callback(edma_handle_t *handle, void *userData,
-		bool transferDone, uint32_t tcds);
+bool transferDone, uint32_t tcds);
 
 /*******************************************************************************
  * VARIABLE DECLARATION WITH FILE SCOPE
@@ -63,12 +63,24 @@ volatile uint32_t g_index = 0U; //Index of the g_dacDataArray array
 
 uint16_t (*g_dacDataArray);
 
+uint16_t (*backUp);
+
 uint16_t nullData[DAC_USED_BUFFER_SIZE] = { 0U };
+
+bool loopBuffer;
+
+bool backUpOn;
+
+uint32_t sizeOf;
 
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH GLOBAL SCOPE
  ******************************************************************************/
 void DAC_Wrapper_Init(void) {
+
+	loopBuffer = true;
+	bool backUpOn = false;
+	sizeOf = DAC_USED_BUFFER_SIZE;
 
 	DAC_Wrapper_Clear_Data_Array();
 
@@ -82,17 +94,31 @@ void DAC_Wrapper_Init(void) {
 	DAC_Configuration();
 }
 
-void DAC_Wrapper_Set_Data_Array(void * newDataArray){
-	g_dacDataArray = (uint16_t *) newDataArray;
+void DAC_Wrapper_Set_Data_Array(void *newDataArray, uint32_t newSizeOf) {
+	g_dacDataArray = (uint16_t*) newDataArray;
+	backUp = (uint16_t*) newDataArray;
+	if (newSizeOf < DAC_USED_BUFFER_SIZE) {
+		sizeOf = newSizeOf;
+		backUpOn = true;
+	} else {
+		backUpOn = false;
+	}
 }
 
-void DAC_Wrapper_Clear_Data_Array(void){
-	g_dacDataArray = (uint16_t *) &nullData;
+void DAC_Wrapper_Clear_Data_Array(void) {
+	g_dacDataArray = (uint16_t*) nullData;
+	backUpOn = false;
+	sizeOf = DAC_USED_BUFFER_SIZE;
 }
 
 void DAC_Wrapper_Start_Trigger(void) {
 	PDB_DoSoftwareTrigger(PDB_BASEADDR);
 }
+
+void DAC_Wrapper_Loop(bool status) {
+	loopBuffer = status;
+}
+
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH FILE SCOPE
  ******************************************************************************/
@@ -147,7 +173,7 @@ static void PDB_Configuration(void) {
 	PDB_SetDACTriggerConfig(PDB_BASEADDR, PDB_DAC_CHANNEL,
 			&pdbDacTriggerConfigStruct);
 	PDB_SetDACTriggerIntervalValue(PDB_BASEADDR, PDB_DAC_CHANNEL,
-			PDB_DAC_INTERVAL_VALUE);
+	PDB_DAC_INTERVAL_VALUE);
 
 	/* Load PDB values. */
 	PDB_DoLoadValues(PDB_BASEADDR);
@@ -179,15 +205,27 @@ static void DAC_Configuration(void) {
  ******************************************************************************/
 
 static void Edma_Callback(edma_handle_t *handle, void *userData,
-		bool transferDone, uint32_t tcds) {
+bool transferDone, uint32_t tcds) {
 	/* Clear Edma interrupt flag. */
 	EDMA_ClearChannelStatusFlags(DMA_BASEADDR, DMA_CHANNEL,
 			kEDMA_InterruptFlag);
 	/* Setup transfer */
 	g_index += DAC_DATL_COUNT;
+
+	if (backUpOn && (g_index > sizeOf)) {
+		g_dacDataArray = (uint16_t*) nullData;
+	}
+
 	if (g_index == DAC_USED_BUFFER_SIZE) {
 		g_index = 0U;
+		if (backUpOn) {
+			g_dacDataArray = (uint16_t*) backUp;
+		}
+		if (!loopBuffer) {
+			DAC_Wrapper_Clear_Data_Array();
+		}
 	}
+
 	EDMA_PrepareTransfer(&g_transferConfig, (void*) (g_dacDataArray + g_index),
 			sizeof(uint16_t), (void*) DAC_DATA_REG_ADDR, sizeof(uint16_t),
 			DAC_DATL_COUNT * sizeof(uint16_t),
