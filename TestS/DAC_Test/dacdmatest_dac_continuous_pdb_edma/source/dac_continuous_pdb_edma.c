@@ -46,6 +46,11 @@ uint16_t sqrtk[DAC_USED_BUFFER_SIZE] = { 0U, 735U, 1040U, 1273U, 1470U, 1644U,
 		2941U, 3032U, 3120U, 3205U, 3289U, 3370U, 3449U, 3527U, 3603U, 3677U,
 		3750U, 3821U, 3891U, 3960U, 4028U, 4095U };
 
+uint16_t cont[DAC_USED_BUFFER_SIZE] = { 4095U, 4095U, 4095U,
+		4095U, 4095U, 4095U, 4095U, 4095U, 4095U, 4095U, 4095U, 4095U, 4095U,
+		4095U, 4095U, 4095U, 4095U, 4095U, 4095U, 4095U, 4095U, 4095U, 4095U,
+		4095U, 4095U, 4095U, 4095U, 4095U, 4095U, 4095U, 4095U, 4095U };
+
 /*******************************************************************************
  * Code
  ******************************************************************************/
@@ -58,8 +63,6 @@ int main(void) {
 
 	DAC_Wrapper_Init();		// 4095U == 2 V
 
-	DAC_Wrapper_Set_Max_Count(DAC_USED_BUFFER_SIZE);	//Por defecto está en
-	//DAC_USED_BUFFER_SIZE pero lo explicito
 	DAC_Wrapper_Loop(true);		//Por defecto está en true pero lo explicito
 
 	DAC_Wrapper_Set_Data_Array(&exp1k);
