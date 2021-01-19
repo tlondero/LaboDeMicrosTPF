@@ -45,7 +45,9 @@ static void EDMA_Configuration(void);
 
 static void DMAMUX_Configuration(void);
 
-static void PDB_Configuration(uint32_t pdb_mod_val, pdb_divider_multiplication_factor_t pdb_mult_fact, pdb_prescaler_divider_t pdb_prescaler);
+static void PDB_Configuration(uint32_t pdb_mod_val,
+		pdb_divider_multiplication_factor_t pdb_mult_fact,
+		pdb_prescaler_divider_t pdb_prescaler);
 
 static void DAC_Configuration(void);
 
@@ -68,20 +70,18 @@ uint16_t (*backUp);
 
 uint16_t nullData[DAC_USED_BUFFER_SIZE] = { 0U };
 
-bool loopBuffer;
+bool loopBuffer = true;
 
-bool backUpOn;
+bool noMoreClear = false;
 
-uint32_t sizeOf;
+bool backUpOn = false;
+
+uint32_t sizeOf = DAC_USED_BUFFER_SIZE;
 
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH GLOBAL SCOPE
  ******************************************************************************/
 void DAC_Wrapper_Init(void) {
-
-	loopBuffer = true;
-	backUpOn = false;
-	sizeOf = DAC_USED_BUFFER_SIZE;
 
 	DAC_Wrapper_Clear_Data_Array();
 
@@ -90,17 +90,22 @@ void DAC_Wrapper_Init(void) {
 	//Initialize EDMA
 	EDMA_Configuration();
 	//Initialize the HW trigger source
-	PDB_Configuration(PDB_COUNT, kPDB_DividerMultiplicationFactor1, kPDB_PrescalerDivider1);
+	PDB_Configuration(PDB_COUNT, kPDB_DividerMultiplicationFactor1,
+			kPDB_PrescalerDivider1);
 	//Initialize DAC
 	DAC_Configuration();
 }
 
-void DAC_Wrapper_PDB_Config(uint32_t mod_val, pdb_divider_multiplication_factor_t mult_fact, pdb_prescaler_divider_t prescaler) {
+void DAC_Wrapper_PDB_Config(uint32_t mod_val,
+		pdb_divider_multiplication_factor_t mult_fact,
+		pdb_prescaler_divider_t prescaler) {
 	PDB_Configuration(mod_val, mult_fact, prescaler);
 }
 
 void DAC_Wrapper_Set_Data_Array(void *newDataArray, uint32_t newSizeOf) {
 	g_dacDataArray = (uint16_t*) newDataArray;
+	g_index = 0U;
+	noMoreClear = false;
 	backUp = (uint16_t*) newDataArray;
 	if (newSizeOf < DAC_USED_BUFFER_SIZE) {
 		sizeOf = newSizeOf;
@@ -220,7 +225,9 @@ static void DMAMUX_Configuration(void) {
 }
 
 /* Enable the trigger source of PDB. */
-static void PDB_Configuration(uint32_t pdb_mod_val, pdb_divider_multiplication_factor_t pdb_mult_fact, pdb_prescaler_divider_t pdb_prescaler) {
+static void PDB_Configuration(uint32_t pdb_mod_val,
+		pdb_divider_multiplication_factor_t pdb_mult_fact,
+		pdb_prescaler_divider_t pdb_prescaler) {
 	pdb_config_t pdbConfigStruct;
 	pdb_dac_trigger_config_t pdbDacTriggerConfigStruct;
 
@@ -288,9 +295,11 @@ bool transferDone, uint32_t tcds) {
 		if (backUpOn) {
 			g_dacDataArray = (uint16_t*) backUp;
 		}
-		if (!loopBuffer) {
+		if (!loopBuffer && !noMoreClear) {
 			DAC_Wrapper_Clear_Data_Array();
+			noMoreClear = true;
 		}
+
 	}
 
 	EDMA_PrepareTransfer(&g_transferConfig, (void*) (g_dacDataArray + g_index),

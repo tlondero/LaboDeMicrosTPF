@@ -119,10 +119,6 @@ uint16_t sen1k[DAC_USED_BUFFER_SIZE] = { 307U, 309U, 310U, 312U, 314U, 316U,
 		280U, 282U, 284U, 286U, 288U, 290U, 292U, 293U, 295U, 297U, 299U, 301U,
 		303U, 305U, 307U };
 
-uint16_t sin32m[32] = { 307U, 369U, 428U, 482U, 530U, 568U, 595U, 611U, 614U,
-		604U, 583U, 550U, 507U, 456U, 399U, 338U, 276U, 215U, 158U, 107U, 64U,
-		31U, 9U, 0U, 3U, 19U, 46U, 84U, 131U, 186U, 245U, 307U };
-
 /*******************************************************************************
  * Code
  ******************************************************************************/
@@ -155,9 +151,6 @@ int main(void) {
 
 	DAC_Wrapper_Init();
 
-	//DAC_USED_BUFFER_SIZE pero lo explicito
-	DAC_Wrapper_Loop(true);		//Por defecto está en true pero lo explicito
-
 	DAC_Wrapper_Start_Trigger();
 
 	PIT_GetDefaultConfig(&pitConfig);
@@ -169,33 +162,20 @@ int main(void) {
 	EnableIRQ(PIT_IRQ_ID);
 	PIT_StartTimer(DEMO_PIT_BASEADDR, DEMO_PIT_CHANNEL);
 
-	DAC_Wrapper_Set_Data_Array(&sin32m, 32);
+	uint8_t xd = 0;
 
-	MP3_Set_Sample_Rate(kMP3_8000Hz);
+	DAC_Wrapper_Loop(false);
 
 	while (true) {
 		/* Check whether occur interupt and toggle LED */
 		if (true == pitIsrFlag) {
 			LED_TOGGLE();
 			pitIsrFlag = false;
+			if ((xd % 2) == 0) {
+				DAC_Wrapper_Set_Data_Array(&sen1k, DAC_USED_BUFFER_SIZE);
+			}
+			//printf("%d \n", xd);
+			xd++;
 		}
 	}
-}
-
-uint8_t cambio(uint8_t count_) {
-	uint8_t count = count_;
-	switch (count) {
-	case (0):
-		DAC_Wrapper_Set_Data_Array(&sen1k, DAC_USED_BUFFER_SIZE);
-		break;
-	case (10):
-		//DAC_Wrapper_Set_Data_Array(&sen1k, DAC_USED_BUFFER_SIZE);
-		break;
-	case (20):
-		break;
-	}
-	if (++count == 30) {
-		count = 0;
-	}
-	return count;
 }
