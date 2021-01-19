@@ -30,18 +30,6 @@
  * Prototypes
  ******************************************************************************/
 
-typedef enum _mp3_sample_rate {
-	kMP3_8000Hz,
-	kMP3_11025Hz,
-	kMP3_12000Hz,
-	kMP3_16000Hz,
-	kMP3_22050Hz,
-	kMP3_24000Hz,
-	kMP3_32000Hz,
-	kMP3_44100Hz,
-	kMP3_48000Hz
-} mp3_sample_rate_t;
-
 /*******************************************************************************
  * Variables
  ******************************************************************************/
@@ -218,67 +206,6 @@ uint16_t sen15k[DAC_USED_BUFFER_SIZE] = { 307U, 335U, 363U, 390U, 417U, 443U,
  * Code
  ******************************************************************************/
 
-void MP3_Set_Sample_Rate(mp3_sample_rate_t sr) {
-	uint32_t mod_val;
-	pdb_divider_multiplication_factor_t mult_fact;
-	pdb_prescaler_divider_t prescaler;
-
-	switch (sr) {
-	case kMP3_8000Hz:
-		mod_val = 11;
-		mult_fact = kPDB_DividerMultiplicationFactor10;
-		prescaler = kPDB_PrescalerDivider64;
-		break;
-	case kMP3_11025Hz:
-		mod_val = 17;
-		mult_fact = kPDB_DividerMultiplicationFactor10;
-		prescaler = kPDB_PrescalerDivider32;
-		break;
-	case kMP3_12000Hz:
-		mod_val = 7;
-		mult_fact = kPDB_DividerMultiplicationFactor20;
-		prescaler = kPDB_PrescalerDivider32;
-		break;
-	case kMP3_16000Hz:
-		mod_val = 11;
-		mult_fact = kPDB_DividerMultiplicationFactor20;
-		prescaler = kPDB_PrescalerDivider16;
-		break;
-	case kMP3_22050Hz:
-		mod_val = 17;
-		mult_fact = kPDB_DividerMultiplicationFactor20;
-		prescaler = kPDB_PrescalerDivider8;
-		break;
-	case kMP3_24000Hz:
-		mod_val = 15;
-		mult_fact = kPDB_DividerMultiplicationFactor20;
-		prescaler = kPDB_PrescalerDivider8;
-		break;
-	case kMP3_32000Hz:
-		mod_val = 11;
-		mult_fact = kPDB_DividerMultiplicationFactor20;
-		prescaler = kPDB_PrescalerDivider8;
-		break;
-	case kMP3_44100Hz:
-		mod_val = 8;
-		mult_fact = kPDB_DividerMultiplicationFactor20;
-		prescaler = kPDB_PrescalerDivider8;
-		break;
-	case kMP3_48000Hz:
-		mod_val = 7;
-		mult_fact = kPDB_DividerMultiplicationFactor20;
-		prescaler = kPDB_PrescalerDivider8;
-		break;
-	default:
-		mod_val = 8;
-		mult_fact = kPDB_DividerMultiplicationFactor20;
-		prescaler = kPDB_PrescalerDivider8;
-		break;
-	}
-
-	DAC_Wrapper_PDB_Config(mod_val, mult_fact, prescaler);
-}
-
 void PIT_LED_HANDLER(void) {
 	/* Clear interrupt flag.*/
 	PIT_ClearStatusFlags(DEMO_PIT_BASEADDR, DEMO_PIT_CHANNEL, kPIT_TimerFlag);
@@ -323,7 +250,11 @@ int main(void) {
 
 	uint8_t count = 0;
 	//bool flag = true;
-	DAC_Wrapper_Set_Data_Array(&sen1k, DAC_USED_BUFFER_SIZE);
+	DAC_Wrapper_Set_Data_Array(&tinchowo, DAC_USED_BUFFER_SIZE);
+
+	DAC_Wrapper_Loop(true);
+
+	MP3_Set_Sample_Rate(kMP3_44100Hz);
 
 	while (true) {
 		/* Check whether occur interupt and toggle LED */
@@ -339,16 +270,13 @@ uint8_t cambio(uint8_t count_) {
 	uint8_t count = count_;
 	switch (count) {
 	case (0):
-		//DAC_Wrapper_Set_Data_Array(&sen1k, DAC_USED_BUFFER_SIZE);
-		DAC_Wrapper_Set_Freq(22050);
+		DAC_Wrapper_Set_Data_Array(&sen1k, DAC_USED_BUFFER_SIZE);
 		break;
 	case (10):
-		//DAC_Wrapper_Set_Data_Array(&sen15k, DAC_USED_BUFFER_SIZE);
-		DAC_Wrapper_Set_Freq(44100);
+		DAC_Wrapper_Set_Data_Array(&sen15k, DAC_USED_BUFFER_SIZE);
 		break;
 	case (20):
-		//DAC_Wrapper_Set_Data_Array(&sen15k, DAC_USED_BUFFER_SIZE);
-		DAC_Wrapper_Set_Freq(88200);
+		DAC_Wrapper_Set_Data_Array(&sen15k, DAC_USED_BUFFER_SIZE);
 		break;
 	}
 	if (++count == 30) {

@@ -12,7 +12,6 @@
 
 #include "fsl_dac.h"
 #include "fsl_edma.h"
-#include "fsl_pdb.h"
 #include "fsl_dmamux.h"
 
 /*******************************************************************************
@@ -123,6 +122,67 @@ void DAC_Wrapper_Start_Trigger(void) {
 
 void DAC_Wrapper_Loop(bool status) {
 	loopBuffer = status;
+}
+
+void MP3_Set_Sample_Rate(mp3_sample_rate_t sr) {
+	uint32_t mod_val;
+	pdb_divider_multiplication_factor_t mult_fact;
+	pdb_prescaler_divider_t prescaler;
+
+	switch (sr) {
+	case kMP3_8000Hz:
+		mod_val = 11;
+		mult_fact = kPDB_DividerMultiplicationFactor10;
+		prescaler = kPDB_PrescalerDivider64;
+		break;
+	case kMP3_11025Hz:
+		mod_val = 17;
+		mult_fact = kPDB_DividerMultiplicationFactor10;
+		prescaler = kPDB_PrescalerDivider32;
+		break;
+	case kMP3_12000Hz:
+		mod_val = 7;
+		mult_fact = kPDB_DividerMultiplicationFactor20;
+		prescaler = kPDB_PrescalerDivider32;
+		break;
+	case kMP3_16000Hz:
+		mod_val = 11;
+		mult_fact = kPDB_DividerMultiplicationFactor20;
+		prescaler = kPDB_PrescalerDivider16;
+		break;
+	case kMP3_22050Hz:
+		mod_val = 17;
+		mult_fact = kPDB_DividerMultiplicationFactor20;
+		prescaler = kPDB_PrescalerDivider8;
+		break;
+	case kMP3_24000Hz:
+		mod_val = 15;
+		mult_fact = kPDB_DividerMultiplicationFactor20;
+		prescaler = kPDB_PrescalerDivider8;
+		break;
+	case kMP3_32000Hz:
+		mod_val = 11;
+		mult_fact = kPDB_DividerMultiplicationFactor20;
+		prescaler = kPDB_PrescalerDivider8;
+		break;
+	case kMP3_44100Hz:
+		mod_val = 8;
+		mult_fact = kPDB_DividerMultiplicationFactor20;
+		prescaler = kPDB_PrescalerDivider8;
+		break;
+	case kMP3_48000Hz:
+		mod_val = 7;
+		mult_fact = kPDB_DividerMultiplicationFactor20;
+		prescaler = kPDB_PrescalerDivider8;
+		break;
+	default:
+		mod_val = 8;
+		mult_fact = kPDB_DividerMultiplicationFactor20;
+		prescaler = kPDB_PrescalerDivider8;
+		break;
+	}
+
+	DAC_Wrapper_PDB_Config(mod_val, mult_fact, prescaler);
 }
 
 /*******************************************************************************

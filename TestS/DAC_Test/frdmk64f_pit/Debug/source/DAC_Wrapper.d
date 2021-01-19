@@ -21,9 +21,9 @@ source/DAC_Wrapper.o source/DAC_Wrapper.d: ../source/DAC_Wrapper.c \
  C:\Users\Usuario\Documents\GitHub\LaboMicrosTPF\TestS\DAC_Test\frdmk64f_pit\drivers/fsl_port.h \
  C:\Users\Usuario\Documents\GitHub\LaboMicrosTPF\TestS\DAC_Test\frdmk64f_pit\board/clock_config.h \
  C:\Users\Usuario\Documents\GitHub\LaboMicrosTPF\TestS\DAC_Test\frdmk64f_pit\board/pin_mux.h \
+ C:\Users\Usuario\Documents\GitHub\LaboMicrosTPF\TestS\DAC_Test\frdmk64f_pit\drivers/fsl_pdb.h \
  C:\Users\Usuario\Documents\GitHub\LaboMicrosTPF\TestS\DAC_Test\frdmk64f_pit\drivers/fsl_dac.h \
  C:\Users\Usuario\Documents\GitHub\LaboMicrosTPF\TestS\DAC_Test\frdmk64f_pit\drivers/fsl_edma.h \
- C:\Users\Usuario\Documents\GitHub\LaboMicrosTPF\TestS\DAC_Test\frdmk64f_pit\drivers/fsl_pdb.h \
  C:\Users\Usuario\Documents\GitHub\LaboMicrosTPF\TestS\DAC_Test\frdmk64f_pit\drivers/fsl_dmamux.h
 
 ../source/DAC_Wrapper.h:
@@ -70,10 +70,10 @@ C:\Users\Usuario\Documents\GitHub\LaboMicrosTPF\TestS\DAC_Test\frdmk64f_pit\boar
 
 C:\Users\Usuario\Documents\GitHub\LaboMicrosTPF\TestS\DAC_Test\frdmk64f_pit\board/pin_mux.h:
 
+C:\Users\Usuario\Documents\GitHub\LaboMicrosTPF\TestS\DAC_Test\frdmk64f_pit\drivers/fsl_pdb.h:
+
 C:\Users\Usuario\Documents\GitHub\LaboMicrosTPF\TestS\DAC_Test\frdmk64f_pit\drivers/fsl_dac.h:
 
 C:\Users\Usuario\Documents\GitHub\LaboMicrosTPF\TestS\DAC_Test\frdmk64f_pit\drivers/fsl_edma.h:
-
-C:\Users\Usuario\Documents\GitHub\LaboMicrosTPF\TestS\DAC_Test\frdmk64f_pit\drivers/fsl_pdb.h:
 
 C:\Users\Usuario\Documents\GitHub\LaboMicrosTPF\TestS\DAC_Test\frdmk64f_pit\drivers/fsl_dmamux.h:
