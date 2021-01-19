@@ -1,8 +1,7 @@
-
-/***************************************************************************/ /**
-  @file     DAC_Wraper.h
-  @brief
-  @author   MAGT
+/***************************************************************************//**
+ @file     DAC_Wraper.h
+ @brief
+ @author   MAGT
  ******************************************************************************/
 #ifndef DAC_WRAPER_H_
 #define DAC_WRAPER_H_
@@ -27,11 +26,9 @@
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
 
-
 /*******************************************************************************
  * VARIABLE PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
-
 
 /*******************************************************************************
  * FUNCTION PROTOTYPES WITH GLOBAL SCOPE
@@ -39,12 +36,16 @@
 
 void DAC_Wrapper_Init(void);
 
-void DAC_Wrapper_Set_Data_Array(void * newDataArray, uint32_t newSizeOf);
+void DAC_Wrapper_Set_Data_Array(void *newDataArray, uint32_t newSizeOf);
 
 void DAC_Wrapper_Clear_Data_Array(void);
 
 void DAC_Wrapper_Start_Trigger(void);		//Start trigger signal to DAC
 
 void DAC_Wrapper_Loop(bool status);
+
+void DAC_Wrapper_PDB_Config(uint32_t mod_val,
+		pdb_divider_multiplication_factor_t mult_fact,
+		pdb_prescaler_divider_t prescaler);
 
 #endif /* DAC_WRAPER_H_ */

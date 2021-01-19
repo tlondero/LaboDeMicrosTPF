@@ -19,7 +19,7 @@
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
-#define PDB_COUNT					0x3BU		//0x21U
+#define PDB_COUNT					0x39U		//0x21U
 
 #define PDB_BASEADDR         		PDB0
 #define PDB_MODULUS_VALUE      		PDB_COUNT
@@ -46,7 +46,7 @@ static void EDMA_Configuration(void);
 
 static void DMAMUX_Configuration(void);
 
-static void PDB_Configuration(void);
+static void PDB_Configuration(uint32_t pdb_mod_val, pdb_divider_multiplication_factor_t pdb_mult_fact, pdb_prescaler_divider_t pdb_prescaler);
 
 static void DAC_Configuration(void);
 
@@ -91,9 +91,13 @@ void DAC_Wrapper_Init(void) {
 	//Initialize EDMA
 	EDMA_Configuration();
 	//Initialize the HW trigger source
-	PDB_Configuration();
+	PDB_Configuration(PDB_COUNT, kPDB_DividerMultiplicationFactor1, kPDB_PrescalerDivider1);
 	//Initialize DAC
 	DAC_Configuration();
+}
+
+void DAC_Wrapper_PDB_Config(uint32_t mod_val, pdb_divider_multiplication_factor_t mult_fact, pdb_prescaler_divider_t prescaler) {
+	PDB_Configuration(mod_val, mult_fact, prescaler);
 }
 
 void DAC_Wrapper_Set_Data_Array(void *newDataArray, uint32_t newSizeOf) {
@@ -156,17 +160,19 @@ static void DMAMUX_Configuration(void) {
 }
 
 /* Enable the trigger source of PDB. */
-static void PDB_Configuration(void) {
+static void PDB_Configuration(uint32_t pdb_mod_val, pdb_divider_multiplication_factor_t pdb_mult_fact, pdb_prescaler_divider_t pdb_prescaler) {
 	pdb_config_t pdbConfigStruct;
 	pdb_dac_trigger_config_t pdbDacTriggerConfigStruct;
 
 	PDB_GetDefaultConfig(&pdbConfigStruct);
-	pdbConfigStruct.dividerMultiplicationFactor =
-			kPDB_DividerMultiplicationFactor1;
+
+	pdbConfigStruct.dividerMultiplicationFactor = pdb_mult_fact;
 	pdbConfigStruct.enableContinuousMode = true;
+	pdbConfigStruct.prescalerDivider = pdb_prescaler;
+
 	PDB_Init(PDB_BASEADDR, &pdbConfigStruct);
 	PDB_EnableInterrupts(PDB_BASEADDR, kPDB_DelayInterruptEnable);
-	PDB_SetModulusValue(PDB_BASEADDR, PDB_MODULUS_VALUE);
+	PDB_SetModulusValue(PDB_BASEADDR, pdb_mod_val);
 	PDB_SetCounterDelayValue(PDB_BASEADDR, PDB_DELAY_VALUE);
 
 	/* Set DAC trigger. */
@@ -174,8 +180,7 @@ static void PDB_Configuration(void) {
 	pdbDacTriggerConfigStruct.enableIntervalTrigger = true;
 	PDB_SetDACTriggerConfig(PDB_BASEADDR, PDB_DAC_CHANNEL,
 			&pdbDacTriggerConfigStruct);
-	PDB_SetDACTriggerIntervalValue(PDB_BASEADDR, PDB_DAC_CHANNEL,
-	PDB_DAC_INTERVAL_VALUE);
+	PDB_SetDACTriggerIntervalValue(PDB_BASEADDR, PDB_DAC_CHANNEL, pdb_mod_val);
 
 	/* Load PDB values. */
 	PDB_DoLoadValues(PDB_BASEADDR);
