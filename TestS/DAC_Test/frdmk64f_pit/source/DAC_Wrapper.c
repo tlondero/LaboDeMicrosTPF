@@ -131,49 +131,49 @@ void MP3_Set_Sample_Rate(mp3_sample_rate_t sr) {
 
 	switch (sr) {
 	case kMP3_8000Hz:
-		mod_val = 11;
-		mult_fact = kPDB_DividerMultiplicationFactor10;
-		prescaler = kPDB_PrescalerDivider64;
+		mod_val = 1875;
+		mult_fact = kPDB_DividerMultiplicationFactor1;
+		prescaler = kPDB_PrescalerDivider4;
 		break;
 	case kMP3_11025Hz:
-		mod_val = 17;
-		mult_fact = kPDB_DividerMultiplicationFactor10;
-		prescaler = kPDB_PrescalerDivider32;
+		mod_val = 2721;
+		mult_fact = kPDB_DividerMultiplicationFactor1;
+		prescaler = kPDB_PrescalerDivider2;
 		break;
 	case kMP3_12000Hz:
-		mod_val = 7;
-		mult_fact = kPDB_DividerMultiplicationFactor20;
-		prescaler = kPDB_PrescalerDivider32;
+		mod_val = 125;
+		mult_fact = kPDB_DividerMultiplicationFactor40;
+		prescaler = kPDB_PrescalerDivider1;
 		break;
 	case kMP3_16000Hz:
-		mod_val = 11;
-		mult_fact = kPDB_DividerMultiplicationFactor20;
-		prescaler = kPDB_PrescalerDivider16;
+		mod_val = 375;
+		mult_fact = kPDB_DividerMultiplicationFactor10;
+		prescaler = kPDB_PrescalerDivider1;
 		break;
 	case kMP3_22050Hz:
-		mod_val = 17;
-		mult_fact = kPDB_DividerMultiplicationFactor20;
-		prescaler = kPDB_PrescalerDivider8;
+		mod_val = 2721;
+		mult_fact = kPDB_DividerMultiplicationFactor1;
+		prescaler = kPDB_PrescalerDivider1;
 		break;
 	case kMP3_24000Hz:
-		mod_val = 15;
+		mod_val = 125;
 		mult_fact = kPDB_DividerMultiplicationFactor20;
-		prescaler = kPDB_PrescalerDivider8;
+		prescaler = kPDB_PrescalerDivider1;
 		break;
 	case kMP3_32000Hz:
-		mod_val = 11;
-		mult_fact = kPDB_DividerMultiplicationFactor20;
-		prescaler = kPDB_PrescalerDivider8;
+		mod_val = 1875;
+		mult_fact = kPDB_DividerMultiplicationFactor1;
+		prescaler = kPDB_PrescalerDivider1;
 		break;
 	case kMP3_44100Hz:
-		mod_val = 8;
-		mult_fact = kPDB_DividerMultiplicationFactor20;
-		prescaler = kPDB_PrescalerDivider8;
+		mod_val = 17;
+		mult_fact = kPDB_DividerMultiplicationFactor40;
+		prescaler = kPDB_PrescalerDivider2;
 		break;
 	case kMP3_48000Hz:
-		mod_val = 7;
-		mult_fact = kPDB_DividerMultiplicationFactor20;
-		prescaler = kPDB_PrescalerDivider8;
+		mod_val = 125;
+		mult_fact = kPDB_DividerMultiplicationFactor10;
+		prescaler = kPDB_PrescalerDivider1;
 		break;
 	default:
 		mod_val = 8;
