@@ -1,7 +1,7 @@
 /***************************************************************************/ /**
   @file     FS_explorer.h
   @brief	API  simple and usefull to explore directories
-  in a FAT volume.
+  	  	  	in a FAT volume.
   @author   Guido Lambertucci
  ******************************************************************************/
 #ifndef FS_EXPLORER_H_
@@ -16,14 +16,16 @@
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
+
 #define NAMES_BUFFER_SIZE 255
 #define NAME_LIST_SIZE 20
 #define MAX_PATH_LENGHT 1000
-typedef void (*cback)(void);
+
+
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
-
+typedef void (*cback)(void);
 
 /*******************************************************************************
  * VARIABLE PROTOTYPES WITH GLOBAL SCOPE

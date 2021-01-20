@@ -57,10 +57,11 @@ int main(void) {
 #endif
 	SDWraperInit(cbackin, cbackout);
 /////////////////////////////////////////////////////////////
-	while (1) {
+	bool finished=false;
+	while (!finished) {
 		if (getJustIn()) {
 
-			if (MP3LoadFile("test.mp3", "test.wav")) {
+			if (MP3LoadFile("test_a.mp3", "test_a.wav")) {
 				int i = 0;
 				if (MP3GetTagData(&ID3Data)) {
 											printf("\nSONG INFO\n");
@@ -71,7 +72,7 @@ int main(void) {
 											printf("YEAR: %s\n", ID3Data.year);
 				}
 
-				while (1) {
+				while (true) {
 
 
 #ifdef DEBUG_PRINTF_INFO
@@ -81,7 +82,7 @@ int main(void) {
 					mp3_decoder_result_t res = MP3GetDecodedFrame(buffer,
 							MP3_DECODED_BUFFER_SIZE, &sampleCount, 0);
 
-					if (res == 0) {
+					if (res == MP3DECODER_NO_ERROR) {
 						MP3GetLastFrameData(&frameData);
 						wrote = storeWavInSd(&frameData, buffer); //TODO ver por que no anda
 
@@ -118,7 +119,7 @@ int main(void) {
 #ifdef DEBUG_PRINTF_APP
 						printf("[APP] FILE ENDED. Decoded %d frames.\n", i - 1);
 #endif
-
+						finished=true;
 						break;
 					}
 					else {
@@ -129,7 +130,9 @@ int main(void) {
 			}
 		}
 	}
-
+	close_file_wav();
+//REMEMBER TO CLOSE FILES
+	while(1){};
 	return 0;
 }
 

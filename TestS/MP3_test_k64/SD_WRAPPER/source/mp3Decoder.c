@@ -67,6 +67,8 @@ typedef struct
 static bool open_file_wav(const char * file_name);
 static bool open_file(const char * file_name);
 static void close_file(void);
+
+
 static void fileSeek(size_t pos);
 uint32_t getFileSize(void);
 void fileRewind(void);
@@ -343,7 +345,7 @@ void printContextData(void){
 static bool open_file_wav(const char* file_name) {
     bool ret = false;
 #ifdef __arm__
-    fr = f_open(&wav, _T(file_name), (FA_CREATE_ALWAYS|FA_WRITE));
+    fr = f_open(&wav, _T("f_1.dat"), (FA_WRITE | FA_READ | FA_CREATE_ALWAYS));
     if (fr == FR_OK)
     {
         wavFile = &(wav);
@@ -382,7 +384,9 @@ static void close_file(void) {
     fclose(mp3File);
 #endif // __arm__
 }
-
+void close_file_wav(void){
+	f_close(&wav);
+}
 
 static void fileSeek(size_t pos) {
 #ifdef __arm__

@@ -61,3 +61,4 @@ mp3_decoder_result_t MP3GetDecodedFrame(short* outBuffer, uint16_t bufferSize, u
 void printContextData(void);
 uint16_t storeWavInSd(mp3_decoder_frame_data_t* data, short* outBuffer);
 #endif
+void close_file_wav(void);

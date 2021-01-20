@@ -47,6 +47,7 @@ typedef struct {
 	bool directory_finished;
 
 	//data structures
+
 	directory_name_att directoryNames[NAME_LIST_SIZE];
 	char directory_path[1000];
 
@@ -79,7 +80,7 @@ char * exploreFS(char * path){
 		data.directory_opened = false;
 	}
 	if (f_opendir(&data.directory, path)) {
-#ifdef DEBUG
+#ifdef DEBUG_PRINTF_FS_EXPLORER
 		printf("Open directory failed.\r\n");
 #endif
 		return -1;
@@ -147,7 +148,7 @@ char* getNext(){
 				continue;
 			}
 			if (data.fileInformation.fattrib & AM_DIR) {
-#ifdef DEBUG
+#ifdef DEBUG_PRINTF_FS_EXPLORER
 				printf("Directory file : %s.\r\n", data.fileInformation.fname);
 #endif
 					data.directoryNames[i].is_directory = true;
@@ -155,7 +156,7 @@ char* getNext(){
 						data.fileInformation.fname);
 				i++;
 			} else {
-#ifdef DEBUG
+#ifdef DEBUG_PRINTF_FS_EXPLORER
 				printf("General file : %s.\r\n", data.fileInformation.fname);
 #endif
 				data.directoryNames[i].is_directory = false;
@@ -209,7 +210,7 @@ char *  openSelected(){
 	if (data.directoryNames[data.directory_index].is_directory) {
 		data.directory_depht++;
 		char *ret = NULL;
-#ifdef DEBUG
+#ifdef DEBUG_PRINTF_FS_EXPLORER
 		printf("Trying to open Directory: %s\r\n",
 				data.directoryNames[data.directory_index].name);
 #endif
@@ -217,7 +218,7 @@ char *  openSelected(){
 		ret = exploreFS(data.directory_path);
 		return ret;
 	} else {
-#ifdef DEBUG
+#ifdef DEBUG_PRINTF_FS_EXPLORER
 		printf("File selected: %s\r\n",
 				data.directoryNames[data.directory_index].name);
 #endif
