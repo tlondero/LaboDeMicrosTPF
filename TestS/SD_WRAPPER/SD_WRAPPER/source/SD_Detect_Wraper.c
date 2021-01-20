@@ -54,7 +54,7 @@ static cback extractedCback;
  * FUNCTION DEFINITIONS WITH GLOBAL SCOPE
  ******************************************************************************/
 bool SDWraperInit(cback inserted_callback, cback extracted_callback){
-	SYSMPU_Enable(SYSMPU, false);
+	SYSMPU_Enable(SYSMPU, false);//Desactiva memory protection unit
 		//////////////////////////////////////////////////////////////
 		//         				PIT CONFIGURATION
 		//////////////////////////////////////////////////////////////

@@ -19,11 +19,13 @@
  ******************************************************************************/
 
 #define MP3DECODER_MODE_NORMAL  0
-#define MP3_FRAME_BUFFER_BYTES  6913            // MP3 buffer size (in bytes)
+#define MP3_FRAME_BUFFER_BYTES  (10240)//6913            // MP3 buffer size (in bytes)
 #define DEFAULT_ID3_FIELD       "Unknown"
 #define MAX_DEPTH       3
-static   FIL			file;
+static   FIL			file __attribute__((aligned((8U))));
 static FIL* mp3File = &file;
+static FIL wav __attribute__((aligned((8U))));
+static FIL* wavFile = &wav;
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
@@ -46,7 +48,7 @@ typedef struct
     uint16_t      last_frame_length;                                // Last frame length
 
     // MP3-encoded buffer
-    uint8_t       encoded_frame_buffer[MP3_FRAME_BUFFER_BYTES+1];         // buffer for MP3-encoded frames
+    uint8_t       encoded_frame_buffer[MP3_FRAME_BUFFER_BYTES] __attribute__((aligned((8U))));         // buffer for MP3-encoded frames
     uint32_t      top_index;                                            // current position in frame buffer (points to top_index)
     uint32_t      bottom_index;                                         // current position at info end in frame buffer
 
@@ -61,7 +63,8 @@ typedef struct
  ******************************************************************************/
 
  //File management functions
-static bool open_file(char * file_name);
+static bool open_file_wav(const char * file_name);
+static bool open_file(const char * file_name);
 static void close_file(void);
 static void fileSeek(size_t pos);
 uint32_t getFileSize(void);
@@ -102,13 +105,14 @@ void  MP3DecoderInit(void) {
 
 }
 
-bool  MP3LoadFile(const char* file_name) {
+bool  MP3LoadFile(const char* file_name, const char* file_name_wav) {
     bool res=false;
     if (context_data.file_opened == true) {//if there was a opened file, i must close it before opening a new one
         resetContextData();
         close_file();
     }
     if (open_file(_T(file_name))) {
+    	open_file_wav(_T(file_name_wav));
         context_data.file_opened = true;
         context_data.f_size = getFileSize();
         context_data.bytes_remaining = context_data.f_size;
@@ -156,7 +160,7 @@ mp3_decoder_result_t MP3GetDecodedFrame(short* outBuffer, uint16_t bufferSize, u
     mp3_decoder_result_t ret = MP3DECODER_NO_ERROR;    // Return value of the function
 
 #ifdef DEBUG
-    printf("Entered decoding. File has %d bytes to decode\n", context_data.f_size);
+    printf("Entered decoding. File has %d bytes to decode\n", context_data.bytes_remaining);
     printf("Buffer has %d bytes to decode\n", context_data.bottom_index - context_data.top_index);
 #endif
 
@@ -178,13 +182,16 @@ mp3_decoder_result_t MP3GetDecodedFrame(short* outBuffer, uint16_t bufferSize, u
             // scroll encoded info up in array if necessary (TESTED-WORKING)
             if ((context_data.top_index > 0) && ((context_data.bottom_index - context_data.top_index) > 0) && (context_data.bottom_index - context_data.top_index < MP3_FRAME_BUFFER_BYTES))
             {
+#ifdef DEBUG
+      uint32_t oldtop = context_data.top_index;
+#endif
                 //memcpy(context_data.mp3FrameBuffer , context_data.mp3FrameBuffer + context_data.top_index, context_data.bottom_index - context_data.top_index);
                 memmove(context_data.encoded_frame_buffer, context_data.encoded_frame_buffer + context_data.top_index, context_data.bottom_index - context_data.top_index);
                 context_data.bottom_index = context_data.bottom_index - context_data.top_index;
                 context_data.top_index = 0;
 
 #ifdef DEBUG
-                printf("Copied %d bytes from %d to %d\n", (context_data.bottom_index - context_data.top_index), context_data.top_index, 0);
+                printf("Copied %d bytes from %d to %d\n", (context_data.bottom_index - context_data.top_index), oldtop, 0);
 #endif
             }
             else if (context_data.bottom_index == context_data.top_index)
@@ -332,7 +339,24 @@ void printContextData(void){
 
 //File management functions
 
-static bool open_file(char* file_name) {
+static bool open_file_wav(const char* file_name) {
+    bool ret = false;
+#ifdef __arm__
+    fr = f_open(&wav, _T(file_name), (FA_CREATE_ALWAYS|FA_WRITE));
+    if (fr == FR_OK)
+    {
+        wavFile = &(wav);
+        printf("Wav file created correctly.\r\n");
+        ret = true;
+    }
+#else
+    mp3File = fopen(file_name, "rb");
+    ret = (wavFile != NULL);
+#endif
+    return ret;
+}
+
+static bool open_file(const char* file_name) {
     bool ret = false;
 #ifdef __arm__
     fr = f_open(&file, _T(file_name), FA_READ);
@@ -391,7 +415,7 @@ void fileRewind(void){
 
 uint16_t readFile(void* buf, uint16_t cnt) {
     uint16_t ret = 0;
-    uint16_t read;
+    UINT read;
     if (context_data.file_opened)
     {
 #ifdef __arm__
@@ -463,12 +487,31 @@ void copyDataAndMovePointer() {
     uint16_t bytes_read;
 
     // Fill buffer with info in mp3 file
+#ifdef DEBUG_ALAN
+    uint8_t auxbuff[5000];
+    if (MP3_FRAME_BUFFER_BYTES - context_data.bottom_index > 0){
+    	if(context_data.bottom_index == 0){
+    	    uint8_t* dst = context_data.encoded_frame_buffer + context_data.bottom_index;
+    		bytes_read = readFile(dst, (MP3_FRAME_BUFFER_BYTES - context_data.bottom_index));
+    		// Update bottom_index pointer
+    		context_data.bottom_index += bytes_read;
+    	}
+    	else{
+    	    uint8_t* dst = auxbuff;
+    		bytes_read = readFile(dst, (MP3_FRAME_BUFFER_BYTES - context_data.bottom_index));
+    		memmove(context_data.encoded_frame_buffer + context_data.bottom_index, auxbuff, MP3_FRAME_BUFFER_BYTES - context_data.bottom_index);
+    		context_data.bottom_index += bytes_read;
+    	}
+    }
+#endif
+#ifndef DEBUG_ALAN
     uint8_t* dst = context_data.encoded_frame_buffer + context_data.bottom_index;
     if (MP3_FRAME_BUFFER_BYTES - context_data.bottom_index > 0){
     bytes_read = readFile(dst, (MP3_FRAME_BUFFER_BYTES - context_data.bottom_index));
     // Update bottom_index pointer
     context_data.bottom_index += bytes_read;
     }
+#endif
 #ifdef DEBUG
     if (bytes_read == 0)
     {
@@ -494,4 +537,15 @@ void resetContextData(void) {
     context_data.top_index = 0;
     context_data.bytes_remaining = 0;
     context_data.f_size = 0;
+}
+
+uint16_t storeWavInSd(mp3_decoder_frame_data_t* data, short* outBuffer){
+	UINT read;
+	uint16_t fr;
+	uint16_t ret = 0;
+	fr = f_write(&wav, ((uint8_t *)outBuffer), data->sampleCount, &read);
+	        if (fr == FR_OK){
+	            ret = read;
+	        }
+	return ret;
 }

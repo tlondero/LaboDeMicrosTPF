@@ -17,14 +17,11 @@
 #include "SD_Detect_Wraper.h"
 #include "mp3Decoder.h"
 #include "ff.h"
-/* TODO: insert other include files here. */
-
-/* TODO: insert other definitions and declarations here. */
 
 #define MAIN_DEBUG
+
 char* concat(const char *s1, const char *s2);
 
-static FIL g_fileObject; /* File object */
 
 /*
  * @brief   Application entry point.
@@ -36,28 +33,26 @@ void cbackin(void) {
 void cbackout(void) {
 	printf("Arafue pa\r\n");
 }
-static short buffer[MP3_DECODED_BUFFER_SIZE];
+
+bool nextFrameFlag = false;
+static short buffer[MP3_DECODED_BUFFER_SIZE] __attribute__((aligned((16U))));
 mp3_decoder_frame_data_t frameData;
 mp3_decoder_tag_data_t ID3Data;
 
 int main(void) {
 	uint16_t sampleCount;
 	uint32_t sr = 0;
-	uint8_t j = 0;
+	uint32_t wrote =0;
 
-	FRESULT error;
-	DIR directory; /* Directory object */
-	FILINFO fileInformation;
-	uint8_t read_buffer[10000];
 	/* Init board hardware. */
 	BOARD_InitBootPins();
 	BOARD_InitBootClocks();
 #ifndef BOARD_INIT_DEBUG_CONSOLE_PERIPHERAL
+
 	/* Init FSL debug console. */
 	BOARD_InitDebugConsole();
 #endif
 	SDWraperInit(cbackin, cbackout);
-	uint16_t bytesWritten=0;
 /////////////////////////////////////////////////////////////
 	while (1) {
 		if (getJustIn()) {
@@ -68,8 +63,7 @@ int main(void) {
 //			huevo++;
 //			huevo--;
 
-
-			if (MP3LoadFile("test.mp3")) {
+			if (MP3LoadFile("test.mp3", "test.wav")) {
 				int i = 0;
 				if (MP3GetTagData(&ID3Data)) {
 											printf("\nSONG INFO\n");
@@ -82,20 +76,39 @@ int main(void) {
 
 				while (1) {
 
+
+
 					printf("\n[APP] Frame %d decoding started.\n", i);
 
 					mp3_decoder_result_t res = MP3GetDecodedFrame(buffer,
 							MP3_DECODED_BUFFER_SIZE, &sampleCount, 0);
 
 					if (res == 0) {
+
+
+
 						MP3GetLastFrameData(&frameData);
+
+						wrote = storeWavInSd(&frameData, buffer);
+
+						printf("[APP] Wrote %d bytes to wav.\n", wrote);
 
 						printf("[APP] Frame %d decoded.\n", i);
 
 						i++;
+						if(i == 28){
+							i++;
+							i--;
+						}
 
 						sr = frameData.sampleRate;
 						printf("[APP] FRAME SAMPLE RATE: %d \n", sr);
+
+						printf("[APP] Un pequenio delay para el dios de la SD bro.\n");
+						while(!nextFrameFlag){
+							//wait
+						}
+						nextFrameFlag = false;
 
 					} else if (res == MP3DECODER_FILE_END) {
 						printf("[APP] FILE ENDED. Decoded %d frames.\n", i - 1);
