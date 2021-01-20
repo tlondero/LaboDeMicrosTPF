@@ -64,4 +64,8 @@ void DAC_Wrapper_PDB_Config(uint32_t mod_val,
 
 void MP3_Set_Sample_Rate(mp3_sample_rate_t sr);
 
+bool DAC_Wrapper_Is_Transfer_Done(void);
+
+void DAC_Wrapper_Clear_Transfer_Done(void);
+
 #endif /* DAC_WRAPER_H_ */

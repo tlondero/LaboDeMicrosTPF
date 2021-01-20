@@ -76,6 +76,8 @@ bool noMoreClear = false;
 
 bool backUpOn = false;
 
+bool onePeriodDone = false;
+
 uint32_t sizeOf = DAC_USED_BUFFER_SIZE;
 
 /*******************************************************************************
@@ -106,6 +108,7 @@ void DAC_Wrapper_Set_Data_Array(void *newDataArray, uint32_t newSizeOf) {
 	g_dacDataArray = (uint16_t*) newDataArray;
 	g_index = 0U;
 	noMoreClear = false;
+	onePeriodDone = false;
 	backUp = (uint16_t*) newDataArray;
 	if (newSizeOf < DAC_USED_BUFFER_SIZE) {
 		sizeOf = newSizeOf;
@@ -118,6 +121,7 @@ void DAC_Wrapper_Set_Data_Array(void *newDataArray, uint32_t newSizeOf) {
 void DAC_Wrapper_Clear_Data_Array(void) {
 	g_dacDataArray = (uint16_t*) nullData;
 	backUpOn = false;
+	onePeriodDone = false;
 	sizeOf = DAC_USED_BUFFER_SIZE;
 }
 
@@ -188,6 +192,14 @@ void MP3_Set_Sample_Rate(mp3_sample_rate_t sr) {
 	}
 
 	DAC_Wrapper_PDB_Config(mod_val, mult_fact, prescaler);
+}
+
+bool DAC_Wrapper_Is_Transfer_Done(void){
+	return onePeriodDone;
+}
+
+void DAC_Wrapper_Clear_Transfer_Done(void){
+	onePeriodDone = false;
 }
 
 /*******************************************************************************
@@ -298,6 +310,7 @@ bool transferDone, uint32_t tcds) {
 		if (!loopBuffer && !noMoreClear) {
 			DAC_Wrapper_Clear_Data_Array();
 			noMoreClear = true;
+			onePeriodDone = true;
 		}
 
 	}
