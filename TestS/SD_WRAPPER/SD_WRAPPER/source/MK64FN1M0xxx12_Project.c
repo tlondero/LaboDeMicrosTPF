@@ -48,7 +48,8 @@
 /* TODO: insert other include files here. */
 
 /* TODO: insert other definitions and declarations here. */
-
+#define FILEPATH "test.DAT"
+#define BUFF_LEN 7000
 
 char* concat(const char *s1, const char *s2);
 
@@ -66,10 +67,14 @@ void cbackout(void){
 }
 int main(void) {
 
-
+	int i;
+	int j;
+	FIL	fp;
+	UINT bytes_read;
     FRESULT error;
     DIR directory; /* Directory object */
     FILINFO fileInformation;
+    uint8_t buff[BUFF_LEN];
 
 	/* Init board hardware. */
 	BOARD_InitBootPins();
@@ -83,41 +88,54 @@ int main(void) {
 /////////////////////////////////////////////////////////////
 	while (1) {
 		if (getJustIn()) {
+			PRINTF("Atroden\r\n");
+			if(f_open(&fp, FILEPATH, FA_READ) == FR_OK){
+				PRINTF("Abiertroden\r\n");
+				for(i=0; i<5;i++){
+					f_read(&fp, buff, BUFF_LEN, &bytes_read);
+					PRINTF("se leyo %d bytes\r\n", bytes_read);
+//					for(j = bytes_read; j>0; j--){
+//						PRINTF("%c", buff[bytes_read-j]);
+//					}
+				}
+				f_close(&fp);
+				PRINTF("Cierratroden\r\n");
+			}
 
-			 PRINTF("\r\nList the file in that directory......\r\n");
-			    if (f_opendir(&directory, "/MUSICA"))
-			    {
-			        PRINTF("Open directory failed.\r\n");
-			        return -1;
-			    }
-
-			    for (;;)
-			    {
-			        error = f_readdir(&directory, &fileInformation);
-
-			        /* To the end. */
-			        if ((error != FR_OK) || (fileInformation.fname[0U] == 0U))
-			        {
-			            break;
-			        }
-			        if (fileInformation.fname[0] == '.'){
-			            continue;
-			        }
-			        if (fileInformation.fattrib & AM_DIR){
-			            PRINTF("Directory file : %s.\r\n", fileInformation.fname);
-			        }
-			        else
-			        {
-			            PRINTF("General file : %s.\r\n", fileInformation.fname);
-			        }
-
-			        if(!strcmp("test.mp3",fileInformation.fname)){
-			        	PRINTF("Encontrado papu, ese rico MP3\r\n");
-			        	char* s = concat("/MUSICA/", fileInformation.fname);
-			        	free(s); // deallocate the string
-
-			        }
-			    }
+//			 PRINTF("\r\nList the file in that directory......\r\n");
+//			    if (f_opendir(&directory, "/MUSICA"))
+//			    {
+//			        PRINTF("Open directory failed.\r\n");
+//			        return -1;
+//			    }
+//
+//			    for (;;)
+//			    {
+//			        error = f_readdir(&directory, &fileInformation);
+//
+//			        /* To the end. */
+//			        if ((error != FR_OK) || (fileInformation.fname[0U] == 0U))
+//			        {
+//			            break;
+//			        }
+//			        if (fileInformation.fname[0] == '.'){
+//			            continue;
+//			        }
+//			        if (fileInformation.fattrib & AM_DIR){
+//			            PRINTF("Directory file : %s.\r\n", fileInformation.fname);
+//			        }
+//			        else
+//			        {
+//			            PRINTF("General file : %s.\r\n", fileInformation.fname);
+//			        }
+//
+//			        if(!strcmp("test.mp3",fileInformation.fname)){
+//			        	PRINTF("Encontrado papu, ese rico MP3\r\n");
+//			        	char* s = concat("/MUSICA/", fileInformation.fname);
+//			        	free(s); // deallocate the string
+//
+//			        }
+//			    }
 
 		}
 	}

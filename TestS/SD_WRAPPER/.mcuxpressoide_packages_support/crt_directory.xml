@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?debugstack-directory version="1.0"?>
 <directory xmlns:xi="http://www.w3.org/2001/XInclude">
-   <xi:include href="file:/C:/Users/Guido/Documents/GitHub/LaboDeMicrosTPF/TestS/SD_TEST_README/.mcuxpressoide_packages_support/MK64FN1M0xxx12_support/K6x_dir_part.xml"/>
+   <xi:include href="file:/C:/Users/Acer/Desktop/GitHub/LaboDeMicrosTPF/TestS/SD_WRAPPER/.mcuxpressoide_packages_support/MK64FN1M0xxx12_support/K6x_dir_part.xml"/>
 </directory>

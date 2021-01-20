@@ -6,6 +6,7 @@
   * INCLUDE HEADER FILES
   ******************************************************************************/
 #define DEBUG
+//#define DEBUG_ALAN
 #include  <stdbool.h>
 #include  <stdint.h>
 
@@ -13,7 +14,7 @@
    * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
    ******************************************************************************/
 
-#define MP3_DECODED_BUFFER_SIZE (4*1152)                                     // maximum frame size if max bitrate is used (in samples)
+#define MP3_DECODED_BUFFER_SIZE (10240)//(4*1152)                                     // maximum frame size if max bitrate is used (in samples)
 #define ID3_MAX_FIELD_SIZE      50
 
    /*******************************************************************************
@@ -52,7 +53,7 @@ typedef struct
  * FUNCTION PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
 void  MP3DecoderInit(void);
-bool  MP3LoadFile(const char* file_name);
+bool  MP3LoadFile(const char* file_name, const char* file_name_wav);
 bool MP3GetTagData(mp3_decoder_tag_data_t* data);
 bool MP3GetLastFrameData(mp3_decoder_frame_data_t* data);
 bool MP3GetNextFrameData(mp3_decoder_frame_data_t* data);
