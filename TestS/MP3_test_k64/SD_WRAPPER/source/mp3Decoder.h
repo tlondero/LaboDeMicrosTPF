@@ -5,7 +5,7 @@
  /*******************************************************************************
   * INCLUDE HEADER FILES
   ******************************************************************************/
-#define DEBUG
+//#define DEBUG
 //#define DEBUG_ALAN
 #include  <stdbool.h>
 #include  <stdint.h>

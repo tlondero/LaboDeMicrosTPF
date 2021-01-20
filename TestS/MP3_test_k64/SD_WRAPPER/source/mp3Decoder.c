@@ -7,6 +7,7 @@
 #include <string.h>
 #include <stdbool.h>  
 #include "mp3decoder.h"
+#include "debug_ifdefs.h"
 #include "lib/helix/pub/mp3dec.h"
 #include "lib/id3tagParser/read_id3.h"
 #include "stdio.h"
@@ -48,7 +49,7 @@ typedef struct
     uint16_t      last_frame_length;                                // Last frame length
 
     // MP3-encoded buffer
-    uint8_t       encoded_frame_buffer[MP3_FRAME_BUFFER_BYTES] __attribute__((aligned((8U))));         // buffer for MP3-encoded frames
+    uint8_t       encoded_frame_buffer[MP3_FRAME_BUFFER_BYTES];         // buffer for MP3-encoded frames
     uint32_t      top_index;                                            // current position in frame buffer (points to top_index)
     uint32_t      bottom_index;                                         // current position at info end in frame buffer
 
@@ -99,9 +100,9 @@ void  MP3DecoderInit(void) {
     resetContextData();
     context_data.Decoder = MP3InitDecoder();//Helix decoder init
 
-#ifdef DEBUG
-    printf("MP3 decoder initialized");
-#endif // DEBUG
+#ifdef DEBUG_PRINTF_APP
+    printf("[App] MP3 decoder initialized");
+#endif
 
 }
 
@@ -118,8 +119,8 @@ bool  MP3LoadFile(const char* file_name, const char* file_name_wav) {
         context_data.bytes_remaining = context_data.f_size;
         readID3Tag();
         copyDataAndMovePointer();
-#ifdef DEBUG
-        printf("File opened successfully!\nFile size is %d bytes\n", context_data.f_size);
+#ifdef DEBUG_PRINTF_APP
+        printf("[App] File opened successfully!\nFile size is %d bytes\n", context_data.f_size);
 #endif
         res = true;
     }
@@ -158,9 +159,10 @@ bool MP3GetNextFrameData(mp3_decoder_frame_data_t* data) {
 
 mp3_decoder_result_t MP3GetDecodedFrame(short* outBuffer, uint16_t bufferSize, uint16_t* samples_decoded, uint8_t depth) {
     mp3_decoder_result_t ret = MP3DECODER_NO_ERROR;    // Return value of the function
-
-#ifdef DEBUG
-    printf("Entered decoding. File has %d bytes to decode\n", context_data.bytes_remaining);
+#ifdef DEBUG_PRINTF_APP
+    printf("[App] File has %d bytes left to decode\n", context_data.bytes_remaining);
+#endif
+#ifdef DEBUG_PRINTF_INFO
     printf("Buffer has %d bytes to decode\n", context_data.bottom_index - context_data.top_index);
 #endif
 
@@ -169,43 +171,42 @@ mp3_decoder_result_t MP3GetDecodedFrame(short* outBuffer, uint16_t bufferSize, u
         if (!context_data.file_opened)
         {
             ret = MP3DECODER_NO_FILE;
-#ifdef DEBUG
-            printf("There is no opened file\n");
+#ifdef DEBUG_PRINTF_ERROR
+            printf("[Error] There is no opened file\n");
 #endif
         }
         else if (context_data.bytes_remaining) // check if there is remaining info to be decoded
         {
-#ifdef DEBUG
+#ifdef DEBUG_PRINTF_INFO
             printf("Current pointers are Head = %d - Bottom = %d\n", context_data.top_index, context_data.bottom_index);
 #endif
 
             // scroll encoded info up in array if necessary (TESTED-WORKING)
             if ((context_data.top_index > 0) && ((context_data.bottom_index - context_data.top_index) > 0) && (context_data.bottom_index - context_data.top_index < MP3_FRAME_BUFFER_BYTES))
             {
-#ifdef DEBUG
+#ifdef DEBUG_PRINTF_INFO
       uint32_t oldtop = context_data.top_index;
 #endif
-                //memcpy(context_data.mp3FrameBuffer , context_data.mp3FrameBuffer + context_data.top_index, context_data.bottom_index - context_data.top_index);
                 memmove(context_data.encoded_frame_buffer, context_data.encoded_frame_buffer + context_data.top_index, context_data.bottom_index - context_data.top_index);
                 context_data.bottom_index = context_data.bottom_index - context_data.top_index;
                 context_data.top_index = 0;
 
-#ifdef DEBUG
+#ifdef DEBUG_PRINTF_INFO
                 printf("Copied %d bytes from %d to %d\n", (context_data.bottom_index - context_data.top_index), oldtop, 0);
 #endif
             }
             else if (context_data.bottom_index == context_data.top_index)
             {
                 // If arrived here, there is nothing else to do
-#ifdef DEBUG
-                printf("Empty buffer.\n");
+#ifdef DEBUG_PRINTF_ERROR
+                printf("[Error] Empty buffer.\n");
 #endif
 
             }
             else if (context_data.bottom_index == MP3_DECODED_BUFFER_SIZE)
             {
-#ifdef DEBUG
-                printf("Full buffer.\n");
+#ifdef DEBUG_PRINTF_ERROR
+                printf("[Error] Full buffer.\n");
 #endif
             }
 
@@ -221,7 +222,7 @@ mp3_decoder_result_t MP3GetDecodedFrame(short* outBuffer, uint16_t bufferSize, u
                 context_data.top_index += offset; // updating top_index pointer
                 context_data.bytes_remaining -= offset;  // subtract garbage info to file size
 
-#ifdef DEBUG
+#ifdef DEBUG_PRINTF_INFO
                 printf("Sync word found @ %d offset\n", offset);
 #endif
             }
@@ -231,13 +232,13 @@ mp3_decoder_result_t MP3GetDecodedFrame(short* outBuffer, uint16_t bufferSize, u
             int err = MP3GetNextFrameInfo(context_data.Decoder, &nextFrameInfo, context_data.encoded_frame_buffer + context_data.top_index);
             if (err == 0)
             {
-#ifdef DEBUG
+#ifdef DEBUG_PRINTF_INFO
                 printf("Frame to decode has %d samples\n", nextFrameInfo.outputSamps);
 #endif
                 if (nextFrameInfo.outputSamps > bufferSize)
                 {
-#ifdef DEBUG
-                    printf("Out buffer isnt big enough to hold samples.\n");
+#ifdef DEBUG_PRINTF_ERROR
+                    printf("[Error] Out buffer isnt big enough to hold samples.\n");
 #endif
                     return MP3DECODER_BUFFER_OVERFLOW;
                 }
@@ -253,7 +254,7 @@ mp3_decoder_result_t MP3GetDecodedFrame(short* outBuffer, uint16_t bufferSize, u
                 uint16_t decodedBytes = context_data.bottom_index - context_data.top_index - bytesLeft;
                 context_data.last_frame_length = decodedBytes;
 
-#ifdef DEBUG
+#ifdef DEBUG_PRINTF_INFO
                 printf("Frame decoded!. MP3 frame size was %d bytes\n", decodedBytes);
 #endif
 
@@ -274,14 +275,14 @@ mp3_decoder_result_t MP3GetDecodedFrame(short* outBuffer, uint16_t bufferSize, u
             {
                 if (context_data.bytes_remaining == 0)
                 {
-#ifdef DEBUG
+#ifdef DEBUG_PRINTF_ERROR
                     printf("[Error] Buffer underflow and file empty\n");
 #endif
 
                     return MP3DECODER_FILE_END;
                 }
-#ifdef DEBUG
-                printf("Underflow error (code %d)\n", res);
+#ifdef DEBUG_PRINTF_ERROR
+                printf("[Error] Underflow error (code %d)\n", res);
 #endif
 
                 // If there weren't enough bytes on the buffer, try again
@@ -291,8 +292,8 @@ mp3_decoder_result_t MP3GetDecodedFrame(short* outBuffer, uint16_t bufferSize, u
             {
                 if (context_data.bytes_remaining <= context_data.last_frame_length)
                 {
-#ifdef DEBUG
-                    printf("Dropped frame\n");
+#ifdef DEBUG_PRINTF_ERROR
+                    printf("[Error] Dropped frame\n");
 #endif
                     return MP3DECODER_FILE_END;
                 }
@@ -300,7 +301,7 @@ mp3_decoder_result_t MP3GetDecodedFrame(short* outBuffer, uint16_t bufferSize, u
                 {
                     context_data.top_index++;
                     context_data.bytes_remaining--;
-#ifdef DEBUG
+#ifdef DEBUG_PRINTF_ERROR
                     printf("Error: %d\n", res);
 #endif
 
@@ -346,7 +347,9 @@ static bool open_file_wav(const char* file_name) {
     if (fr == FR_OK)
     {
         wavFile = &(wav);
-        printf("Wav file created correctly.\r\n");
+#ifdef DEBUG_PRINTF_APP
+        printf("[App] Wav file created correctly.\r\n");
+#endif
         ret = true;
     }
 #else
@@ -468,14 +471,7 @@ void readID3Tag(void)
         printf("ID3 Tag is %d bytes long\n", tagSize);
 #endif
         fileSeek(tagSize);
-        context_data.bytes_remaining -= tagSize;//TODO
-//        fileRewind();//TODO
-        /* *
-         * aca solo fuimos pa atras, no cre que esté bien
-         *  pero podemos leer los archivos. deberiamos ver
-         *   como hacer para saltear la id3 tag
-         *   o para hacer lo mismo sin ser cabeza
-         * */
+        context_data.bytes_remaining -= tagSize;
     }
     else
     {
@@ -512,12 +508,16 @@ void copyDataAndMovePointer() {
     context_data.bottom_index += bytes_read;
     }
 #endif
-#ifdef DEBUG
+
     if (bytes_read == 0)
     {
-        printf("File was read completely.\n");
+#ifdef DEBUG_PRINTF_APP
+        printf("[App] File was read completely.\n");
+#endif
     }
-    printf("[?] Read %d bytes from file. Head = %d - Bottom = %d\n", bytes_read, context_data.top_index, context_data.bottom_index);
+
+#ifdef DEBUG_PRINTF_INFO
+    printf("Read %d bytes from file. Head = %d - Bottom = %d\n", bytes_read, context_data.top_index, context_data.bottom_index);
 #endif
 }
 

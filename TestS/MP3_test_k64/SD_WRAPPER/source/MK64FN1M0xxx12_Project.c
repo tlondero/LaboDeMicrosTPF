@@ -7,6 +7,7 @@
 #include "peripherals.h"
 #include "pin_mux.h"
 #include "clock_config.h"
+#include "debug_ifdefs.h"
 #include "MK64F12.h"
 #include "fsl_sysmpu.h"
 #include "fsl_debug_console.h"
@@ -18,31 +19,33 @@
 #include "mp3Decoder.h"
 #include "ff.h"
 
-#define MAIN_DEBUG
-
 char* concat(const char *s1, const char *s2);
 
-
-/*
- * @brief   Application entry point.
- */
 void cbackin(void) {
-	printf("Atroden pa\r\n");
+#ifdef DEBUG_PRINTF_APP
+	printf("[App] SD Card inserted.\r\n");
+#endif
 	MP3DecoderInit();
 }
 void cbackout(void) {
-	printf("Arafue pa\r\n");
+#ifdef DEBUG_PRINTF_APP
+	printf("[App] SD Card removed.\r\n");
+#endif
 }
 
+#ifdef DEBUG_FRAME_DELAY
 bool nextFrameFlag = false;
-static short buffer[MP3_DECODED_BUFFER_SIZE] __attribute__((aligned((16U))));
+#endif
+static short buffer[MP3_DECODED_BUFFER_SIZE];
 mp3_decoder_frame_data_t frameData;
 mp3_decoder_tag_data_t ID3Data;
 
 int main(void) {
 	uint16_t sampleCount;
-	uint32_t sr = 0;
 	uint32_t wrote =0;
+#ifdef DEBUG_PRINTF_INFO
+	uint32_t sr = 0;
+#endif
 
 	/* Init board hardware. */
 	BOARD_InitBootPins();
@@ -56,12 +59,6 @@ int main(void) {
 /////////////////////////////////////////////////////////////
 	while (1) {
 		if (getJustIn()) {
-//			error = f_open(&g_fileObject, _T("test.mp3"), FA_READ);
-//			bytesWritten = f_size(&g_fileObject);
-//			error = f_read(&g_fileObject, buffer, sizeof(buffer), &bytesWritten);
-//			int huevo=0;
-//			huevo++;
-//			huevo--;
 
 			if (MP3LoadFile("test.mp3", "test.wav")) {
 				int i = 0;
@@ -72,37 +69,39 @@ int main(void) {
 											printf("ALBUM: %s\n", ID3Data.album);
 											printf("TRACK NUM: %s\n", ID3Data.trackNum);
 											printf("YEAR: %s\n", ID3Data.year);
-										}
+				}
 
 				while (1) {
 
 
-
+#ifdef DEBUG_PRINTF_INFO
 					printf("\n[APP] Frame %d decoding started.\n", i);
+#endif
 
 					mp3_decoder_result_t res = MP3GetDecodedFrame(buffer,
 							MP3_DECODED_BUFFER_SIZE, &sampleCount, 0);
 
 					if (res == 0) {
-
-
-
 						MP3GetLastFrameData(&frameData);
+						wrote = storeWavInSd(&frameData, buffer); //TODO ver por que no anda
 
-						wrote = storeWavInSd(&frameData, buffer);
-
+#ifdef DEBUG_PRINTF_INFO
 						printf("[APP] Wrote %d bytes to wav.\n", wrote);
 
 						printf("[APP] Frame %d decoded.\n", i);
 
 						i++;
-						if(i == 28){
+						if(i == 200){
 							i++;
 							i--;
 						}
+#endif
 
+#ifdef DEBUG_PRINTF_INFO
 						sr = frameData.sampleRate;
+
 						printf("[APP] FRAME SAMPLE RATE: %d \n", sr);
+#endif
 
 #ifdef DEBUG_FRAME_DELAY
 						printf("[APP] Un pequenio delay para el dios de la SD bro.\n");
@@ -111,10 +110,15 @@ int main(void) {
 						}
 						nextFrameFlag = false;
 #endif
-					} else if (res == MP3DECODER_FILE_END) {
+
+					}
+					else if (res == MP3DECODER_FILE_END) {
+#ifdef DEBUG_PRINTF_APP
 						printf("[APP] FILE ENDED. Decoded %d frames.\n", i - 1);
+#endif
 						break;
-					} else {
+					}
+					else {
 						int huevo = 0;
 						huevo++;
 					}

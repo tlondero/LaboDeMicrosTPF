@@ -11,6 +11,7 @@
 
 #include "fsl_sd_disk.h"
 #include "fsl_common.h"
+#include "debug_ifdefs.h"
 #include "fsl_pit.h"
 #include "fsl_sysmpu.h"
 #include "fsl_sd.h"
@@ -23,7 +24,7 @@
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
-//#define DEBUG_FRAME_DELAY
+
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
