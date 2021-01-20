@@ -78,6 +78,7 @@ void BOARD_SD_Config(void *card, sd_cd_t cd, uint32_t hostIRQPriority, void *use
     ((sd_card_t *)card)->host                                = &s_host;
     ((sd_card_t *)card)->host->hostController.base           = BOARD_SDMMC_SD_HOST_BASEADDR;
     ((sd_card_t *)card)->host->hostController.sourceClock_Hz = CLOCK_GetFreq(kCLOCK_CoreSysClk);
+    ((sd_card_t *)card)->noInteralAlign = true;
 
     ((sd_card_t *)card)->host->hostEvent = &s_event;
     ((sd_card_t *)card)->usrParam.cd     = &s_cd;

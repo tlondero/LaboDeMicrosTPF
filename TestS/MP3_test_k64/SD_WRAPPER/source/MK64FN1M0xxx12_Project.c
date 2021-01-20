@@ -104,12 +104,13 @@ int main(void) {
 						sr = frameData.sampleRate;
 						printf("[APP] FRAME SAMPLE RATE: %d \n", sr);
 
+#ifdef DEBUG_FRAME_DELAY
 						printf("[APP] Un pequenio delay para el dios de la SD bro.\n");
 						while(!nextFrameFlag){
 							//wait
 						}
 						nextFrameFlag = false;
-
+#endif
 					} else if (res == MP3DECODER_FILE_END) {
 						printf("[APP] FILE ENDED. Decoded %d frames.\n", i - 1);
 						break;
