@@ -1,0 +1,10 @@
+FS_explorer.c:75:8:exploreFS	24	static
+FS_explorer.c:123:7:getNext	16	static
+FS_explorer.c:173:7:getPrev	16	static
+FS_explorer.c:208:9:openSelected	16	static
+FS_explorer.c:232:9:goBackDir	16	static
+FS_explorer.c:243:8:getPath	4	static
+FS_explorer.c:246:6:addCallbackForFile	16	static
+FS_explorer.c:255:6:addToPath	24	static
+FS_explorer.c:268:6:removeDirFromPath	4	static
+FS_explorer.c:277:6:copyFname	24	static

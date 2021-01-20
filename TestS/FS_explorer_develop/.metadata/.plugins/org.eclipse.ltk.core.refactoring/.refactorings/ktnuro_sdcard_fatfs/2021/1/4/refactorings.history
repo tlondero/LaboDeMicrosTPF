@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;ktnuro_sdcard_fatfs/source/FS_explorer&apos; to &apos;FS_explorer.c&apos;" description="Rename resource &apos;FS_explorer&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="source/FS_explorer" name="FS_explorer.c" stamp="1611161903955" updateReferences="true"/>
+</session>

@@ -6,7 +6,7 @@
  * Generated linker script file for MK64FN1M0xxx12
  * Created from linkscript.ldt by FMCreateLinkLibraries
  * Using Freemarker v2.3.23
- * MCUXpresso IDE v11.2.1 [Build 4149] [2020-10-07] on Jan 19, 2021 9:30:02 PM
+ * MCUXpresso IDE v11.2.1 [Build 4149] [2020-10-07] on Jan 20, 2021 3:04:46 PM
  */
 
 INCLUDE "ktnuro_sdcard_fatfs_Debug_library.ld"

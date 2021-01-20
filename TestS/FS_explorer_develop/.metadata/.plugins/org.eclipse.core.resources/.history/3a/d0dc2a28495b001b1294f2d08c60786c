@@ -1,0 +1,179 @@
+
+/***************************************************************************/ /**
+  @file     FileName.c
+  @brief
+  @author   Guido Lambertucci
+ ******************************************************************************/
+
+/*******************************************************************************
+ * INCLUDE HEADER FILES
+ ******************************************************************************/
+#include "FS_explorer.h"
+/*******************************************************************************
+ * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
+ ******************************************************************************/
+
+
+/*******************************************************************************
+ * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
+ ******************************************************************************/
+typedef struct {
+	char name[NAMES_BUFFER_SIZE];
+	bool is_directory;
+} directory_name_att;
+
+
+typedef struct {
+	//FAT things
+	DIR directory; /* Directory object */
+	FILINFO fileInformation;
+
+	//indexes
+
+	uint16_t path_index;
+	uint8_t directory_index;
+
+	//counters
+	uint16_t page_counter;
+	uint8_t directory_counter_finished;
+	uint8_t directory_depht;
+
+	//flags
+	uint16_t page_finished;
+	bool directory_opened;
+	bool directory_finished;
+
+	//data structures
+	directory_name_att directoryNames[NAME_LIST_SIZE];
+	char directory_path[1000];
+
+	//callback
+	cback mycb;
+
+} explorer_data_t;
+
+
+/*******************************************************************************
+ * FUNCTION PROTOTYPES WITH FILE SCOPE
+ ******************************************************************************/
+
+/*******************************************************************************
+ * VARIABLE DECLARATION WITH FILE SCOPE
+ ******************************************************************************/
+static explorer_data_t data;
+
+/*******************************************************************************
+ * FUNCTION DEFINITIONS WITH GLOBAL SCOPE
+ ******************************************************************************/
+char * exploreFS(char * path){
+	FRESULT error;
+	if (data.directory_opened) {
+		f_closedir(&data.directory);
+		data.directory_opened = false;
+	}
+	if (f_opendir(&data.directory, path)) {
+#ifdef DEBUG
+		PRINTF("Open directory failed.\r\n");
+#endif
+		return -1;
+
+	}
+	data.directory_opened = true;
+
+	uint8_t i = 0;
+	data.directory_index = 0;
+	data.page_counter = 0;
+	while (i < NAME_LIST_SIZE) {
+		error = f_readdir(&data.directory, &data.fileInformation);
+
+		/* To the end. */
+		if ((error != FR_OK) || (data.fileInformation.fname[0U] == 0U)) {
+			data.directory_finished = true;
+			data.page_finished = data.page_counter;
+			data.directory_counter_finished = i - 1;
+			break;
+		}
+		if (data.fileInformation.fname[0] == '.') {
+			continue;
+		}
+		if (data.fileInformation.fattrib & AM_DIR) {
+
+			copyFname(data.directoryNames[i].name, data.fileInformation.fname);
+			data.directoryNames[i].is_directory = true;
+			i++;
+		} else {
+
+			copyFname(data.directoryNames[i].name, data.fileInformation.fname);
+			data.directoryNames[i].is_directory = false;
+			i++;
+		}
+	}
+
+	return data.directoryNames[data.directory_index].name;
+
+
+}
+char* getNext(){
+	FRESULT error;
+	if (data.directory_index < NAME_LIST_SIZE - 1) {
+
+		if (data.directory_finished && (data.page_finished == data.page_counter)
+				&& (data.directory_counter_finished == data.directory_index)) {
+			return NULL;
+		}
+
+		data.directory_index++;
+		return data.directoryNames[data.directory_index].name;
+	} else {
+		data.page_counter++;
+		uint8_t i = 0;
+		while (i < NAME_LIST_SIZE) {
+			error = f_readdir(&data.directory, &data.fileInformation);
+			/* To the end. */
+			if ((error != FR_OK) || (data.fileInformation.fname[0U] == 0U)) {
+				data.directory_finished = true;
+				data.page_finished = data.page_counter;
+				data.directory_counter_finished = i - 1;
+				break;
+			}
+			if (data.fileInformation.fname[0] == '.') {
+				continue;
+			}
+			if (data.fileInformation.fattrib & AM_DIR) {
+#ifdef DEBUG
+					PRINTF("Directory file : %s.\r\n", fileInformation.fname);
+#endif
+					data.directoryNames[i].is_directory = true;
+				copyFname(data.directoryNames[i].name,
+						data.fileInformation.fname);
+				i++;
+			} else {
+#ifdef DEBUG
+				PRINTF("General file : %s.\r\n", fileInformation.fname);
+#endif
+				data.directoryNames[i].is_directory = false;
+				copyFname(data.directoryNames[i].name,
+						data.fileInformation.fname);
+				i++;
+			}
+		}
+
+		data.directory_index = 0;
+
+		return data.directoryNames[data.directory_index].name;
+	}
+}
+char* getPrev();
+char *  openSelected();
+char *  goBackDir();
+char * getPath(void);
+void addCallbackForFile(cback cb);
+/*******************************************************************************
+ * FUNCTION DEFINITIONS WITH FILE SCOPE
+ ******************************************************************************/
+
+/*******************************************************************************
+ *						 INTERRUPTION ROUTINES
+ ******************************************************************************/
+
+
