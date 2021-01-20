@@ -22,9 +22,9 @@
 #define MP3_FRAME_BUFFER_BYTES  (10240)//6913            // MP3 buffer size (in bytes)
 #define DEFAULT_ID3_FIELD       "Unknown"
 #define MAX_DEPTH       3
-static   FIL			file __attribute__((aligned((16U))));
+static   FIL			file __attribute__((aligned((8U))));
 static FIL* mp3File = &file;
-static FIL wav __attribute__((aligned((16U))));
+static FIL wav __attribute__((aligned((8U))));
 static FIL* wavFile = &wav;
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
@@ -48,7 +48,7 @@ typedef struct
     uint16_t      last_frame_length;                                // Last frame length
 
     // MP3-encoded buffer
-    uint8_t       encoded_frame_buffer[MP3_FRAME_BUFFER_BYTES] __attribute__((aligned((4U))));         // buffer for MP3-encoded frames
+    uint8_t       encoded_frame_buffer[MP3_FRAME_BUFFER_BYTES] __attribute__((aligned((8U))));         // buffer for MP3-encoded frames
     uint32_t      top_index;                                            // current position in frame buffer (points to top_index)
     uint32_t      bottom_index;                                         // current position at info end in frame buffer
 
@@ -63,8 +63,8 @@ typedef struct
  ******************************************************************************/
 
  //File management functions
-static bool open_file_wav(char * file_name);
-static bool open_file(char * file_name);
+static bool open_file_wav(const char * file_name);
+static bool open_file(const char * file_name);
 static void close_file(void);
 static void fileSeek(size_t pos);
 uint32_t getFileSize(void);
@@ -78,7 +78,6 @@ void readID3Tag(void);
 static void copyDataAndMovePointer(void);
 void copyFrameInfo(mp3_decoder_frame_data_t* mp3_data, MP3FrameInfo* helix_data);
 void resetContextData(void);
-uint16_t storeWavInSd(mp3_decoder_frame_data_t* data, short* outBuffer);
 /*******************************************************************************
  * STATIC VARIABLES AND CONST VARIABLES WITH FILE LEVEL SCOPE
  ******************************************************************************/
@@ -340,7 +339,7 @@ void printContextData(void){
 
 //File management functions
 
-static bool open_file_wav(char* file_name) {
+static bool open_file_wav(const char* file_name) {
     bool ret = false;
 #ifdef __arm__
     fr = f_open(&wav, _T(file_name), (FA_CREATE_ALWAYS|FA_WRITE));
@@ -357,7 +356,7 @@ static bool open_file_wav(char* file_name) {
     return ret;
 }
 
-static bool open_file(char* file_name) {
+static bool open_file(const char* file_name) {
     bool ret = false;
 #ifdef __arm__
     fr = f_open(&file, _T(file_name), FA_READ);
@@ -416,7 +415,7 @@ void fileRewind(void){
 
 uint16_t readFile(void* buf, uint16_t cnt) {
     uint16_t ret = 0;
-    uint16_t read;
+    UINT read;
     if (context_data.file_opened)
     {
 #ifdef __arm__
@@ -486,10 +485,10 @@ void readID3Tag(void)
 
 void copyDataAndMovePointer() {
     uint16_t bytes_read;
-    uint8_t auxbuff[5000];
 
     // Fill buffer with info in mp3 file
 #ifdef DEBUG_ALAN
+    uint8_t auxbuff[5000];
     if (MP3_FRAME_BUFFER_BYTES - context_data.bottom_index > 0){
     	if(context_data.bottom_index == 0){
     	    uint8_t* dst = context_data.encoded_frame_buffer + context_data.bottom_index;
@@ -541,7 +540,7 @@ void resetContextData(void) {
 }
 
 uint16_t storeWavInSd(mp3_decoder_frame_data_t* data, short* outBuffer){
-	uint16_t read;
+	UINT read;
 	uint16_t fr;
 	uint16_t ret = 0;
 	fr = f_write(&wav, ((uint8_t *)outBuffer), data->sampleCount, &read);

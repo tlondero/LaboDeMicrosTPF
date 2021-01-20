@@ -23,7 +23,7 @@
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
-
+#define DEBUG_FRAME_DELAY
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
@@ -35,6 +35,7 @@ void interruptRoutine(void); //Interrupt
 /*******************************************************************************
  * VARIABLE DECLARATION WITH FILE SCOPE
  ******************************************************************************/
+extern bool nextFrameFlag;
 
 static bool inserted_flag=false;
 static bool removed_flag=false;
@@ -74,6 +75,21 @@ bool SDWraperInit(cback inserted_callback, cback extracted_callback){
 		EnableIRQ(PIT0_IRQn);
 
 		PIT_StartTimer(PIT, kPIT_Chnl_0);
+
+#ifdef DEBUG_FRAME_DELAY
+
+		/* Set timer period for channel 1 */
+		PIT_SetTimerPeriod(PIT, kPIT_Chnl_1,
+				USEC_TO_COUNT(2500000U, CLOCK_GetFreq(kCLOCK_BusClk)));
+
+		/* Enable timer interrupts for channel 1 */
+		PIT_EnableInterrupts(PIT, kPIT_Chnl_1, kPIT_TimerInterruptEnable);
+
+		/* Enable at the NVIC */
+		EnableIRQ(PIT1_IRQn);
+
+		PIT_StartTimer(PIT, kPIT_Chnl_1);
+#endif
 
 		//////////////////////////////////////////////////////////////
 		//						SD CONFIG 						    //
@@ -181,3 +197,17 @@ void PIT0_IRQHandler(void) {
 	__DSB();
 
 }
+#ifdef DEBUG_FRAME_DELAY
+void PIT1_IRQHandler(void) {
+	/* Clear interrupt flag.*/
+	PIT_ClearStatusFlags(PIT, kPIT_Chnl_1, kPIT_TimerFlag);
+
+	nextFrameFlag = true;
+	/* Added for, and affects, all PIT handlers. For CPU clock which is much larger than the IP bus clock,
+	 * CPU can run out of the interrupt handler before the interrupt flag being cleared, resulting in the
+	 * CPU's entering the handler again and again. Adding DSB can prevent the issue from happening.
+	 */
+	__DSB();
+
+}
+#endif

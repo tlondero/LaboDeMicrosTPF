@@ -41,11 +41,11 @@ typedef struct
 
 typedef struct
 {
-    uint8_t title[ID3_MAX_FIELD_SIZE];
-    uint8_t artist[ID3_MAX_FIELD_SIZE];
-    uint8_t album[ID3_MAX_FIELD_SIZE];
-    uint8_t trackNum[10];
-    uint8_t year[10];
+    char title[ID3_MAX_FIELD_SIZE];
+    char artist[ID3_MAX_FIELD_SIZE];
+    char album[ID3_MAX_FIELD_SIZE];
+    char trackNum[10];
+    char year[10];
 
 } mp3_decoder_tag_data_t;
 
@@ -59,4 +59,5 @@ bool MP3GetLastFrameData(mp3_decoder_frame_data_t* data);
 bool MP3GetNextFrameData(mp3_decoder_frame_data_t* data);
 mp3_decoder_result_t MP3GetDecodedFrame(short* outBuffer, uint16_t bufferSize, uint16_t* samples_decoded, uint8_t depth);
 void printContextData(void);
+uint16_t storeWavInSd(mp3_decoder_frame_data_t* data, short* outBuffer);
 #endif
