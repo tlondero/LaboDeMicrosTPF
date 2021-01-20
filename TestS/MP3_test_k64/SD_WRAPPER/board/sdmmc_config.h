@@ -11,6 +11,7 @@
 #ifdef SD_ENABLED
 #include "fsl_sd.h"
 #endif
+#define MMC_ENABLED
 #ifdef MMC_ENABLED
 #include "fsl_mmc.h"
 #endif

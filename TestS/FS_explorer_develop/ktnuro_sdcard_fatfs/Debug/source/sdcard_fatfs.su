@@ -1,0 +1,11 @@
+fsl_sysmpu.h:268:20:SYSMPU_Enable	16	static
+sdcard_fatfs.c:62:8:exploreFS	24	static
+sdcard_fatfs.c:105:7:getNext	16	static
+sdcard_fatfs.c:149:7:getPrev	16	static
+sdcard_fatfs.c:183:9:openSelected	16	static
+sdcard_fatfs.c:201:9:goBackDir	16	static
+sdcard_fatfs.c:212:6:addToPath	24	static
+sdcard_fatfs.c:226:6:removeDirFromPath	4	static
+sdcard_fatfs.c:234:6:copyFname	24	static
+sdcard_fatfs.c:273:5:main	24	static
+sdcard_fatfs.c:360:17:sdcardWaitCardInsert	8	static
