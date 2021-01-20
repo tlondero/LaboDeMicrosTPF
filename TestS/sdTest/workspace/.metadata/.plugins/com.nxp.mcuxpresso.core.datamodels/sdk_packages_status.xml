@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sdk-packages>
+<package hash="1602079320000" path="C:\nxp\MCUXpressoIDE_11.2.1_4149\ide\plugins\com.nxp.mcuxpresso.core.datamodels.resources_11.2.0.202001021529\fragments" schema="manifest-schema/sdk_manifest_v3.3.xsd"/>
+<package hash="1602079320000" path="C:\nxp\MCUXpressoIDE_11.2.1_4149\ide\plugins\com.nxp.mcuxpresso.core.datamodels.resources_11.2.0.202001021529\override" schema="manifest-schema/sdk_manifest_v3.3.xsd"/>
+<package hash="1610301031668" path="C:\Users\Acer\mcuxpresso\02\SDKPackages\SDK_2.8.2_FRDM-K64F (1).zip" schema="manifest-schema/sdk_manifest_v3.6.xsd"/>
+</sdk-packages>

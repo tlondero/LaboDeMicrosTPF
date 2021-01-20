@@ -42,7 +42,7 @@ mp3_decoder_tag_data_t ID3Data;
 
 int main(void) {
 	uint16_t sampleCount;
-	uint32_t wrote =0;
+	uint32_t wrote = 0;
 #ifdef DEBUG_PRINTF_INFO
 	uint32_t sr = 0;
 #endif
@@ -85,16 +85,18 @@ int main(void) {
 						MP3GetLastFrameData(&frameData);
 						wrote = storeWavInSd(&frameData, buffer); //TODO ver por que no anda
 
+						i++;
+						if(i == 1000){
+							i++;
+							i--;
+						}
 #ifdef DEBUG_PRINTF_INFO
 						printf("[APP] Wrote %d bytes to wav.\n", wrote);
 
 						printf("[APP] Frame %d decoded.\n", i);
 
-						i++;
-						if(i == 200){
-							i++;
-							i--;
-						}
+
+
 #endif
 
 #ifdef DEBUG_PRINTF_INFO
@@ -116,6 +118,7 @@ int main(void) {
 #ifdef DEBUG_PRINTF_APP
 						printf("[APP] FILE ENDED. Decoded %d frames.\n", i - 1);
 #endif
+
 						break;
 					}
 					else {
