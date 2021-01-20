@@ -1,0 +1,304 @@
+/*
+ * Copyright (c) 2015, Freescale Semiconductor, Inc.
+ * Copyright 2016-2017 NXP
+ * All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+#include <stdio.h>
+#include <string.h>
+#include "fsl_sd.h"
+#include "fsl_debug_console.h"
+#include "ff.h"
+#include "diskio.h"
+#include "fsl_sd_disk.h"
+#include "board.h"
+#include "sdmmc_config.h"
+#include "fsl_sysmpu.h"
+#include "pin_mux.h"
+#include "clock_config.h"
+/*******************************************************************************
+ * Definitions
+ ******************************************************************************/
+
+/* buffer size (in byte) for read/write operations */
+#define BUFFER_SIZE (100U)
+/*******************************************************************************
+ * Prototypes
+ ******************************************************************************/
+/*!
+ * @brief wait card insert function.
+ */
+static status_t sdcardWaitCardInsert(void);
+/***********************************************************************************************************************/
+//                                  API NOMBRES PA.
+/***********************************************************************************************************************/
+DIR directory; /* Directory object */
+FILINFO fileInformation;
+#define NAMES_BUFFER_SIZE 255
+#define NAME_LIST_SIZE 20
+
+
+typedef struct{
+	char name[NAMES_BUFFER_SIZE];
+	bool is_directory;
+}directory_name_att;
+
+directory_name_att directoryNames[NAME_LIST_SIZE];
+
+static uint8_t directory_counter = 0;
+static uint8_t directory_index = 0;
+static uint16_t page_counter = 0;
+static bool directory_finished = false;
+
+static uint16_t page_finished = 0;
+static uint8_t directory_counter_finished = 0;
+
+void copyFname(char *destiny, char *source);
+
+char* exploreFS() {
+	FRESULT error;
+	PRINTF("\r\nFile explorer initialized\r\n");
+	if (f_opendir(&directory, "/")) {
+		PRINTF("Open directory failed.\r\n");
+		return -1;
+	}
+	directory_counter = 0;
+	uint8_t i = 0;
+	directory_index = 0;
+	page_counter = 0;
+	while (i < NAME_LIST_SIZE) {
+		error = f_readdir(&directory, &fileInformation);
+
+		/* To the end. */
+		if ((error != FR_OK) || (fileInformation.fname[0U] == 0U)) {
+			directory_finished = true;
+			page_finished = page_counter;
+			directory_counter_finished = i - 1;
+			break;
+		}
+		if (fileInformation.fname[0] == '.') {
+			continue;
+		}
+		if (fileInformation.fattrib & AM_DIR) {
+			//	PRINTF("Directory file : %s.\r\n", fileInformation.fname);
+			copyFname(directoryNames[i].name, fileInformation.fname);
+			i++;
+		} else {
+			//	PRINTF("General file : %s.\r\n", fileInformation.fname);
+			copyFname(directoryNames[i].name, fileInformation.fname);
+			i++;
+		}
+	}
+	directory_counter = i;
+
+	return directoryNames[directory_index];
+
+}
+
+char* getNext() {
+	FRESULT error;
+	if (directory_index < NAME_LIST_SIZE - 1) {
+
+		if (directory_finished && (page_finished == page_counter)
+				&& (directory_counter_finished == directory_index)) {
+			return NULL;
+		}
+
+		directory_index++;
+		return directoryNames[directory_index];
+	} else {
+		page_counter++;
+		uint8_t i = 0;
+		while (i < NAME_LIST_SIZE) {
+			error = f_readdir(&directory, &fileInformation);
+			/* To the end. */
+			if ((error != FR_OK) || (fileInformation.fname[0U] == 0U)) {
+				directory_finished = true;
+				page_finished = page_counter;
+				directory_counter_finished = i - 1;
+				break;
+			}
+			if (fileInformation.fname[0] == '.') {
+				continue;
+			}
+			if (fileInformation.fattrib & AM_DIR) {
+				//	PRINTF("Directory file : %s.\r\n", fileInformation.fname);
+				directoryNames[i].is_directory=true;
+				copyFname(directoryNames[i].name, fileInformation.fname);
+				i++;
+			} else {
+				//	PRINTF("General file : %s.\r\n", fileInformation.fname);
+				directoryNames[i].is_directory=false;
+				copyFname(directoryNames[i].name, fileInformation.fname);
+				i++;
+			}
+		}
+		directory_counter = i;
+		directory_index = 0;
+
+		return directoryNames[directory_index];
+	}
+}
+char* getPrev() {
+	FRESULT error;
+	if (directory_index > 0) {
+
+		directory_index--;
+		return directoryNames[directory_index];
+	} else {
+		if ((page_counter == 0) && (directory_index == 0)) {
+			return NULL;
+		}
+
+		page_counter--;
+		f_rewinddir(&directory);
+		uint16_t i = 0,j=0;
+		for (i = 0; i < page_counter * NAME_LIST_SIZE+NAME_LIST_SIZE;) {
+			f_readdir(&directory, &fileInformation);
+			if (fileInformation.fname[0] == '.') {
+				continue;
+			}
+				i++;
+			if (i > page_counter * NAME_LIST_SIZE) { //si estoy en la ultima pagina
+				copyFname(directoryNames[j], fileInformation.fname);
+				if (fileInformation.fattrib & AM_DIR) {
+					directoryNames[i].is_directory=true;
+				}
+				else{
+					directoryNames[i].is_directory=false;
+				}
+				j++;
+			}
+		}
+		directory_index=NAME_LIST_SIZE-1;
+		return directoryNames[directory_index];
+	}
+}
+
+void copyFname(char *destiny, char *source) {
+	uint8_t i = 0;
+	while ((*source != '\0') && (i < NAMES_BUFFER_SIZE)) {
+		destiny[i] = source[i];
+		i++;
+	}
+
+}
+/***********************************************************************************************************************/
+//                                  API NOMBRES FIN.
+/***********************************************************************************************************************/
+
+/*******************************************************************************
+ * Variables
+ ******************************************************************************/
+static FATFS g_fileSystem; /* File system object */
+static FIL g_fileObject; /* File object */
+
+/* @brief decription about the read/write buffer
+ * The size of the read/write buffer should be a multiple of 512, since SDHC/SDXC card uses 512-byte fixed
+ * block length and this driver example is enabled with a SDHC/SDXC card.If you are using a SDSC card, you
+ * can define the block length by yourself if the card supports partial access.
+ * The address of the read/write buffer should align to the specific DMA data buffer address align value if
+ * DMA transfer is used, otherwise the buffer address is not important.
+ * At the same time buffer address/size should be aligned to the cache line size if cache is supported.
+ */
+/*! @brief Data written to the card */
+SDK_ALIGN(uint8_t g_bufferWrite[BUFFER_SIZE],
+		BOARD_SDMMC_DATA_BUFFER_ALIGN_SIZE);
+/*! @brief Data read from the card */
+SDK_ALIGN(uint8_t g_bufferRead[BUFFER_SIZE],
+		BOARD_SDMMC_DATA_BUFFER_ALIGN_SIZE);
+/*******************************************************************************
+ * Code
+ ******************************************************************************/
+
+/*!
+ * @brief Main function
+ */
+int main(void) {
+	FRESULT error;
+
+	const TCHAR driverNumberBuffer[3U] = { SDDISK + '0', ':', '/' };
+
+	BOARD_InitPins();
+	BOARD_BootClockRUN();
+	BOARD_InitDebugConsole();
+	SYSMPU_Enable(SYSMPU, false);
+
+	PRINTF(
+			"\r\nFATFS example to demonstrate how to use FATFS with SD card.\r\n");
+
+	PRINTF("\r\nPlease insert a card into board.\r\n");
+
+	if (sdcardWaitCardInsert() != kStatus_Success) {
+		return -1;
+	}
+
+	if (f_mount(&g_fileSystem, driverNumberBuffer, 0U)) {
+		PRINTF("Mount volume failed.\r\n");
+		return -1;
+	}
+
+#if (FF_FS_RPATH >= 2U)
+	error = f_chdrive((char const*) &driverNumberBuffer[0U]);
+	if (error) {
+		PRINTF("Change drive failed.\r\n");
+		return -1;
+	}
+#endif
+
+	printf("\r\n %s \r\n", exploreFS());
+	char *chptr = 1;
+	int i = 1;
+	while (1) {
+		chptr = getNext();
+		if (!chptr) {
+			break;
+		}
+
+		printf("\r\n %s \r\n", chptr);
+		printf("\r\n %d \r\n", i++);
+	}
+
+	i--;
+	while (1) {
+		chptr = getPrev();
+		if (!chptr) {
+			break;
+		}
+
+		printf("\r\n %s \r\n", chptr);
+		printf("\r\n %d \r\n", i--);
+	}
+	PRINTF("\r\nThe example will not read/write file again.\r\n");
+
+	while (true) {
+	}
+}
+
+static status_t sdcardWaitCardInsert(void) {
+
+	BOARD_SD_Config(&g_sd, NULL, BOARD_SDMMC_SD_HOST_IRQ_PRIORITY, NULL);
+
+	/* SD host init function */
+	if (SD_HostInit(&g_sd) != kStatus_Success) {
+		PRINTF("\r\nSD host init fail\r\n");
+		return kStatus_Fail;
+	}
+	/* power off card */
+	SD_SetCardPower(&g_sd, false);
+
+	/* wait card insert */
+	if (SD_PollingCardInsert(&g_sd, kSD_Inserted) == kStatus_Success) {
+		PRINTF("\r\nCard inserted.\r\n");
+		/* power on the card */
+		SD_SetCardPower(&g_sd, true);
+	} else {
+		PRINTF("\r\nCard detect fail.\r\n");
+		return kStatus_Fail;
+	}
+
+	return kStatus_Success;
+}
+
