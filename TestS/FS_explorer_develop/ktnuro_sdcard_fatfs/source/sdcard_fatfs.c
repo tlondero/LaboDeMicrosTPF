@@ -18,6 +18,7 @@
 #include "fsl_sysmpu.h"
 #include "pin_mux.h"
 #include "clock_config.h"
+#include "FS_explorer.h"
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
@@ -31,222 +32,12 @@
  * @brief wait card insert function.
  */
 static status_t sdcardWaitCardInsert(void);
-/***********************************************************************************************************************/
-//                                  API NOMBRES PA.
-/***********************************************************************************************************************/
-DIR directory; /* Directory object */
-FILINFO fileInformation;
-#define NAMES_BUFFER_SIZE 255
-#define NAME_LIST_SIZE 20
-#define MAX_PATH_LENGHT 1000
-typedef struct {
-	char name[NAMES_BUFFER_SIZE];
-	bool is_directory;
-} directory_name_att;
-
-directory_name_att directoryNames[NAME_LIST_SIZE];
-static char directory_path[1000];
-static uint16_t path_index=0;
-static uint8_t directory_counter = 0;
-static uint8_t directory_index = 0;
-static uint16_t page_counter = 0;
-static bool directory_finished = false;
-static uint8_t directory_depht =0;
-
-static uint16_t page_finished = 0;
-static uint8_t directory_counter_finished = 0;
-
-void copyFname(char *destiny, char *source);
-void addToPath(char* s);
-void removeDirFromPath();
-char * exploreFS(char * path) {
-	FRESULT error;
-
-	f_closedir(&directory);
-	if (f_opendir(&directory,path )) {
-		PRINTF("Open directory failed.\r\n");
-		return -1;
-	}
-	directory_counter = 0;
-	uint8_t i = 0;
-	directory_index = 0;
-	page_counter = 0;
-	while (i < NAME_LIST_SIZE) {
-		error = f_readdir(&directory, &fileInformation);
-
-		/* To the end. */
-		if ((error != FR_OK) || (fileInformation.fname[0U] == 0U)) {
-			directory_finished = true;
-			page_finished = page_counter;
-			directory_counter_finished = i - 1;
-			break;
-		}
-		if (fileInformation.fname[0] == '.') {
-			continue;
-		}
-		if (fileInformation.fattrib & AM_DIR) {
-			//	PRINTF("Directory file : %s.\r\n", fileInformation.fname);
-			copyFname(directoryNames[i].name, fileInformation.fname);
-			directoryNames[i].is_directory=true;
-			i++;
-		} else {
-			//	PRINTF("General file : %s.\r\n", fileInformation.fname);
-			copyFname(directoryNames[i].name, fileInformation.fname);
-			directoryNames[i].is_directory=false;
-			i++;
-		}
-	}
-	directory_counter = i;
-
-	return directoryNames[directory_index].name;
-
-}
-
-char* getNext() {
-	FRESULT error;
-	if (directory_index < NAME_LIST_SIZE - 1) {
-
-		if (directory_finished && (page_finished == page_counter)
-				&& (directory_counter_finished == directory_index)) {
-			return NULL;
-		}
-
-		directory_index++;
-		return directoryNames[directory_index].name;
-	} else {
-		page_counter++;
-		uint8_t i = 0;
-		while (i < NAME_LIST_SIZE) {
-			error = f_readdir(&directory, &fileInformation);
-			/* To the end. */
-			if ((error != FR_OK) || (fileInformation.fname[0U] == 0U)) {
-				directory_finished = true;
-				page_finished = page_counter;
-				directory_counter_finished = i - 1;
-				break;
-			}
-			if (fileInformation.fname[0] == '.') {
-				continue;
-			}
-			if (fileInformation.fattrib & AM_DIR) {
-				//	PRINTF("Directory file : %s.\r\n", fileInformation.fname);
-				directoryNames[i].is_directory = true;
-				copyFname(directoryNames[i].name, fileInformation.fname);
-				i++;
-			} else {
-				//	PRINTF("General file : %s.\r\n", fileInformation.fname);
-				directoryNames[i].is_directory = false;
-				copyFname(directoryNames[i].name, fileInformation.fname);
-				i++;
-			}
-		}
-		directory_counter = i;
-		directory_index = 0;
-
-		return directoryNames[directory_index].name;
-	}
-}
-char* getPrev() {
-	FRESULT error;
-	if (directory_index > 0) {
-
-		directory_index--;
-		return directoryNames[directory_index].name;
-	} else {
-		if ((page_counter == 0) && (directory_index == 0)) {
-			return NULL;
-		}
-
-		page_counter--;
-		f_rewinddir(&directory);
-		uint16_t i = 0, j = 0;
-		for (i = 0; i < page_counter * NAME_LIST_SIZE + NAME_LIST_SIZE;) {
-			f_readdir(&directory, &fileInformation);
-			if (fileInformation.fname[0] == '.') {
-				continue;
-			}
-			i++;
-			if (i > page_counter * NAME_LIST_SIZE) { //si estoy en la ultima pagina
-				copyFname(directoryNames[j].name, fileInformation.fname);
-				if (fileInformation.fattrib & AM_DIR) {
-					directoryNames[j].is_directory = true;
-				} else {
-					directoryNames[j].is_directory = false;
-				}
-				j++;
-			}
-		}
-		directory_index = NAME_LIST_SIZE - 1;
-		return directoryNames[directory_index].name;
-	}
-}
-char *  openSelected() {
-	if (directoryNames[directory_index].is_directory) {
-		directory_depht++;
-		char * ret=NULL;
-		printf("Trying to open Directory: %s\r\n",
-				directoryNames[directory_index].name);
-		addToPath(directoryNames[directory_index].name);
-		ret=exploreFS(directory_path);
-
-	} else {
-		printf("File selected: %s\r\n", directoryNames[directory_index].name);
-		addToPath(directoryNames[directory_index].name);
-		/*
-		 * aca iria codigo para hacer algo cuando me eligen el archivo mp3 para ponerle play
-		 *
-		 */
-	}
-}
-char *  goBackDir(){
-	if(directory_depht>0){
-	directory_depht--;
-	char * ret=NULL;
-	removeDirFromPath();
-	ret=exploreFS(directory_path);
-	return ret;
-	}
-	else {return NULL;}
-}
-void addToPath(char* s){
-
-	directory_path[path_index]='/';//add the / simbol for the new directory/file
-	path_index++;
-	uint16_t i=0;
-	while(s[i] != NULL){
-		directory_path[path_index]= s[i];
-		i++;
-		path_index++;
-	}
-
-
-	directory_path[path_index]='\0';//add EOS in case its a file
-}
-void removeDirFromPath(){
-	while(directory_path[path_index] != '/'){
-		directory_path[path_index]= '\0';
-		path_index--;
-	}
-	directory_path[path_index]='\0';//add EOS in case its a file
-}
-
-void copyFname(char *destiny, char *source) {
-	uint8_t i = 0;
-	while ((*source != '\0') && (i < NAMES_BUFFER_SIZE)) {
-		destiny[i] = source[i];
-		i++;
-	}
-
-}
-/***********************************************************************************************************************/
-//                                  API NOMBRES FIN.
-/***********************************************************************************************************************/
 
 /*******************************************************************************
  * Variables
  ******************************************************************************/
 static FATFS g_fileSystem; /* File system object */
-static FIL g_fileObject; /* File object */
+
 
 /* @brief decription about the read/write buffer
  * The size of the read/write buffer should be a multiple of 512, since SDHC/SDXC card uses 512-byte fixed
@@ -302,9 +93,9 @@ int main(void) {
 #endif
 
 	printf("Exploring all files forward\r\n");
-	char *chptr = 	exploreFS("/");
+	char *chptr = exploreFS("/");
 
-	printf("\r\n %s \r\n",chptr );
+	printf("\r\n %s \r\n", chptr);
 
 	int i = 1;
 	while (1) {
@@ -328,14 +119,14 @@ int main(void) {
 		printf("\r\n %d \r\n", i--);
 	}
 	printf("\r\n Trying to add a open directory\r\n");
-	for(int i=0;i<4 ;i++){
-		if(i==3){
-			chptr=openSelected(chptr);
+	for (int i = 0; i < 4; i++) {
+		if (i == 3) {
+			chptr = openSelected(chptr);
 			break;
 		}
-		chptr=getNext();
+		chptr = getNext();
 	}
-	printf("\r\n %s \r\n",chptr );
+	printf("\r\n %s \r\n", chptr);
 
 	i = 1;
 	while (1) {
@@ -348,8 +139,8 @@ int main(void) {
 		printf("\r\n %d \r\n", i++);
 	}
 	printf("\r\n Going back in the directory\r\n");
-	chptr =goBackDir();
-	printf("\r\n %s \r\n",chptr );
+	chptr = goBackDir();
+	printf("\r\n %s \r\n", chptr);
 	PRINTF("\r\nThe example will not read/write file again.\r\n");
 
 	while (true) {
