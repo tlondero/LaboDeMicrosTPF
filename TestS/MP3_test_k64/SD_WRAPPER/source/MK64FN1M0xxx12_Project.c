@@ -21,6 +21,13 @@
 
 char* concat(const char *s1, const char *s2);
 
+//#define DEBUG_PRINTF_ERROR
+//#define DEBUG_PRINTF_APP
+//#define DEBUG_PRINTF_INFO
+//#define DEBUG_ALAN
+//#define DEBUG_FRAME_DELAY
+
+
 void cbackin(void) {
 #ifdef DEBUG_PRINTF_APP
 	printf("[App] SD Card inserted.\r\n");
@@ -57,40 +64,36 @@ int main(void) {
 #endif
 	SDWraperInit(cbackin, cbackout);
 /////////////////////////////////////////////////////////////
-	bool finished=false;
+	bool finished = false;
 	while (!finished) {
 		if (getJustIn()) {
 
-			if (MP3LoadFile("test_a.mp3", "test_a.wav")) {
+			if (MP3LoadFile("test.mp3", "test_a.wav")) {
 				int i = 0;
 				if (MP3GetTagData(&ID3Data)) {
-											printf("\nSONG INFO\n");
-											printf("TITLE: %s\n", ID3Data.title);
-											printf("ARTIST: %s\n", ID3Data.artist);
-											printf("ALBUM: %s\n", ID3Data.album);
-											printf("TRACK NUM: %s\n", ID3Data.trackNum);
-											printf("YEAR: %s\n", ID3Data.year);
+					printf("\nSONG INFO\n");
+					printf("TITLE: %s\n", ID3Data.title);
+					printf("ARTIST: %s\n", ID3Data.artist);
+					printf("ALBUM: %s\n", ID3Data.album);
+					printf("TRACK NUM: %s\n", ID3Data.trackNum);
+					printf("YEAR: %s\n", ID3Data.year);
 				}
 
 				while (true) {
-
 
 #ifdef DEBUG_PRINTF_INFO
 					printf("\n[APP] Frame %d decoding started.\n", i);
 #endif
 
 					mp3_decoder_result_t res = MP3GetDecodedFrame(buffer,
-							MP3_DECODED_BUFFER_SIZE, &sampleCount, 0);
+					MP3_DECODED_BUFFER_SIZE, &sampleCount, 0);
 
 					if (res == MP3DECODER_NO_ERROR) {
 						MP3GetLastFrameData(&frameData);
-						wrote = storeWavInSd(&frameData, buffer); //TODO ver por que no anda
+						//wrote = storeWavInSd(&frameData, buffer); //TODO ver por que no anda
 
 						i++;
-						if(i == 1000){
-							i++;
-							i--;
-						}
+
 #ifdef DEBUG_PRINTF_INFO
 						printf("[APP] Wrote %d bytes to wav.\n", wrote);
 
@@ -114,15 +117,13 @@ int main(void) {
 						nextFrameFlag = false;
 #endif
 
-					}
-					else if (res == MP3DECODER_FILE_END) {
+					} else if (res == MP3DECODER_FILE_END) {
 #ifdef DEBUG_PRINTF_APP
 						printf("[APP] FILE ENDED. Decoded %d frames.\n", i - 1);
 #endif
-						finished=true;
+						finished = true;
 						break;
-					}
-					else {
+					} else {
 						int huevo = 0;
 						huevo++;
 					}
@@ -132,14 +133,16 @@ int main(void) {
 	}
 	close_file_wav();
 //REMEMBER TO CLOSE FILES
-	while(1){};
+	while (1) {
+	};
 	return 0;
 }
 
 char* concat(const char *s1, const char *s2) {
 	char *result = malloc(strlen(s1) + strlen(s2) + 1); // +1 for the null-terminator
-	// in real code you would check for errors in malloc here
-	strcpy(result, s1);
-	strcat(result, s2);
+	if (result) {
+		strcpy(result, s1);
+		strcat(result, s2);
+	}
 	return result;
 }
