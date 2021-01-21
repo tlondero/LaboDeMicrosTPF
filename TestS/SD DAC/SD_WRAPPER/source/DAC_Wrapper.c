@@ -121,7 +121,6 @@ void DAC_Wrapper_Set_Data_Array(void *newDataArray, uint32_t newSizeOf) {
 void DAC_Wrapper_Clear_Data_Array(void) {
 	g_dacDataArray = (uint16_t*) nullData;
 	backUpOn = false;
-	onePeriodDone = false;
 	sizeOf = DAC_USED_BUFFER_SIZE;
 }
 

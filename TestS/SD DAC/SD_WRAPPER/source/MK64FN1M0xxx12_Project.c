@@ -23,6 +23,8 @@
 
 char* concat(const char *s1, const char *s2);
 
+void volume(void *buf, uint32_t size, uint16_t vol);
+
 void cbackin(void) {
 #ifdef DEBUG_PRINTF_APP
 	printf("[App] SD Card inserted.\r\n");
@@ -62,7 +64,7 @@ int main(void) {
 	while (!finished) {
 		if (getJustIn()) {
 
-			if (MP3LoadFile("test_a.mp3", "test_a.wav")) {
+			if (MP3LoadFile("test_tomi.mp3", "test_tomi.wav")) {
 				int i = 0;
 				if (MP3GetTagData(&ID3Data)) {
 					printf("\nSONG INFO\n");
@@ -97,10 +99,11 @@ int main(void) {
 							MP3_Set_Sample_Rate(sr_);
 						}
 
-						if(DAC_Wrapper_Is_Transfer_Done() || i<=1){
-							DAC_Wrapper_Clear_Transfer_Done();
+						//volume(&buffer, frameData.sampleCount, 1000);
+
+						if (DAC_Wrapper_Is_Transfer_Done() || i < 1) {
 							DAC_Wrapper_Set_Data_Array(&buffer,
-								frameData.sampleRate);
+									frameData.sampleCount);
 						}
 
 						i++;
@@ -155,4 +158,12 @@ char* concat(const char *s1, const char *s2) {
 	strcpy(result, s1);
 	strcat(result, s2);
 	return result;
+}
+
+void volume(void *buf, uint32_t size, uint16_t vol) {
+	uint32_t *buf_ = (uint32_t*) buf;
+	uint32_t i;
+	for (i = 0; i < size; i++) {
+		buf_[i] = buf_[i] * vol;
+	}
 }
