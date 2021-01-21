@@ -27,7 +27,7 @@
 #define PDB_DAC_INTERVAL_VALUE 		PDB_COUNT
 #define DAC_BASEADDR           		DAC0
 #define DMAMUX_BASEADDR        		DMAMUX
-#define DMA_CHANNEL            		0U
+#define DMA_CHANNEL            		1U
 #define DMA_DAC_SOURCE         		45U
 #define DMA_BASEADDR           		DMA0
 #define DAC_DATA_REG_ADDR           0x400cc000U
@@ -133,72 +133,72 @@ void DAC_Wrapper_Loop(bool status) {
 	loopBuffer = status;
 }
 
-void MP3_Set_Sample_Rate(mp3_sample_rate_t sr) {
+void MP3_Set_Sample_Rate(uint16_t sr) {
 	uint32_t mod_val;
 	pdb_divider_multiplication_factor_t mult_fact;
 	pdb_prescaler_divider_t prescaler;
 
 	switch (sr) {
-	case kMP3_8000Hz:
+	case 8000:
 		mod_val = 1875;
 		mult_fact = kPDB_DividerMultiplicationFactor1;
 		prescaler = kPDB_PrescalerDivider4;
 		break;
-	case kMP3_11025Hz:
+	case 11025:
 		mod_val = 2721;
 		mult_fact = kPDB_DividerMultiplicationFactor1;
 		prescaler = kPDB_PrescalerDivider2;
 		break;
-	case kMP3_12000Hz:
+	case 12000:
 		mod_val = 125;
 		mult_fact = kPDB_DividerMultiplicationFactor40;
 		prescaler = kPDB_PrescalerDivider1;
 		break;
-	case kMP3_16000Hz:
+	case 16000:
 		mod_val = 375;
 		mult_fact = kPDB_DividerMultiplicationFactor10;
 		prescaler = kPDB_PrescalerDivider1;
 		break;
-	case kMP3_22050Hz:
+	case 22050:
 		mod_val = 2721;
 		mult_fact = kPDB_DividerMultiplicationFactor1;
 		prescaler = kPDB_PrescalerDivider1;
 		break;
-	case kMP3_24000Hz:
+	case 24000:
 		mod_val = 125;
 		mult_fact = kPDB_DividerMultiplicationFactor20;
 		prescaler = kPDB_PrescalerDivider1;
 		break;
-	case kMP3_32000Hz:
+	case 32000:
 		mod_val = 1875;
 		mult_fact = kPDB_DividerMultiplicationFactor1;
 		prescaler = kPDB_PrescalerDivider1;
 		break;
-	case kMP3_44100Hz:
+	case 44100:
 		mod_val = 17;
 		mult_fact = kPDB_DividerMultiplicationFactor40;
 		prescaler = kPDB_PrescalerDivider2;
 		break;
-	case kMP3_48000Hz:
+	case 48000:
 		mod_val = 125;
 		mult_fact = kPDB_DividerMultiplicationFactor10;
 		prescaler = kPDB_PrescalerDivider1;
 		break;
 	default:
-		mod_val = 8;
-		mult_fact = kPDB_DividerMultiplicationFactor20;
-		prescaler = kPDB_PrescalerDivider8;
+		mod_val = 17;
+		mult_fact = kPDB_DividerMultiplicationFactor40;
+		prescaler = kPDB_PrescalerDivider2;
 		break;
 	}
 
 	DAC_Wrapper_PDB_Config(mod_val, mult_fact, prescaler);
 }
 
-bool DAC_Wrapper_Is_Transfer_Done(void){
+bool DAC_Wrapper_Is_Transfer_Done(void) {
 	return onePeriodDone;
 }
 
-void DAC_Wrapper_Clear_Transfer_Done(void){
+void DAC_Wrapper_Clear_Transfer_Done(void) {
 	onePeriodDone = false;
 }
 

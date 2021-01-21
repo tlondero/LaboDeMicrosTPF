@@ -19,6 +19,8 @@
 #include "mp3Decoder.h"
 #include "ff.h"
 
+#include "DAC_Wrapper.h"
+
 char* concat(const char *s1, const char *s2);
 
 void cbackin(void) {
@@ -42,7 +44,6 @@ mp3_decoder_tag_data_t ID3Data;
 
 int main(void) {
 	uint16_t sampleCount;
-	uint32_t wrote = 0;
 #ifdef DEBUG_PRINTF_INFO
 	uint32_t sr = 0;
 #endif
@@ -57,40 +58,53 @@ int main(void) {
 #endif
 	SDWraperInit(cbackin, cbackout);
 /////////////////////////////////////////////////////////////
-	bool finished=false;
+	bool finished = false;
 	while (!finished) {
 		if (getJustIn()) {
 
 			if (MP3LoadFile("test_a.mp3", "test_a.wav")) {
 				int i = 0;
 				if (MP3GetTagData(&ID3Data)) {
-											printf("\nSONG INFO\n");
-											printf("TITLE: %s\n", ID3Data.title);
-											printf("ARTIST: %s\n", ID3Data.artist);
-											printf("ALBUM: %s\n", ID3Data.album);
-											printf("TRACK NUM: %s\n", ID3Data.trackNum);
-											printf("YEAR: %s\n", ID3Data.year);
+					printf("\nSONG INFO\n");
+					printf("TITLE: %s\n", ID3Data.title);
+					printf("ARTIST: %s\n", ID3Data.artist);
+					printf("ALBUM: %s\n", ID3Data.album);
+					printf("TRACK NUM: %s\n", ID3Data.trackNum);
+					printf("YEAR: %s\n", ID3Data.year);
 				}
 
-				while (true) {
+				DAC_Wrapper_Init();
+				DAC_Wrapper_Loop(false);
+				DAC_Wrapper_Start_Trigger();
 
+				uint16_t sr_ = 44100;
+				MP3_Set_Sample_Rate(sr_);
+
+				while (true) {
 
 #ifdef DEBUG_PRINTF_INFO
 					printf("\n[APP] Frame %d decoding started.\n", i);
 #endif
 
 					mp3_decoder_result_t res = MP3GetDecodedFrame(buffer,
-							MP3_DECODED_BUFFER_SIZE, &sampleCount, 0);
+					MP3_DECODED_BUFFER_SIZE, &sampleCount, 0);
 
 					if (res == MP3DECODER_NO_ERROR) {
 						MP3GetLastFrameData(&frameData);
-						wrote = storeWavInSd(&frameData, buffer); //TODO ver por que no anda
+
+						if (sr_ != frameData.sampleRate) {
+							sr_ = frameData.sampleRate;
+							MP3_Set_Sample_Rate(sr_);
+						}
+
+						if(DAC_Wrapper_Is_Transfer_Done() || i<=1){
+							DAC_Wrapper_Clear_Transfer_Done();
+							DAC_Wrapper_Set_Data_Array(&buffer,
+								frameData.sampleRate);
+						}
 
 						i++;
-						if(i == 1000){
-							i++;
-							i--;
-						}
+
 #ifdef DEBUG_PRINTF_INFO
 						printf("[APP] Wrote %d bytes to wav.\n", wrote);
 
@@ -114,15 +128,13 @@ int main(void) {
 						nextFrameFlag = false;
 #endif
 
-					}
-					else if (res == MP3DECODER_FILE_END) {
+					} else if (res == MP3DECODER_FILE_END) {
 #ifdef DEBUG_PRINTF_APP
 						printf("[APP] FILE ENDED. Decoded %d frames.\n", i - 1);
 #endif
-						finished=true;
+						finished = true;
 						break;
-					}
-					else {
+					} else {
 						int huevo = 0;
 						huevo++;
 					}
@@ -132,7 +144,8 @@ int main(void) {
 	}
 	close_file_wav();
 //REMEMBER TO CLOSE FILES
-	while(1){};
+	while (1) {
+	};
 	return 0;
 }
 
