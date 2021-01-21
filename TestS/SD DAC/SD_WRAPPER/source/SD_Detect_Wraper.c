@@ -11,6 +11,7 @@
 
 #include "fsl_sd_disk.h"
 #include "fsl_common.h"
+#include "debug_ifdefs.h"
 #include "fsl_pit.h"
 #include "fsl_sysmpu.h"
 #include "fsl_sd.h"
@@ -35,6 +36,7 @@ void interruptRoutine(void); //Interrupt
 /*******************************************************************************
  * VARIABLE DECLARATION WITH FILE SCOPE
  ******************************************************************************/
+extern bool nextFrameFlag;
 
 static bool inserted_flag=false;
 static bool removed_flag=false;
@@ -54,7 +56,7 @@ static cback extractedCback;
  * FUNCTION DEFINITIONS WITH GLOBAL SCOPE
  ******************************************************************************/
 bool SDWraperInit(cback inserted_callback, cback extracted_callback){
-	SYSMPU_Enable(SYSMPU, false);//Desactiva memory protection unit
+	SYSMPU_Enable(SYSMPU, false);
 		//////////////////////////////////////////////////////////////
 		//         				PIT CONFIGURATION
 		//////////////////////////////////////////////////////////////
@@ -74,6 +76,21 @@ bool SDWraperInit(cback inserted_callback, cback extracted_callback){
 		EnableIRQ(PIT0_IRQn);
 
 		PIT_StartTimer(PIT, kPIT_Chnl_0);
+
+#ifdef DEBUG_FRAME_DELAY
+
+		/* Set timer period for channel 1 */
+		PIT_SetTimerPeriod(PIT, kPIT_Chnl_1,
+				USEC_TO_COUNT(2500000U, CLOCK_GetFreq(kCLOCK_BusClk)));
+
+		/* Enable timer interrupts for channel 1 */
+		PIT_EnableInterrupts(PIT, kPIT_Chnl_1, kPIT_TimerInterruptEnable);
+
+		/* Enable at the NVIC */
+		EnableIRQ(PIT1_IRQn);
+
+		PIT_StartTimer(PIT, kPIT_Chnl_1);
+#endif
 
 		//////////////////////////////////////////////////////////////
 		//						SD CONFIG 						    //
@@ -128,11 +145,12 @@ void interruptRoutine(void){
 		{
 			error = FR_DISK_ERR;
 		}
-
 		if ((card->usrParam.cd->cardDetected() == true)
 				&& (old_status != kSD_Inserted)) {
+
 			SDMMC_OSADelay(card->usrParam.cd->cdDebounce_ms);
 			if (card->usrParam.cd->cardDetected() == true) {
+				SD_SetCardPower(&g_sd, true);
 				if (f_mount(&g_fileSystem, driverNumberBuffer, 0U)) {
 					error = FR_DISK_ERR;
 							}
@@ -156,6 +174,7 @@ void interruptRoutine(void){
 				&& (old_status != kSD_Removed)) {
 			old_status = kSD_Removed;
 			removed_flag=true;
+			SD_SetCardPower(&g_sd, false);
 			inserted_flag=false;
 			if(extractedCback){
 				extractedCback();
@@ -179,3 +198,17 @@ void PIT0_IRQHandler(void) {
 	__DSB();
 
 }
+#ifdef DEBUG_FRAME_DELAY
+void PIT1_IRQHandler(void) {
+	/* Clear interrupt flag.*/
+	PIT_ClearStatusFlags(PIT, kPIT_Chnl_1, kPIT_TimerFlag);
+
+	nextFrameFlag = true;
+	/* Added for, and affects, all PIT handlers. For CPU clock which is much larger than the IP bus clock,
+	 * CPU can run out of the interrupt handler before the interrupt flag being cleared, resulting in the
+	 * CPU's entering the handler again and again. Adding DSB can prevent the issue from happening.
+	 */
+	__DSB();
+
+}
+#endif
