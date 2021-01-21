@@ -244,7 +244,6 @@ typedef struct {
 
 /* File information structure (FILINFO) */
 
-
 typedef struct {
 	FSIZE_t	fsize;			/* File size */
 	WORD	fdate;			/* Modified date */
