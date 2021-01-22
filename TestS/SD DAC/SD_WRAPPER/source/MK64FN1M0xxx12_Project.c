@@ -44,8 +44,8 @@ void cbackout(void) {
 bool nextFrameFlag = false;
 #endif
 
-static short buffer_work[MP3_DECODED_BUFFER_SIZE];
-static short buffer_load[MP3_DECODED_BUFFER_SIZE];
+static short buffer_1[MP3_DECODED_BUFFER_SIZE];
+static short buffer_2[MP3_DECODED_BUFFER_SIZE];
 
 mp3_decoder_frame_data_t frameData;
 mp3_decoder_tag_data_t ID3Data;
@@ -67,13 +67,11 @@ int main(void) {
 	SDWraperInit(cbackin, cbackout);
 /////////////////////////////////////////////////////////////
 	bool finished = false;
-	short min = 1;
-	short max = 1;
 	while (!finished) {
 		if (getJustIn()) {
 
-			//if (MP3LoadFile("test_500.mp3", "test_500.wav")) {
-			if (MP3LoadFile("test_tomi.mp3", "test_tomi.wav")) {
+			if (MP3LoadFile("test_500.mp3", "test_500.wav")) {
+				//if (MP3LoadFile("test_tomi.mp3", "test_tomi.wav")) {
 				int i = 0;
 				if (MP3GetTagData(&ID3Data)) {
 					printf("\nSONG INFO\n");
@@ -89,14 +87,22 @@ int main(void) {
 				DAC_Wrapper_Start_Trigger();
 
 				uint16_t sr_ = 44100;
-				MP3_Set_Sample_Rate(sr_);
+				uint8_t ch_ = 2;
+				MP3_Set_Sample_Rate(sr_, ch_);
 
-				mp3_decoder_result_t res_work = MP3GetDecodedFrame(buffer_work,
+//				DAC_Wrapper_PDB_Config(63, kPDB_DividerMultiplicationFactor10,
+//						kPDB_PrescalerDivider1); //67
+
+				mp3_decoder_result_t res_1 = MP3GetDecodedFrame(buffer_1,
 				MP3_DECODED_BUFFER_SIZE, &sampleCount, 0);
-				mp3_decoder_result_t res_load = MP3GetDecodedFrame(buffer_load,
-				MP3_DECODED_BUFFER_SIZE, &sampleCount, 0);
+
+				mp3_decoder_result_t res_2; // = MP3GetDecodedFrame(buffer_2,MP3_DECODED_BUFFER_SIZE, &sampleCount, 0);
 
 				bool sendWork = true;
+
+				bool using_buffer_1 = true;
+
+				printf("\nHolu\n");
 
 				while (true) {
 
@@ -104,45 +110,66 @@ int main(void) {
 					printf("\n[APP] Frame %d decoding started.\n", i);
 #endif
 
-					if (res_work == MP3DECODER_NO_ERROR) {
+					if (res_1 == MP3DECODER_NO_ERROR) {
 
-						if (DAC_Wrapper_Is_Transfer_Done()) {
+						if (DAC_Wrapper_Is_Transfer_Done() || i == 0) {
 
-							res_work = res_load;
+//							bool allNegative_w = true;
+//							bool allNegative_l = true;
+//
+//							uint16_t j;
+//							for (j = 0; j < frameData.sampleCount; j++) {
+//								buffer_work[j] = (uint16_t) ((buffer_load[j]
+//										- MP3_MIN_VALUE) * MAX_DAC / MP3_GAP);
+//								//buffer_work[j] = buffer_load[j];
+//								if (buffer_work[j] >= 0) {
+//									allNegative_w = false;
+//								}
+//								if (buffer_load[j] >= 0) {
+//									allNegative_l = false;
+//								}
+//							}
+//
+//							if (allNegative_w) {
+//								uint8_t uebo = 0;
+//								uebo++;
+//							}
+//							if (allNegative_l) {
+//								uint8_t uebo = 0;
+//								uebo++;
+//							}
+//							uint16_t j;
+//
+//							sendWork = true;
+//						}
+//
+//						if (sendWork) {
 
 							MP3GetLastFrameData(&frameData);
 
-							uint16_t j;
-							for (j = 0; j < frameData.sampleCount; j++) {
-								buffer_work[j] = (uint16_t) ((buffer_load[j]
-										- MP3_MIN_VALUE) * MAX_DAC / MP3_GAP);
-//								buffer_work[j] = buffer_load[j];
-								if (max < buffer_load[j]) {
-									max = buffer_load[j];
-								}
-								if (min > buffer_load[j]) {
-									min = buffer_load[j];
-								}
-							}
-
-							res_load = MP3GetDecodedFrame(buffer_load,
-							MP3_DECODED_BUFFER_SIZE, &sampleCount, 0);
-
-							sendWork = true;
-						}
-
-						if (sendWork) {
-
-							MP3GetLastFrameData(&frameData);
-
-							if (sr_ != frameData.sampleRate) {
+							//No debería cambiar el sample rate entre frame y frame
+							//Pero si lo hace...
+							if ((sr_ != frameData.sampleRate)
+									|| (ch_ != frameData.channelCount)) {
 								sr_ = frameData.sampleRate;
-								MP3_Set_Sample_Rate(sr_);
+								ch_ = frameData.channelCount;
+								MP3_Set_Sample_Rate(sr_, ch_);
 							}
 
-							DAC_Wrapper_Set_Data_Array(&buffer_work,
-									frameData.sampleCount);
-							sendWork = false;
+							if (using_buffer_1) {
+								DAC_Wrapper_Set_Data_Array(&buffer_1,
+										frameData.sampleCount);
+								res_1 = MP3GetDecodedFrame(buffer_2,
+								MP3_DECODED_BUFFER_SIZE, &sampleCount, 0);
+							} else {
+								DAC_Wrapper_Set_Data_Array(&buffer_2,
+										frameData.sampleCount);
+								res_1 = MP3GetDecodedFrame(buffer_1,
+								MP3_DECODED_BUFFER_SIZE, &sampleCount, 0);
+							}
+
+							using_buffer_1 = !using_buffer_1;
+							//sendWork = false;
 
 							i++;
 						}
@@ -167,9 +194,9 @@ int main(void) {
 						nextFrameFlag = false;
 #endif
 
-					} else if (res_work == MP3DECODER_FILE_END) {
+					} else if (res_1 == MP3DECODER_FILE_END) {
 #ifdef DEBUG_PRINTF_APP
-				printf("[APP] FILE ENDED. Decoded %d frames.\n", i - 1);
+							printf("[APP] FILE ENDED. Decoded %d frames.\n", i - 1);
 #endif
 						finished = true;
 						break;
@@ -183,11 +210,7 @@ int main(void) {
 	}
 	close_file_wav();
 //REMEMBER TO CLOSE FILES
-	printf("Hasta la proxima \n");
-	printf("max = %d \n", max);
-	printf("min = %d \n", min);
-	while (1) {
-	};
+	printf("\nHasta la proxima\n");
 	return 0;
 }
 

@@ -132,65 +132,126 @@ void DAC_Wrapper_Loop(bool status) {
 	loopBuffer = status;
 }
 
-void MP3_Set_Sample_Rate(uint16_t sr) {
+bool MP3_Set_Sample_Rate(uint16_t sr, uint8_t ch) {
+	bool ret = true;
 	uint32_t mod_val;
 	pdb_divider_multiplication_factor_t mult_fact;
 	pdb_prescaler_divider_t prescaler;
 
-	switch (sr) {
-	case 8000:
-		mod_val = 1875;
-		mult_fact = kPDB_DividerMultiplicationFactor1;
-		prescaler = kPDB_PrescalerDivider4;
-		break;
-	case 11025:
-		mod_val = 2721;
-		mult_fact = kPDB_DividerMultiplicationFactor1;
-		prescaler = kPDB_PrescalerDivider2;
-		break;
-	case 12000:
-		mod_val = 125;
-		mult_fact = kPDB_DividerMultiplicationFactor40;
-		prescaler = kPDB_PrescalerDivider1;
-		break;
-	case 16000:
-		mod_val = 375;
-		mult_fact = kPDB_DividerMultiplicationFactor10;
-		prescaler = kPDB_PrescalerDivider1;
-		break;
-	case 22050:
-		mod_val = 2721;
-		mult_fact = kPDB_DividerMultiplicationFactor1;
-		prescaler = kPDB_PrescalerDivider1;
-		break;
-	case 24000:
-		mod_val = 125;
-		mult_fact = kPDB_DividerMultiplicationFactor20;
-		prescaler = kPDB_PrescalerDivider1;
-		break;
-	case 32000:
-		mod_val = 1875;
-		mult_fact = kPDB_DividerMultiplicationFactor1;
-		prescaler = kPDB_PrescalerDivider1;
-		break;
-	case 44100:
-		mod_val = 17;
-		mult_fact = kPDB_DividerMultiplicationFactor40;
-		prescaler = kPDB_PrescalerDivider2;
-		break;
-	case 48000:
-		mod_val = 125;
-		mult_fact = kPDB_DividerMultiplicationFactor10;
-		prescaler = kPDB_PrescalerDivider1;
-		break;
-	default:
-		mod_val = 17;
-		mult_fact = kPDB_DividerMultiplicationFactor40;
-		prescaler = kPDB_PrescalerDivider2;
-		break;
+	if (ch == 1) {
+		switch (sr) {
+		case 8000:
+			mod_val = 1875;
+			mult_fact = kPDB_DividerMultiplicationFactor1;
+			prescaler = kPDB_PrescalerDivider4;
+			break;
+		case 11025:
+			mod_val = 2721;
+			mult_fact = kPDB_DividerMultiplicationFactor1;
+			prescaler = kPDB_PrescalerDivider2;
+			break;
+		case 12000:
+			mod_val = 125;
+			mult_fact = kPDB_DividerMultiplicationFactor40;
+			prescaler = kPDB_PrescalerDivider1;
+			break;
+		case 16000:
+			mod_val = 375;
+			mult_fact = kPDB_DividerMultiplicationFactor10;
+			prescaler = kPDB_PrescalerDivider1;
+			break;
+		case 22050:
+			mod_val = 2721;
+			mult_fact = kPDB_DividerMultiplicationFactor1;
+			prescaler = kPDB_PrescalerDivider1;
+			break;
+		case 24000:
+			mod_val = 125;
+			mult_fact = kPDB_DividerMultiplicationFactor20;
+			prescaler = kPDB_PrescalerDivider1;
+			break;
+		case 32000:
+			mod_val = 1875;
+			mult_fact = kPDB_DividerMultiplicationFactor1;
+			prescaler = kPDB_PrescalerDivider1;
+			break;
+		case 44100:
+			mod_val = 17;
+			mult_fact = kPDB_DividerMultiplicationFactor40;
+			prescaler = kPDB_PrescalerDivider2;
+			break;
+		case 48000:
+			mod_val = 125;
+			mult_fact = kPDB_DividerMultiplicationFactor10;
+			prescaler = kPDB_PrescalerDivider1;
+			break;
+		default:
+			mod_val = 17;
+			mult_fact = kPDB_DividerMultiplicationFactor40;
+			prescaler = kPDB_PrescalerDivider2;
+			ret = false;
+			break;
+		}
+	} else if (ch == 2) {
+		switch (sr) {
+		case 8000:
+			mod_val = 1875;
+			mult_fact = kPDB_DividerMultiplicationFactor1;
+			prescaler = kPDB_PrescalerDivider2;
+			break;
+		case 11025:
+			mod_val = 2721;
+			mult_fact = kPDB_DividerMultiplicationFactor1;
+			prescaler = kPDB_PrescalerDivider1;
+			break;
+		case 12000:
+			mod_val = 125;
+			mult_fact = kPDB_DividerMultiplicationFactor10;
+			prescaler = kPDB_PrescalerDivider2;
+			break;
+		case 16000:
+			mod_val = 1875;
+			mult_fact = kPDB_DividerMultiplicationFactor1;
+			prescaler = kPDB_PrescalerDivider1;
+			break;
+		case 22050:
+			mod_val = 85;
+			mult_fact = kPDB_DividerMultiplicationFactor1;
+			prescaler = kPDB_PrescalerDivider16;
+			break;
+		case 24000:
+			mod_val = 125;
+			mult_fact = kPDB_DividerMultiplicationFactor10;
+			prescaler = kPDB_PrescalerDivider1;
+			break;
+		case 32000:
+			mod_val = 937;
+			mult_fact = kPDB_DividerMultiplicationFactor1;
+			prescaler = kPDB_PrescalerDivider1;
+			break;
+		case 44100:
+			mod_val = 17;
+			mult_fact = kPDB_DividerMultiplicationFactor40;
+			prescaler = kPDB_PrescalerDivider1;
+			break;
+		case 48000:
+			mod_val = 625;
+			mult_fact = kPDB_DividerMultiplicationFactor1;
+			prescaler = kPDB_PrescalerDivider1;
+			break;
+		default:
+			mod_val = 17;
+			mult_fact = kPDB_DividerMultiplicationFactor40;
+			prescaler = kPDB_PrescalerDivider1;
+			ret = false;
+			break;
+		}
+	} else {
+		ret = false;
 	}
 
 	DAC_Wrapper_PDB_Config(mod_val, mult_fact, prescaler);
+	return ret;
 }
 
 bool DAC_Wrapper_Is_Transfer_Done(void) {
