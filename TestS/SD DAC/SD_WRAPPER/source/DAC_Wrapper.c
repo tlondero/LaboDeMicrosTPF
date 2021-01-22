@@ -297,21 +297,39 @@ bool transferDone, uint32_t tcds) {
 	/* Setup transfer */
 	g_index += DAC_DATL_COUNT;
 
-	if (backUpOn && (g_index > sizeOf)) {
-		g_dacDataArray = (uint16_t*) nullData;
-	}
+	bool endNow = false;
 
-	if (g_index == DAC_USED_BUFFER_SIZE) {
+//	if (backUpOn && (g_index >= sizeOf)) { //el tamaño del aray es menor al maximo y ya lo mostré all
+//		if (!loopBuffer) {
+//			endNow = true;	//sin loop quiero que se termine acá
+//		} else {
+//			g_dacDataArray = (uint16_t*) nullData;//con loop quiero que se rellene con ceros
+//		}
+//	}
+//
+//	if (endNow || (g_index == DAC_USED_BUFFER_SIZE)) {	//transmiti all
+//		g_index = 0U;
+//		if (backUpOn) {
+//			g_dacDataArray = (uint16_t*) backUp;//si hay loop agarro el back up
+//		}
+//		if (!loopBuffer && !noMoreClear) {	//si no hay loop y no limpie antes
+//			DAC_Wrapper_Clear_Data_Array();
+//			noMoreClear = true;
+//			onePeriodDone = true;
+//		}
+//
+//	}
+
+	if (g_index >= sizeOf) {		//all data send
 		g_index = 0U;
-		if (backUpOn) {
-			g_dacDataArray = (uint16_t*) backUp;
-		}
-		if (!loopBuffer && !noMoreClear) {
+		if (!loopBuffer && !noMoreClear) {	//no hay loop y no limpie el buffer
 			DAC_Wrapper_Clear_Data_Array();
 			noMoreClear = true;
 			onePeriodDone = true;
+		} else if (loopBuffer && backUpOn) {	//hay loop y cargo el back up
+			g_dacDataArray = (uint16_t*) backUp;
 		}
-
+		//si hay loop sigo en el mismo buffer (no toco nada)
 	}
 
 	EDMA_PrepareTransfer(&g_transferConfig, (void*) (g_dacDataArray + g_index),

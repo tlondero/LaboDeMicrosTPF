@@ -22,7 +22,7 @@
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
-#define DAC_USED_BUFFER_SIZE 		1024U
+#define DAC_USED_BUFFER_SIZE 		10240U
 
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
