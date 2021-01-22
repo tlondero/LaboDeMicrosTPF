@@ -28,18 +28,6 @@
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
 
-typedef enum _mp3_sample_rate {
-	kMP3_8000Hz,
-	kMP3_11025Hz,
-	kMP3_12000Hz,
-	kMP3_16000Hz,
-	kMP3_22050Hz,
-	kMP3_24000Hz,
-	kMP3_32000Hz,
-	kMP3_44100Hz,
-	kMP3_48000Hz
-} mp3_sample_rate_t;
-
 /*******************************************************************************
  * VARIABLE PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
@@ -62,7 +50,7 @@ void DAC_Wrapper_PDB_Config(uint32_t mod_val,
 		pdb_divider_multiplication_factor_t mult_fact,
 		pdb_prescaler_divider_t prescaler);
 
-void MP3_Set_Sample_Rate(mp3_sample_rate_t sr);
+bool MP3_Set_Sample_Rate(uint16_t sr, uint8_t ch);
 
 bool DAC_Wrapper_Is_Transfer_Done(void);
 

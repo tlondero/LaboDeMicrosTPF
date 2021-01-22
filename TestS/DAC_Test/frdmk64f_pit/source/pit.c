@@ -164,7 +164,8 @@ int main(void) {
 
 	uint8_t xd = 0;
 
-	DAC_Wrapper_Loop(false);
+	DAC_Wrapper_Loop(true);
+	DAC_Wrapper_Set_Data_Array(&sen1k, DAC_USED_BUFFER_SIZE);
 
 	while (true) {
 		/* Check whether occur interupt and toggle LED */
@@ -174,7 +175,6 @@ int main(void) {
 			if ((xd % 2) == 0) {
 				DAC_Wrapper_Set_Data_Array(&sen1k, DAC_USED_BUFFER_SIZE);
 			}
-			//printf("%d \n", xd);
 			xd++;
 		}
 	}

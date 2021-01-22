@@ -97,7 +97,7 @@ int main(void) {
 				//Por defecto ya está configurado así, solo lo explicito y ayuda
 				//si hay que cambiarlo mientras corre el codigo
 
-				printf("\nHolu\n");
+				printf("\nHolu");
 
 				while (true) {
 
@@ -107,7 +107,7 @@ int main(void) {
 
 					if (res == MP3DECODER_NO_ERROR) {
 
-						if (DAC_Wrapper_Is_Transfer_Done() || i == 0) {
+						if (DAC_Wrapper_Is_Transfer_Done() || i == 0) {		//Entro en la primera o cuando ya transmiti
 
 							MP3GetLastFrameData(&frameData);
 
@@ -120,35 +120,36 @@ int main(void) {
 								MP3_Set_Sample_Rate(sr_, ch_);
 							}
 
+							DAC_Wrapper_Clear_Transfer_Done();
+
+							//uint16_t* nullptr = NULL;
 							if (using_buffer_1) {
 								//Envio el buffer 1 al dac
 								DAC_Wrapper_Set_Data_Array(&buffer_1,
 										frameData.sampleCount);
+								DAC_Wrapper_Set_Next_Buffer(&buffer_2);
 
 								//Cargo el y normalizo el buffer 2
 								res = MP3GetDecodedFrame(buffer_2,
 								MP3_DECODED_BUFFER_SIZE, &sampleCount, 0);
 								uint16_t j;
 								for (j = 0; j < frameData.sampleCount; j++) {
-									buffer_2[j] =
-											(uint16_t) ((buffer_2[j]
-													- MP3_MIN_VALUE) * MAX_DAC
-													/ MP3_GAP);
+									buffer_2[j] = (uint16_t) ((buffer_2[j]
+											+ 100000) * 4095 / 200000);
 								}
 							} else {
 								//Envio el buffer 2 al dac
 								DAC_Wrapper_Set_Data_Array(&buffer_2,
 										frameData.sampleCount);
+								DAC_Wrapper_Set_Next_Buffer(&buffer_1);
 
 								//Cargo el y normalizo el buffer 1
 								res = MP3GetDecodedFrame(buffer_1,
 								MP3_DECODED_BUFFER_SIZE, &sampleCount, 0);
 								uint16_t j;
 								for (j = 0; j < frameData.sampleCount; j++) {
-									buffer_1[j] =
-											(uint16_t) ((buffer_1[j]
-													- MP3_MIN_VALUE) * MAX_DAC
-													/ MP3_GAP);
+									buffer_1[j] = (uint16_t) ((buffer_1[j]
+											+ 100000) * 4095 / 200000);
 								}
 							}
 

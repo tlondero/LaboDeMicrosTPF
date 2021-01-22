@@ -60,25 +60,29 @@ bool transferDone, uint32_t tcds);
 
 edma_handle_t g_EDMA_Handle;                             	//Edma handler
 
-edma_transfer_config_t g_transferConfig;                 	//Edma transfer config
+edma_transfer_config_t g_transferConfig;                 //Edma transfer config
 
-volatile uint32_t g_index = 0U; 							//Index of the g_dacDataArray array
+volatile uint32_t g_index = 0U; 			//Index of the g_dacDataArray array
 
-uint16_t (*g_dacDataArray);									//Array que va al dac
+uint16_t (*g_dacDataArray);								//Array que va al dac
 
-uint16_t (*backUp);											//Back up por si existen menos samples que el max. y loopBuffer = true
+uint16_t (*backUp);	//Back up por si existen menos samples que el max. y loopBuffer = true
 
-uint16_t nullData[DAC_USED_BUFFER_SIZE] = { 0U };			//Array vacio para enviar al dac
+uint16_t (*nextBuffer);	//Cuando cambio a un segundo buffer y necesito avisar de antemano
 
-bool loopBuffer = true;										//Determina si al finalizar un periodo se repite el buffer o no se manda nada mas
+bool nextBufferLoad = false;	//Muestra si hay un siguiente buffer
 
-bool noMoreClear = false;									//Evita clears inecesarios
+uint16_t nullData[DAC_USED_BUFFER_SIZE] = { 0U };//Array vacio para enviar al dac
 
-bool backUpOn = false;										//Determina si se esta usando back up o no
+bool loopBuffer = true;	//Determina si al finalizar un periodo se repite el buffer o no se manda nada mas
 
-bool onePeriodDone = false;									//Determina si se envio un peridodo del buffer
+bool nullArrayOn = true;
 
-uint32_t sizeOf = DAC_USED_BUFFER_SIZE;						//Cantidad de datos en el buffer
+bool backUpOn = false;				//Determina si se esta usando back up o no
+
+bool onePeriodDone = false;		//Determina si se envio un peridodo del buffer
+
+uint32_t sizeOf = DAC_USED_BUFFER_SIZE;			//Cantidad de datos en el buffer
 
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH GLOBAL SCOPE
@@ -109,12 +113,13 @@ void DAC_Wrapper_PDB_Config(uint32_t mod_val,
 }
 
 void DAC_Wrapper_Set_Data_Array(void *newDataArray, uint32_t newSizeOf) {
-	g_dacDataArray = (uint16_t*) newDataArray;
-	backUp = (uint16_t*) newDataArray;
 
-	//Cleaning registers
-	g_index = 0U;
-	noMoreClear = false;
+	if (!nextBufferLoad) {
+		g_dacDataArray = (uint16_t*) newDataArray;
+		backUp = (uint16_t*) newDataArray;
+		g_index = 0U;
+	}
+	nullArrayOn = false;
 	onePeriodDone = false;
 
 	if (newSizeOf < DAC_USED_BUFFER_SIZE) {
@@ -125,9 +130,20 @@ void DAC_Wrapper_Set_Data_Array(void *newDataArray, uint32_t newSizeOf) {
 	}
 }
 
+void DAC_Wrapper_Set_Next_Buffer(void *forcedBackUp) {
+	if (forcedBackUp == NULL) {
+		nextBuffer = (uint16_t*) nullData;
+		nextBufferLoad = false;
+	} else {
+		nextBuffer = (uint16_t*) forcedBackUp;
+		nextBufferLoad = true;
+	}
+}
+
 void DAC_Wrapper_Clear_Data_Array(void) {
 	g_dacDataArray = (uint16_t*) nullData;
 	backUpOn = false;
+	nullArrayOn = true;
 	sizeOf = DAC_USED_BUFFER_SIZE;
 }
 
@@ -365,13 +381,14 @@ bool transferDone, uint32_t tcds) {
 	/* Setup transfer */
 	g_index += DAC_DATL_COUNT;
 
-	bool endNow = false;
-
 	if (g_index >= sizeOf) {		//all data send
 		g_index = 0U;
-		if (!loopBuffer && !noMoreClear) {	//no hay loop y no limpie el buffer
-			DAC_Wrapper_Clear_Data_Array();
-			noMoreClear = true;
+		if (!loopBuffer && !nullArrayOn) {//no hay loop y no esta el array nulo
+			if (nextBufferLoad) {
+				g_dacDataArray = nextBuffer;
+			} else {
+				DAC_Wrapper_Clear_Data_Array();
+			}
 			onePeriodDone = true;
 		} else if (loopBuffer && backUpOn) {	//hay loop y cargo el back up
 			g_dacDataArray = (uint16_t*) backUp;
