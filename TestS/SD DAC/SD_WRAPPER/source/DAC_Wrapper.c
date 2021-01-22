@@ -18,7 +18,7 @@
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
-#define PDB_COUNT					0x39U		//0x21U
+#define PDB_COUNT					17
 
 #define PDB_BASEADDR         		PDB0
 #define PDB_MODULUS_VALUE      		PDB_COUNT
@@ -58,27 +58,27 @@ bool transferDone, uint32_t tcds);
  * VARIABLE DECLARATION WITH FILE SCOPE
  ******************************************************************************/
 
-edma_handle_t g_EDMA_Handle;                             //Edma handler
+edma_handle_t g_EDMA_Handle;                             	//Edma handler
 
-edma_transfer_config_t g_transferConfig;                 //Edma transfer config
+edma_transfer_config_t g_transferConfig;                 	//Edma transfer config
 
-volatile uint32_t g_index = 0U; //Index of the g_dacDataArray array
+volatile uint32_t g_index = 0U; 							//Index of the g_dacDataArray array
 
-uint16_t (*g_dacDataArray);
+uint16_t (*g_dacDataArray);									//Array que va al dac
 
-uint16_t (*backUp);
+uint16_t (*backUp);											//Back up por si existen menos samples que el max. y loopBuffer = true
 
-uint16_t nullData[DAC_USED_BUFFER_SIZE] = { 0U };
+uint16_t nullData[DAC_USED_BUFFER_SIZE] = { 0U };			//Array vacio para enviar al dac
 
-bool loopBuffer = true;
+bool loopBuffer = true;										//Determina si al finalizar un periodo se repite el buffer o no se manda nada mas
 
-bool noMoreClear = false;
+bool noMoreClear = false;									//Evita clears inecesarios
 
-bool backUpOn = false;
+bool backUpOn = false;										//Determina si se esta usando back up o no
 
-bool onePeriodDone = false;
+bool onePeriodDone = false;									//Determina si se envio un peridodo del buffer
 
-uint32_t sizeOf = DAC_USED_BUFFER_SIZE;
+uint32_t sizeOf = DAC_USED_BUFFER_SIZE;						//Cantidad de datos en el buffer
 
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH GLOBAL SCOPE
@@ -89,11 +89,15 @@ void DAC_Wrapper_Init(void) {
 
 	//Initialize DMAMUX
 	DMAMUX_Configuration();
+
 	//Initialize EDMA
 	EDMA_Configuration();
+
 	//Initialize the HW trigger source
-	PDB_Configuration(PDB_COUNT, kPDB_DividerMultiplicationFactor1,
+	//44100Hz mp3 default config
+	PDB_Configuration(PDB_COUNT, kPDB_DividerMultiplicationFactor40,
 			kPDB_PrescalerDivider1);
+
 	//Initialize DAC
 	DAC_Configuration();
 }
@@ -106,10 +110,13 @@ void DAC_Wrapper_PDB_Config(uint32_t mod_val,
 
 void DAC_Wrapper_Set_Data_Array(void *newDataArray, uint32_t newSizeOf) {
 	g_dacDataArray = (uint16_t*) newDataArray;
+	backUp = (uint16_t*) newDataArray;
+
+	//Cleaning registers
 	g_index = 0U;
 	noMoreClear = false;
 	onePeriodDone = false;
-	backUp = (uint16_t*) newDataArray;
+
 	if (newSizeOf < DAC_USED_BUFFER_SIZE) {
 		sizeOf = newSizeOf;
 		backUpOn = true;
@@ -138,7 +145,7 @@ bool MP3_Set_Sample_Rate(uint16_t sr, uint8_t ch) {
 	pdb_divider_multiplication_factor_t mult_fact;
 	pdb_prescaler_divider_t prescaler;
 
-	if (ch == 1) {
+	if (ch == 1) {		//Mono
 		switch (sr) {
 		case 8000:
 			mod_val = 1875;
@@ -192,7 +199,7 @@ bool MP3_Set_Sample_Rate(uint16_t sr, uint8_t ch) {
 			ret = false;
 			break;
 		}
-	} else if (ch == 2) {
+	} else if (ch == 2) {		//Stereo
 		switch (sr) {
 		case 8000:
 			mod_val = 1875;
@@ -359,27 +366,6 @@ bool transferDone, uint32_t tcds) {
 	g_index += DAC_DATL_COUNT;
 
 	bool endNow = false;
-
-//	if (backUpOn && (g_index >= sizeOf)) { //el tamaño del aray es menor al maximo y ya lo mostré all
-//		if (!loopBuffer) {
-//			endNow = true;	//sin loop quiero que se termine acá
-//		} else {
-//			g_dacDataArray = (uint16_t*) nullData;//con loop quiero que se rellene con ceros
-//		}
-//	}
-//
-//	if (endNow || (g_index == DAC_USED_BUFFER_SIZE)) {	//transmiti all
-//		g_index = 0U;
-//		if (backUpOn) {
-//			g_dacDataArray = (uint16_t*) backUp;//si hay loop agarro el back up
-//		}
-//		if (!loopBuffer && !noMoreClear) {	//si no hay loop y no limpie antes
-//			DAC_Wrapper_Clear_Data_Array();
-//			noMoreClear = true;
-//			onePeriodDone = true;
-//		}
-//
-//	}
 
 	if (g_index >= sizeOf) {		//all data send
 		g_index = 0U;
