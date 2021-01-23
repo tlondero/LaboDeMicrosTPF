@@ -70,7 +70,7 @@ uint16_t (*backUp);											//Back up por si existen menos samples que el max.
 
 uint16_t nullData[DAC_USED_BUFFER_SIZE] = { 0U };			//Array vacio para enviar al dac
 
-bool loopBuffer = true;										//Determina si al finalizar un periodo se repite el buffer o no se manda nada mas
+bool loopBufferActive = true;										//Determina si al finalizar un periodo se repite el buffer o no se manda nada mas
 
 bool noMoreClear = false;									//Evita clears inecesarios
 
@@ -142,7 +142,7 @@ void DAC_Wrapper_Start_Trigger(void) {
 }
 
 void DAC_Wrapper_Loop(bool status) {
-	loopBuffer = status;
+	loopBufferActive = status;
 }
 
 bool MP3_Set_Sample_Rate(uint16_t sr, uint8_t ch) {
@@ -375,11 +375,11 @@ bool transferDone, uint32_t tcds) {
 
 	if (g_index >= sizeOf) {		//all data send
 		g_index = 0U;
-		if (!loopBuffer && !nullArrayOn) {	//no hay loop y no esta el array nulo
+		if (!loopBufferActive && !nullArrayOn) {	//no hay loop y no esta el array nulo
 			DAC_Wrapper_Clear_Data_Array();
 			//noMoreClear = true;
 			onePeriodDone = true;
-		} else if (loopBuffer && backUpOn) {	//hay loop y cargo el back up
+		} else if (loopBufferActive && backUpOn) {	//hay loop y cargo el back up
 			g_dacDataArray = (uint16_t*) backUp;
 		}
 		//si hay loop sigo en el mismo buffer (no toco nada)

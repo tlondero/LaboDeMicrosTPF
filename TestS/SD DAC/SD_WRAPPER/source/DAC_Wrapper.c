@@ -66,19 +66,15 @@ volatile uint32_t g_index = 0U; 			//Index of the g_dacDataArray array
 
 uint16_t (*g_dacDataArray);								//Array que va al dac
 
-uint16_t (*backUp);	//Back up por si existen menos samples que el max. y loopBuffer = true
-
 uint16_t (*nextBuffer);	//Cuando cambio a un segundo buffer y necesito avisar de antemano
 
 bool nextBufferLoad = false;	//Muestra si hay un siguiente buffer
 
 uint16_t nullData[DAC_USED_BUFFER_SIZE] = { 0U };//Array vacio para enviar al dac
 
-bool loopBuffer = true;	//Determina si al finalizar un periodo se repite el buffer o no se manda nada mas
+bool loopBufferActive = true;//Determina si al finalizar un periodo se repite el buffer o no se manda nada mas
 
 bool nullArrayOn = true;
-
-bool backUpOn = false;				//Determina si se esta usando back up o no
 
 bool onePeriodDone = false;		//Determina si se envio un peridodo del buffer
 
@@ -116,18 +112,11 @@ void DAC_Wrapper_Set_Data_Array(void *newDataArray, uint32_t newSizeOf) {
 
 	if (!nextBufferLoad) {
 		g_dacDataArray = (uint16_t*) newDataArray;
-		backUp = (uint16_t*) newDataArray;
 		g_index = 0U;
 	}
 	nullArrayOn = false;
 	onePeriodDone = false;
-
-	if (newSizeOf < DAC_USED_BUFFER_SIZE) {
-		sizeOf = newSizeOf;
-		backUpOn = true;
-	} else {
-		backUpOn = false;
-	}
+	sizeOf = newSizeOf;
 }
 
 void DAC_Wrapper_Set_Next_Buffer(void *forcedBackUp) {
@@ -142,7 +131,6 @@ void DAC_Wrapper_Set_Next_Buffer(void *forcedBackUp) {
 
 void DAC_Wrapper_Clear_Data_Array(void) {
 	g_dacDataArray = (uint16_t*) nullData;
-	backUpOn = false;
 	nullArrayOn = true;
 	sizeOf = DAC_USED_BUFFER_SIZE;
 }
@@ -152,7 +140,7 @@ void DAC_Wrapper_Start_Trigger(void) {
 }
 
 void DAC_Wrapper_Loop(bool status) {
-	loopBuffer = status;
+	loopBufferActive = status;
 }
 
 bool MP3_Set_Sample_Rate(uint16_t sr, uint8_t ch) {
@@ -161,7 +149,8 @@ bool MP3_Set_Sample_Rate(uint16_t sr, uint8_t ch) {
 	pdb_divider_multiplication_factor_t mult_fact;
 	pdb_prescaler_divider_t prescaler;
 
-	if (ch == 1) {		//Mono
+	switch (ch) {		//Mono
+	case (1):
 		switch (sr) {
 		case 8000:
 			mod_val = 1875;
@@ -199,7 +188,7 @@ bool MP3_Set_Sample_Rate(uint16_t sr, uint8_t ch) {
 			prescaler = kPDB_PrescalerDivider1;
 			break;
 		case 44100:
-			mod_val = 17;
+			mod_val = 16;
 			mult_fact = kPDB_DividerMultiplicationFactor40;
 			prescaler = kPDB_PrescalerDivider2;
 			break;
@@ -215,7 +204,8 @@ bool MP3_Set_Sample_Rate(uint16_t sr, uint8_t ch) {
 			ret = false;
 			break;
 		}
-	} else if (ch == 2) {		//Stereo
+		break;
+	case (2):		//Stereo
 		switch (sr) {
 		case 8000:
 			mod_val = 1875;
@@ -253,7 +243,7 @@ bool MP3_Set_Sample_Rate(uint16_t sr, uint8_t ch) {
 			prescaler = kPDB_PrescalerDivider1;
 			break;
 		case 44100:
-			mod_val = 17;
+			mod_val = 16;
 			mult_fact = kPDB_DividerMultiplicationFactor40;
 			prescaler = kPDB_PrescalerDivider1;
 			break;
@@ -269,8 +259,10 @@ bool MP3_Set_Sample_Rate(uint16_t sr, uint8_t ch) {
 			ret = false;
 			break;
 		}
-	} else {
+		break;
+	default:
 		ret = false;
+		break;
 	}
 
 	DAC_Wrapper_PDB_Config(mod_val, mult_fact, prescaler);
@@ -383,15 +375,13 @@ bool transferDone, uint32_t tcds) {
 
 	if (g_index >= sizeOf) {		//all data send
 		g_index = 0U;
-		if (!loopBuffer && !nullArrayOn) {//no hay loop y no esta el array nulo
+		if (!loopBufferActive && !nullArrayOn) {//Loop apagado y no limpie nunca (no hay array nulo en buffer)
 			if (nextBufferLoad) {
 				g_dacDataArray = nextBuffer;
 			} else {
 				DAC_Wrapper_Clear_Data_Array();
 			}
 			onePeriodDone = true;
-		} else if (loopBuffer && backUpOn) {	//hay loop y cargo el back up
-			g_dacDataArray = (uint16_t*) backUp;
 		}
 		//si hay loop sigo en el mismo buffer (no toco nada)
 	}
@@ -400,7 +390,8 @@ bool transferDone, uint32_t tcds) {
 			sizeof(uint16_t), (void*) DAC_DATA_REG_ADDR, sizeof(uint16_t),
 			DAC_DATL_COUNT * sizeof(uint16_t),
 			DAC_DATL_COUNT * sizeof(uint16_t), kEDMA_MemoryToMemory);
-	EDMA_SetTransferConfig(DMA_BASEADDR, DMA_CHANNEL, &g_transferConfig, NULL);
+	EDMA_SetTransferConfig(DMA_BASEADDR, DMA_CHANNEL, &g_transferConfig,
+	NULL);
 	/* Enable transfer. */
 	EDMA_StartTransfer(&g_EDMA_Handle);
 }

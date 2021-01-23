@@ -71,7 +71,7 @@ int main(void) {
 		if (getJustIn()) {
 
 			if (MP3LoadFile("test_500.mp3", "test_500.wav")) {
-				//if (MP3LoadFile("dakiti.mp3", "dakiti.wav")) {
+			//if (MP3LoadFile("dakiti.mp3", "dakiti.wav")) {
 				int i = 0;
 				if (MP3GetTagData(&ID3Data)) {
 					printf("\nSONG INFO\n");
@@ -91,8 +91,8 @@ int main(void) {
 				MP3_DECODED_BUFFER_SIZE, &sampleCount, 0);
 				bool using_buffer_1 = true;
 
-				uint16_t sr_ = 44100;		//Default config 4 mp3 stereo
-				uint8_t ch_ = 2;
+				uint16_t sr_ = kMP3_44100Hz;	//Default config 4 mp3 stereo
+				uint8_t ch_ = kMP3_Stereo;
 				MP3_Set_Sample_Rate(sr_, ch_);
 				//Por defecto ya está configurado así, solo lo explicito y ayuda
 				//si hay que cambiarlo mientras corre el codigo
@@ -107,7 +107,7 @@ int main(void) {
 
 					if (res == MP3DECODER_NO_ERROR) {
 
-						if (DAC_Wrapper_Is_Transfer_Done() || i == 0) {		//Entro en la primera o cuando ya transmiti
+						if (DAC_Wrapper_Is_Transfer_Done() || i == 0) {	//Entro en la primera o cuando ya transmiti
 
 							MP3GetLastFrameData(&frameData);
 
