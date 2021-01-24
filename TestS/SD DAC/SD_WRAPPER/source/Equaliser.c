@@ -1,6 +1,6 @@
 /***************************************************************************//**
- @file     Ecualiser.c
- @brief
+ @file     equaliser.c
+ @brief    ...
  @author   MAGT
  ******************************************************************************/
 
@@ -8,36 +8,30 @@
  * INCLUDE HEADER FILES
  ******************************************************************************/
 
-#include "Equaliser.h"
+#include "equaliser.h"
+#include "arm_math.h"
 #include "math_helper.h"
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
-#define BLOCK_SIZE      32
-#define FRAME_SIZE		1024
+#define BLOCK_SIZE          32
+#define NUM_TAPS            65
 
 /*******************************************************************************
- * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
+ *  VARIABLES WITH FILE LEVEL SCOPE
  ******************************************************************************/
 
-/*******************************************************************************
- * VARIABLE DECLARATION WITH FILE SCOPE
- ******************************************************************************/
+static uint32_t eqFrameSize;
+static uint32_t blockSize = BLOCK_SIZE;
 
-static uint32_t frameSize = FRAME_SIZE;
+static float32_t firStateF32[BLOCK_SIZE + NUM_TAPS - 1]; // State of the FIR filter. Needed for initialisation.
 
-static float32_t filterGains[FIR_FILTERS] = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-		1.0f, 1.0f, 1.0f };
+arm_fir_instance_f32 parallelFilter[EQ_NUM_OF_FILTERS]; // EQ filter implemented as parallel bandpass FIR filters.
 
-arm_fir_instance_f32 FirParallel[FIR_FILTERS];
-
-//static uint32_t blockSize = BLOCK_SIZE;
-
-static float32_t FirState[BLOCK_SIZE + FIR_COEFF - 1]; // State of the FIR filter. Needed for initialisation.
-
-static const float32_t FirFilters[FIR_FILTERS][FIR_COEFF] = // Coefficients of each bandpass FIR filter. Computed with MATLAB.
+static const float32_t eqFirCoeffs32[EQ_NUM_OF_FILTERS][NUM_TAPS] __attribute__((aligned(32)))
+=    // Coefficients of each bandpass FIR filter. Computed with MATLAB.
 		{
 		//32
 				{ 6.1969e-21, -1.5765e-09, -6.2654e-09, -1.4006e-08,
@@ -2471,55 +2465,60 @@ static const float32_t FirFilters[FIR_FILTERS][FIR_COEFF] = // Coefficients of e
 						-7.3225e-08, -1.8896e-07, -4.661e-07, 5.8637e-07,
 						-9.2159e-08, 7.9054e-08, -3.2586e-07, 1.6503e-07,
 						5.281e-08, 9.257e-09, -5.345e-08, -1.9189e-08,
-						3.1784e-08, -3.2225e-09, 2.8834e-10, 1.4926e-20 }
+						3.1784e-08, -3.2225e-09, 2.8834e-10, 1.4926e-20 } };
 
-		};
+static float32_t eqGains32[EQ_NUM_OF_FILTERS] = // Multiplier of each equaliser (EQ_NUM_OF_FILTERS bands).
+		{ 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
+
+static float32_t outputAux[NUM_TAPS];
+static float32_t inputAux[NUM_TAPS];
 
 /*******************************************************************************
- * FUNCTION PROTOTYPES WITH FILE SCOPE
+ *******************************************************************************
+ GLOBAL FUNCTION DEFINITIONS
+ *******************************************************************************
  ******************************************************************************/
 
-/*******************************************************************************
- * FUNCTION DEFINITIONS WITH GLOBAL SCOPE
- ******************************************************************************/
-
-void Equaliser_Init(void) {
-	for (uint32_t j = 0; j < FIR_FILTERS; j++) {
-		arm_fir_init_f32(&(FirParallel[j]), FIR_COEFF, (float32_t*) FirFilters,
-				FirState, BLOCK_SIZE);
+void eqInit(uint32_t frameSize) {
+	// Call FIR init function to initialise the instance structure.
+	for (uint32_t j = 0; j < EQ_NUM_OF_FILTERS; j++) {
+		arm_fir_init_f32(&(parallelFilter[j]), NUM_TAPS,
+				(float32_t*) &eqFirCoeffs32[0], &firStateF32[0], blockSize);
 	}
 
+	eqFrameSize = frameSize;
 }
 
-void Equaliser_Set_Frame_Size(uint32_t size) {
-	frameSize = size;
-}
+void eqFilterFrame(int16_t *inputF32, uint16_t size, float32_t *outputF32) {
 
-void Equaliser_Frame(float32_t *input, float32_t *output) {
+	uint16_t x;
+	for (x = 0; x < size; x++) {
+		inputAux[x] = (float32_t) (inputF32[x]);
+	}
 
-	float32_t outputAux[FIR_COEFF] = { 0U };
-	uint32_t i, j, k;
-
-	for (i = 0; i < frameSize / BLOCK_SIZE; i++) {
-
-		for (j = 0; j < FIR_FILTERS; j++) {
-
-			arm_fir_f32(&(FirParallel[j]), input + (i * BLOCK_SIZE),
-					outputAux, BLOCK_SIZE);
-			for (k = 0; k < BLOCK_SIZE; k++) {
-				output[k + (i * BLOCK_SIZE)] += filterGains[k] * outputAux[k];
+	// Call the FIR process function for every blockSize samples.
+	for (uint32_t i = 0; i < eqFrameSize / BLOCK_SIZE; i++) {
+		for (uint32_t j = 0; j < EQ_NUM_OF_FILTERS; j++) {
+			arm_fir_f32(&(parallelFilter[j]), inputAux + (i * BLOCK_SIZE),
+					outputAux, blockSize);
+			for (uint32_t k = 0; k < BLOCK_SIZE; k++) {
+				outputF32[k + (i * BLOCK_SIZE)] += eqGains32[k] * outputAux[k];
 			}
 		}
 	}
 }
 
-void Equaliser_Set_All_Gains(float32_t gains[FIR_FILTERS]) {
-	uint16_t j;
-	for (j = 0; j < FIR_FILTERS; j++) {
-		filterGains[j] = gains[j];
+void eqSetFrameSize(uint32_t eqFrameSize_) {
+	eqFrameSize = eqFrameSize_;
+}
+
+void eqSetFilterGains(float32_t gains[EQ_NUM_OF_FILTERS]) {
+	for (uint32_t i = 0; i < EQ_NUM_OF_FILTERS; i++) {
+		eqGains32[i] = gains[i];
 	}
 }
 
-void Equaliser_Set_Gain(float32_t gain, equaliser_filters_t filter) {
-	filterGains[filter] = gain;
+void eqSetFilterGain(float32_t gain, uint8_t filterNum) {
+	eqGains32[filterNum] = gain;
 }
+
