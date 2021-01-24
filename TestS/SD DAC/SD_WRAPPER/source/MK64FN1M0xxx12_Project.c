@@ -20,11 +20,11 @@
 #include "ff.h"
 
 #include "DAC_Wrapper.h"
+#include "Equaliser.h"
 
-#define MAX_DAC				4095
-#define MP3_MAX_VALUE		100000//32767
-#define MP3_MIN_VALUE		-100000//-32768
-#define MP3_GAP				MP3_MAX_VALUE - MP3_MIN_VALUE
+#define MAX_DAC_VALUE		4095.0
+#define MP3_MIN_VALUE		32768
+#define MP3_GAP_VALUE		65535.0
 
 char* concat(const char *s1, const char *s2);
 
@@ -44,8 +44,11 @@ void cbackout(void) {
 bool nextFrameFlag = false;
 #endif
 
-static short buffer_1[MP3_DECODED_BUFFER_SIZE];
-static short buffer_2[MP3_DECODED_BUFFER_SIZE];
+static uint16_t u_buffer_1[MP3_DECODED_BUFFER_SIZE];
+static uint16_t u_buffer_2[MP3_DECODED_BUFFER_SIZE];
+
+static float32_t eq_buffer_1[MP3_DECODED_BUFFER_SIZE];
+static float32_t eq_buffer_2[MP3_DECODED_BUFFER_SIZE];
 
 mp3_decoder_frame_data_t frameData;
 mp3_decoder_tag_data_t ID3Data;
@@ -71,7 +74,7 @@ int main(void) {
 		if (getJustIn()) {
 
 			if (MP3LoadFile("test_500.mp3", "test_500.wav")) {
-			//if (MP3LoadFile("dakiti.mp3", "dakiti.wav")) {
+				//if (MP3LoadFile("dakiti.mp3", "dakiti.wav")) {
 				int i = 0;
 				if (MP3GetTagData(&ID3Data)) {
 					printf("\nSONG INFO\n");
@@ -82,13 +85,24 @@ int main(void) {
 					printf("YEAR: %s\n", ID3Data.year);
 				}
 
+				Equaliser_Init();
+
 				DAC_Wrapper_Init();
 				DAC_Wrapper_Loop(false);
 				DAC_Wrapper_Start_Trigger();
 
 				//Empiezo por el buffer 1
-				mp3_decoder_result_t res = MP3GetDecodedFrame(buffer_1,
-				MP3_DECODED_BUFFER_SIZE, &sampleCount, 0);
+				mp3_decoder_result_t res = MP3GetDecodedFrame(
+						(int16_t*) u_buffer_1,
+						MP3_DECODED_BUFFER_SIZE, &sampleCount, 0);
+
+				//Equaliser_Frame(eq_buffer_1, (float32_t*) u_buffer_1);
+				uint16_t j;
+				for (j = 0; j < frameData.sampleCount; j++) {
+					u_buffer_1[j] = (uint16_t) ((u_buffer_1[j] + 32768) * 4095
+							/ 65535.0);
+				}
+
 				bool using_buffer_1 = true;
 
 				uint16_t sr_ = kMP3_44100Hz;	//Default config 4 mp3 stereo
@@ -96,8 +110,6 @@ int main(void) {
 				MP3_Set_Sample_Rate(sr_, ch_);
 				//Por defecto ya está configurado así, solo lo explicito y ayuda
 				//si hay que cambiarlo mientras corre el codigo
-
-				printf("\nHolu");
 
 				while (true) {
 
@@ -122,34 +134,35 @@ int main(void) {
 
 							DAC_Wrapper_Clear_Transfer_Done();
 
-							//uint16_t* nullptr = NULL;
 							if (using_buffer_1) {
 								//Envio el buffer 1 al dac
-								DAC_Wrapper_Set_Data_Array(&buffer_1,
+								DAC_Wrapper_Set_Data_Array(&u_buffer_1,
 										frameData.sampleCount);
-								DAC_Wrapper_Set_Next_Buffer(&buffer_2);
+								DAC_Wrapper_Set_Next_Buffer(&u_buffer_2);
 
 								//Cargo el y normalizo el buffer 2
-								res = MP3GetDecodedFrame(buffer_2,
+								res = MP3GetDecodedFrame((int16_t*) u_buffer_2,
 								MP3_DECODED_BUFFER_SIZE, &sampleCount, 0);
-								uint16_t j;
+
+								//Equaliser_Frame(eq_buffer_2, (float32_t*) u_buffer_2);
 								for (j = 0; j < frameData.sampleCount; j++) {
-									buffer_2[j] = (uint16_t) ((buffer_2[j]
-											+ 100000) * 4095 / 200000);
+									u_buffer_2[j] = (uint16_t) ((u_buffer_2[j]
+											+ 32768) * 4095 / 65535.0);
 								}
 							} else {
 								//Envio el buffer 2 al dac
-								DAC_Wrapper_Set_Data_Array(&buffer_2,
+								DAC_Wrapper_Set_Data_Array(&u_buffer_2,
 										frameData.sampleCount);
-								DAC_Wrapper_Set_Next_Buffer(&buffer_1);
+								DAC_Wrapper_Set_Next_Buffer(&u_buffer_1);
 
 								//Cargo el y normalizo el buffer 1
-								res = MP3GetDecodedFrame(buffer_1,
+								res = MP3GetDecodedFrame((int16_t*) u_buffer_1,
 								MP3_DECODED_BUFFER_SIZE, &sampleCount, 0);
-								uint16_t j;
+
+								//Equaliser_Frame(eq_buffer_1, (float32_t*) u_buffer_1);
 								for (j = 0; j < frameData.sampleCount; j++) {
-									buffer_1[j] = (uint16_t) ((buffer_1[j]
-											+ 100000) * 4095 / 200000);
+									u_buffer_1[j] = (uint16_t) ((u_buffer_1[j]
+											+ 32768) * 4095 / 65535.0);
 								}
 							}
 
