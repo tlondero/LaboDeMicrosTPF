@@ -73,7 +73,7 @@ typedef struct{
 
 void runMenu(event_t* events, app_context_t* context);
 void runPlayer(event_t* events, app_context_t* context);
-
+void switchAppState(app_state_t current, app_state_t target);
 void resetAppContext(void);
 void switchOffKinetis(void);
 void prepareForSwitchOn(void);
@@ -102,57 +102,65 @@ mp3_decoder_tag_data_t ID3Data;
 
 int main(void) {
 
-	if(initDevice()){
-		while(true){
+	initDevice();																		/* Init device */
+	prepareForSwitchOff();																/*and turn off */
 
-			event_t events = EVHANDLER_GetEvents();
+	while(true){
 
-			switch(g_appContext.appState){
-				case kAPP_STATE_OFF:
-					prepareForSwitchOff();
-					switchOffKinetis();
-					prepareForSwitchOn();
-					g_appContext.appState = kAPP_STATE_IDDLE;
-					break;
+		event_t events = EVHANDLER_GetEvents();											/* Get events */
 
+		switch(g_appContext.appState){
 
-				case kAPP_STATE_IDDLE:
-					if(SDWRAPPER_GetMounted() && SDWRAPPER_getJustIn()){
-						g_appContext.currentFile = FSEXP_exploreFS(FSEXP_ROOT_DIR);
+				/***************/
+				/*  OFF STATE  */
+				/***************/
+
+			case kAPP_STATE_OFF:
+				switchOffKinetis();														/* Turn off */
+				switchAppState(g_appContext.menuState, kAPP_STATE_IDDLE);				/* Go back to IDDLE */
+
+				break;
+
+				/***************/
+				/* IDDLE STATE */
+				/***************/
+
+			case kAPP_STATE_IDDLE:
+				if(SDWRAPPER_GetMounted() && SDWRAPPER_getJustIn()){					/* If SD is mounted */
+					g_appContext.currentFile = FSEXP_exploreFS(FSEXP_ROOT_DIR);			/* Explore filesystem */
 #ifdef DEBUG_PRINTF_APP
-						g_appContext.currentFile = FSEXP_getNext();
-						g_appContext.currentFile = FSEXP_getNext();
-						g_appContext.currentFile = FSEXP_getNext();
-						g_appContext.currentFile = FSEXP_getNext();
-						printf("Pointing currently to: %s\n", g_appContext.currentFile);
+					g_appContext.currentFile = FSEXP_getNext();
+					printf("Pointing currently to: %s\n", g_appContext.currentFile);
 #endif
+				}
+				else if(SDWRAPPER_getJustOut()){										/* If SD is removed */
+					if(g_appContext.menuState == kAPP_MENU_FILESYSTEM){					/* and menu is exploring FS*/
+						g_appContext.menuState = kAPP_MENU_MAIN;						/* Go back to main menu */
 					}
-					else if(SDWRAPPER_getJustOut()){
-						if(g_appContext.menuState == kAPP_MENU_FILESYSTEM){
-							g_appContext.menuState = kAPP_MENU_MAIN;
-						}
+				}
+				runMenu(&events, &g_appContext);										/* Run menu in background */
+				break;
+
+				/***************/
+				/*PLAYING STATE*/
+				/***************/
+
+			case kAPP_STATE_PLAYING:
+				if(SDWRAPPER_getJustOut()){												/* If SD is removed */
+					if(g_appContext.menuState == kAPP_MENU_FILESYSTEM){					/* and menu is exploring FS*/
+						g_appContext.menuState = kAPP_MENU_MAIN;						/* Go back to main menu */
+						//TODO stop music, stop spectogram
+						//...
+						switchAppState(g_appContext.menuState, kAPP_STATE_IDDLE); 		/* Return to iddle state */
+						break;
 					}
-					runMenu(&events, &g_appContext); //run menu in background
-					break;
+				}
+				runMenu(&events, &g_appContext);										/* Run menu in background */
+				runPlayer(&events, &g_appContext);										/* Run player in background */
+				break;
 
 
-				case kAPP_STATE_PLAYING:
-					if(SDWRAPPER_getJustOut()){
-						if(g_appContext.menuState == kAPP_MENU_FILESYSTEM){
-							g_appContext.menuState = kAPP_MENU_MAIN;
-							//TODO stop music, stop spectogram
-							//...
-							g_appContext.appState = kAPP_STATE_IDDLE; //return to iddle
-							break;
-						}
-					}
-					runMenu(&events, &g_appContext); //run menu in background
-					runPlayer(&events, &g_appContext); //run mp3player, spectrogram
-					break;
-
-
-				default: break;
-			}
+			default: break;
 		}
 	}
 	return 0;
@@ -174,6 +182,7 @@ int initDevice(void){
 #endif
 
 #ifdef APP_KINETIS_LEDS
+	/* Init kinetis ON/OFF leds */
 	LED_RED_INIT(LOGIC_LED_ON);
 	LED_GREEN_INIT(LOGIC_LED_OFF);
 #endif
@@ -194,17 +203,47 @@ int initDevice(void){
 	DAC_Wrapper_Init();		//Init DMAMUX, EDMA, PDB, DAC
 	DAC_Wrapper_Loop(false);
 
+	/* Reset app context */
 	resetAppContext();
 
 	return true; //TODO agregar verificaciones al resto de los inits
 
 }
 
-void runMenu(event_t* events, app_context_t* context){
+void switchAppState(app_state_t current, app_state_t target){
+	switch(target){
+	case kAPP_STATE_OFF: 							/* Can only come from IDDLE */
+		if(current == kAPP_STATE_IDDLE){
+			prepareForSwitchOff();
+			g_appContext.appState = target;
+		}
+		break;
+	case kAPP_STATE_IDDLE:							/* Can come from OFF or PLAYING */
+		if(current == kAPP_STATE_OFF){
+			prepareForSwitchOn();
+			g_appContext.appState = target;
+		}
+		else if(current == kAPP_STATE_PLAYING){
+			//TODO: Stop player, spectrogram..
+			g_appContext.appState = target;
+		}
+		break;
+	case kAPP_STATE_PLAYING:						/* Can only come from IDDLE */
+		if(current == kAPP_STATE_IDDLE){
+			//TODO: Start player, spectrogram..
+			g_appContext.appState = target;
+		}
+		break;
 
+	default: break;
+	}
+}
+
+void runMenu(event_t* events, app_context_t* context){
+	//TODO: La fsm del menu
 }
 void runPlayer(event_t* events, app_context_t* context){
-
+	//TODO: Implementar aca el reproductor y el espectrograma (ver si no van a funcar a interrupciones tho)
 }
 
 char* concat(const char *s1, const char *s2) {
@@ -232,17 +271,6 @@ void resetAppContext(void){
 	g_appContext.spectrogramEnable = false;
 	g_appContext.volume = 50;
 	g_appContext.currentFile = NULL;
-}
-
-void switchAppState(app_state_t current, app_state_t target){
-	switch(target){
-	case kAPP_STATE_OFF:
-		break;
-	case kAPP_STATE_IDDLE:
-		break;
-	case kAPP_STATE_PLAYING:
-		break;
-	}
 }
 
 void switchOffKinetis(void){
@@ -285,7 +313,7 @@ void APP_WAKEUP_BUTTON_IRQ_HANDLER(void){ //Esta es la rutina de interrupción d
     }
     else if(!g_kinetisWakeupArmed && ((1U << APP_WAKEUP_BUTTON_GPIO_PIN) & PORT_GetPinsInterruptFlags(APP_WAKEUP_BUTTON_PORT))){
     	PORT_ClearPinsInterruptFlags(APP_WAKEUP_BUTTON_PORT, (1U << APP_WAKEUP_BUTTON_GPIO_PIN));
-    	g_appContext.appState = kAPP_STATE_OFF; //TODO //Esto seria mejor meterlo dentro del ev handler.
+    	switchAppState(g_appContext.appState, kAPP_STATE_OFF);
     }
 }
 
