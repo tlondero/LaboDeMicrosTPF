@@ -46,6 +46,11 @@ void BOARD_InitPins(void);
 #define BOARD_SW3_PORT PORTA /*!<@brief PORT device name: PORTA */
 #define BOARD_SW3_PIN 4U     /*!<@brief PORTA pin index: 4 */
                              /* @} */
+/*!
+ * @brief Configures ports for a wakeup interruption with SW2 only
+ * @enable true to set for wakeup else false
+ */
+void BOARD_SetPortsForWakeupSW2(bool enable);
 
 /*!
  * @brief Configures pin routing and optionally pin electrical features.

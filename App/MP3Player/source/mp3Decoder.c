@@ -102,8 +102,8 @@ void  MP3DecoderInit(void) {
     resetContextData();
     context_data.Decoder = MP3InitDecoder();//Helix decoder init
 
-#ifdef DEBUG_PRINTF_APP
-    printf("[App] MP3 decoder initialized");
+#ifdef DEBUG_PRINTF_INFO
+    printf("MP3 decoder initialized");
 #endif
 
 }

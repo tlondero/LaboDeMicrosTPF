@@ -123,8 +123,28 @@ pin_labels:
 #include "fsl_common.h"
 #include "fsl_port.h"
 #include "fsl_gpio.h"
+#include "debug_ifdefs.h"
 #include "pin_mux.h"
 
+/* FUNCTION ************************************************************************************************************
+ *
+ * Function Name : BOARD_SetPinsForWakeup
+ * Description   : Enables or disables ports for switching on or off
+ *
+ * END ****************************************************************************************************************/
+void BOARD_SetPortsForWakeupSW2(bool enable){
+	//Disable the clocks of the ports not used for wakeup, else an interrupt from them wakes up kinetis.
+	if(enable){
+		CLOCK_DisableClock(kCLOCK_PortA);                           /* Port A Clock Gate Control: Clock disabled */
+		CLOCK_DisableClock(kCLOCK_PortB);                           /* Port B Clock Gate Control: Clock disabled */
+		CLOCK_DisableClock(kCLOCK_PortE);                           /* Port E Clock Gate Control: Clock disabled */
+	}
+	else{
+		CLOCK_EnableClock(kCLOCK_PortA);                           /* Port A Clock Gate Control: Clock enabled */
+		CLOCK_EnableClock(kCLOCK_PortB);                           /* Port B Clock Gate Control: Clock enabled */
+		CLOCK_EnableClock(kCLOCK_PortE);                           /* Port E Clock Gate Control: Clock enabled */
+	}
+}
 /* FUNCTION ************************************************************************************************************
  *
  * Function Name : BOARD_InitBootPins
@@ -166,12 +186,19 @@ BOARD_InitPins:
  * END ****************************************************************************************************************/
 void BOARD_InitPins(void)
 {
+	CLOCK_EnableClock(kCLOCK_PortA);                           /* Port A Clock Gate Control: Clock enabled */
 	 CLOCK_EnableClock(kCLOCK_PortB);                           /* Port B Clock Gate Control: Clock enabled */
 	  CLOCK_EnableClock(kCLOCK_PortE);                           /* Port E Clock Gate Control: Clock enabled */
+	  CLOCK_EnableClock(kCLOCK_PortC);                           /* Port C Clock Gate Control: Clock enabled */
 
+#ifdef APP_KINETIS_LEDS
+	  PORT_SetPinMux(PORTB, 22U, kPORT_MuxAsGpio);				/* PORTB22 (LED RED) is configured as GPIO */
+	  PORT_SetPinMux(PORTE, 26U, kPORT_MuxAsGpio);				/* PORTE26 (LED GREEN) is configured as GPIO */
+#endif
 	  PORT_SetPinMux(PORTB, PIN16_IDX, kPORT_MuxAlt3);           /* PORTB16 (pin 62) is configured as UART0_RX */
 	  PORT_SetPinMux(PORTB, PIN17_IDX, kPORT_MuxAlt3);           /* PORTB17 (pin 63) is configured as UART0_TX */
 	  PORT_SetPinMux(PORTB, PIN22_IDX, kPORT_MuxAsGpio);         /* PORTB22 (pin 68) is configured as PTB22 */
+	  PORT_SetPinMux(PORTA, 2U, kPORT_MuxAlt7);				/* PORTA2 (pin 36) is configured as TRACE_SWO */
 
 	  const port_pin_config_t porte0_pin1_config = {
 	    kPORT_PullUp,                                            /* Internal pull-up resistor is enabled */
@@ -243,8 +270,37 @@ void BOARD_InitPins(void)
 	    kPORT_UnlockRegister                                     /* Pin Control Register fields [15:0] are not locked */
 	  };
 	  PORT_SetPinConfig(PORTE, PIN6_IDX, &porte6_pin7_config);   /* PORTE6 (pin 7) is configured as PTE6 */
+	  const port_pin_config_t portc6_pin78_config = {/* Internal pull-up resistor is enabled */
+		 kPORT_PullUp,
+		 /* Fast slew rate is configured */
+		 kPORT_FastSlewRate,
+		 /* Passive filter is disabled */
+		 kPORT_PassiveFilterDisable,
+		 /* Open drain is disabled */
+		 kPORT_OpenDrainDisable,
+		 /* Low drive strength is configured */
+		 kPORT_LowDriveStrength,
+		 /* Pin is configured as PTC6 */
+		 kPORT_MuxAsGpio,
+		 /* Pin Control Register fields [15:0] are not locked */
+		 kPORT_UnlockRegister};
+	      /* PORTC6 (pin 78) is configured as PTC6 */
+	     PORT_SetPinConfig(PORTC, 6U, &portc6_pin78_config);
 
+		 PORTA->PCR[2] = ((PORTA->PCR[2] &
+						   /* Mask bits to zero which are setting */
+						   (~(PORT_PCR_PS_MASK | PORT_PCR_PE_MASK | PORT_PCR_DSE_MASK | PORT_PCR_ISF_MASK)))
 
+						  /* Pull Select: Internal pulldown resistor is enabled on the corresponding pin, if the
+						   * corresponding PE field is set. */
+						  | PORT_PCR_PS(kPORT_PullDown)
+
+						  /* Pull Enable: Internal pullup or pulldown resistor is not enabled on the corresponding pin. */
+						  | PORT_PCR_PE(kPORT_PullDisable)
+
+						  /* Drive Strength Enable: Low drive strength is configured on the corresponding pin, if pin
+						   * is configured as a digital output. */
+						  | PORT_PCR_DSE(kPORT_LowDriveStrength));
 
 	  SIM->SOPT5 = ((SIM->SOPT5 &
 	    (~(SIM_SOPT5_UART0TXSRC_MASK)))                          /* Mask bits to zero which are setting */

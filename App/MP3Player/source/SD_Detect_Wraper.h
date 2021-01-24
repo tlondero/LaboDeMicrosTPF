@@ -36,15 +36,27 @@ typedef void (*cback) (void);
  *
  * @return true if it was succesfull the initialization.
 */
-bool SDWraperInit(cback inserted_callback, cback extracted_callback);
+bool SDWRAPPER_Init(cback inserted_callback, cback extracted_callback);
 
+/**
+ * @brief Sets the interrupt for the SD card
+ *
+*/
+void SDWRAPPER_SetInterruptEnable(bool enable);
+
+/**
+ * @brief Sets the power of the SD Card.
+ * @param
+ * 		@enable -- whether to turn on or off the power
+*/
+void SDWRAPPER_SetCardPower(bool enable);
 
 /**
  * @brief  getter for the SD status
  * @param --
  * @return true if it is inserted, false if it isnt.
 */
-bool getSDInserted(void);
+bool SDWRAPPER_getSDInserted(void);
 
 
 /**
@@ -52,7 +64,7 @@ bool getSDInserted(void);
  * @param --
  * @return True if it was inserted.
 */
-bool getJustIn(void);
+bool SDWRAPPER_getJustIn(void);
 
 
 /**
@@ -60,14 +72,37 @@ bool getJustIn(void);
  * @param --
  * @return True if it was extracted
 */
-bool getJustOut(void);
+bool SDWRAPPER_getJustOut(void);
 
 /**
  * @brief getter for the error status
  * @param --
  * @return see FRESULT typedef for the errors.
 */
-FRESULT getErrorStatus(void);
+FRESULT SDWRAPPER_getErrorStatus(void);
 
+/**
+ * @brief sets the power level for the SD card
+ * @param enable -- whether to power it on or off
+*/
+void SDWRAPPER_SetCardPower(bool enable);
+
+/**
+ * @brief clears the just inserted flag, this will make so that the next call
+ * 			to getjustin returns false as if it was polled before
+*/
+void SDWRAPPER_ClearInsertedFlag(void);
+
+/**
+ * @brief set the just inserted flag, this will make so that the next call
+ * 			to getjustin returns true as if the card was just inserted
+*/
+void SDWRAPPER_SetInsertedFlag(void);
+
+/**
+ * @brief check whether filesystem was mounted already
+ *
+*/
+bool SDWRAPPER_GetMounted(void);
 
 #endif /* SD_DETECT_WRAPER_H_ */

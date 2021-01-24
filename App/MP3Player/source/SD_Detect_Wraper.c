@@ -40,6 +40,7 @@ extern bool nextFrameFlag;
 
 static bool inserted_flag=false;
 static bool removed_flag=false;
+static bool fs_mounted_flag=false;
 
 static bool old_status = kSD_Removed;
 
@@ -55,7 +56,7 @@ static cback extractedCback;
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH GLOBAL SCOPE
  ******************************************************************************/
-bool SDWraperInit(cback inserted_callback, cback extracted_callback){
+bool SDWRAPPER_Init(cback inserted_callback, cback extracted_callback){
 	SYSMPU_Enable(SYSMPU, false);
 		//////////////////////////////////////////////////////////////
 		//         				PIT CONFIGURATION
@@ -76,22 +77,6 @@ bool SDWraperInit(cback inserted_callback, cback extracted_callback){
 		EnableIRQ(PIT0_IRQn);
 
 		PIT_StartTimer(PIT, kPIT_Chnl_0);
-
-#ifdef DEBUG_FRAME_DELAY
-
-		/* Set timer period for channel 1 */
-		PIT_SetTimerPeriod(PIT, kPIT_Chnl_1,
-				USEC_TO_COUNT(2500000U, CLOCK_GetFreq(kCLOCK_BusClk)));
-
-		/* Enable timer interrupts for channel 1 */
-		PIT_EnableInterrupts(PIT, kPIT_Chnl_1, kPIT_TimerInterruptEnable);
-
-		/* Enable at the NVIC */
-		EnableIRQ(PIT1_IRQn);
-
-		PIT_StartTimer(PIT, kPIT_Chnl_1);
-#endif
-
 		//////////////////////////////////////////////////////////////
 		//						SD CONFIG 						    //
 		//////////////////////////////////////////////////////////////
@@ -109,12 +94,43 @@ bool SDWraperInit(cback inserted_callback, cback extracted_callback){
 		if(extracted_callback != NULL){
 			extractedCback=extracted_callback;
 		}
+
+
 		return !kStatus_Success;
 }
 
-bool getSDInserted(void){return card->usrParam.cd->cardDetected();}
+void SDWRAPPER_SetInterruptEnable(bool enable){
+	if(enable){
+		PIT_EnableInterrupts(PIT, kPIT_Chnl_0, kPIT_TimerInterruptEnable);
+	}
+	else{
+		PIT_DisableInterrupts(PIT, kPIT_Chnl_0, kPIT_TimerInterruptEnable);
+	}
+}
 
-bool getJustIn(void){
+void SDWRAPPER_SetCardPower(bool enable){
+	if(SDWRAPPER_getSDInserted()){
+		SD_SetCardPower(&g_sd, enable);
+	}
+}
+
+void SDWRAPPER_ClearInsertedFlag(void){
+	if(SDWRAPPER_getSDInserted()){
+	inserted_flag = false;
+	}
+}
+
+void SDWRAPPER_SetInsertedFlag(void){
+	if(SDWRAPPER_getSDInserted()){
+	inserted_flag = true;
+	}
+}
+
+bool SDWRAPPER_getSDInserted(void){return card->usrParam.cd->cardDetected();}
+
+bool SDWRAPPER_GetMounted(void){return fs_mounted_flag;}
+
+bool SDWRAPPER_getJustIn(void){
 	if(((card->usrParam.cd->cardDetected() == true)
 			&& (inserted_flag)) ==  true)
 	{inserted_flag=false;
@@ -122,7 +138,7 @@ bool getJustIn(void){
 	else return false;
 }
 
-bool getJustOut(void){
+bool SDWRAPPER_getJustOut(void){
 	if(((card->usrParam.cd->cardDetected() == false)
 			&& (removed_flag)) ==  true)
 	{removed_flag=false;
@@ -164,6 +180,7 @@ void interruptRoutine(void){
 				old_status = kSD_Inserted;
 				inserted_flag=true;
 				removed_flag=false;
+				fs_mounted_flag = true;
 				if(insertedCback){
 					insertedCback();
 				}
@@ -176,6 +193,7 @@ void interruptRoutine(void){
 			removed_flag=true;
 			SD_SetCardPower(&g_sd, false);
 			inserted_flag=false;
+			fs_mounted_flag = false;
 			if(extractedCback){
 				extractedCback();
 			}
