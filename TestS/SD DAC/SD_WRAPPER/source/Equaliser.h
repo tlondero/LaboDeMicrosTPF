@@ -1,10 +1,12 @@
 /***************************************************************************//**
- @file     Equaliser.h
- @brief
- @author   MAGT
+  @file     equaliser.h
+  @brief    Applies FIR filters to the input singal, you can personlize the gain of these filters, the filter coefficients can be changed in the eqFirCoeffs32 vector.
+  @author   MAGT
  ******************************************************************************/
-#ifndef EQUALISER_H_
-#define EQUALISER_H_
+
+#ifndef MCAL_EQUALISER_EQUALISER_H_
+#define MCAL_EQUALISER_EQUALISER_H_
+
 /*******************************************************************************
  * INCLUDE HEADER FILES
  ******************************************************************************/
@@ -15,25 +17,11 @@
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
-#define FIR_FILTERS			10
-#define	FIR_COEFF			1001
+#define EQ_NUM_OF_FILTERS			10
 
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
-
-typedef enum {
-	kEq_32Hz,
-	kEq_64Hz,
-	kEq_125Hz,
-	kEq_250Hz,
-	kEq_500Hz,
-	kEq_1000Hz,
-	kEq_2000Hz,
-	kEq_4000Hz,
-	kEq_8000Hz,
-	kEq_16000Hz,
-} equaliser_filters_t;
 
 /*******************************************************************************
  * VARIABLE PROTOTYPES WITH GLOBAL SCOPE
@@ -43,14 +31,36 @@ typedef enum {
  * FUNCTION PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
 
-void Equaliser_Init(void);
+/**
+ * @brief Initialises equaliser. Calls ARM DSP initialisation functions.
+ * @param frameSize  Number of data numbers to be filtered when calling eqFilterFrame.
+ */
+void eqInit(uint32_t frameSize);
 
-void Equaliser_Set_All_Gains(float32_t gains_[FIR_FILTERS]);
+/**
+ * @brief Compute the equaliser filter on the data given.
+ * @param inputF32  Pointer to input data to filter.
+ * @param outputF32 Pointer to where the filtered data should be saved.
+ */
+void eqFilterFrame(int16_t *inputF32, uint16_t size, float32_t *outputF32);
 
-void Equaliser_Set_Gain(float32_t gain, equaliser_filters_t filter);
+/**
+ * @brief Sets all equaliser filter gains.
+ * @param gains  Array with the filter gains for each of the equaliser bands.
+ */
+void eqSetFilterGains(float32_t gains[EQ_NUM_OF_FILTERS]);
 
-void Equaliser_Frame(float32_t * input, float32_t * output);
+/**
+ * @brief Sets equaliser number filterNum to the gain given.
+ * @param gain        Filter gain for filter number filterNum.
+ * @param filterNum   Number of filter to apply the gain to.
+ */
+void eqSetFilterGain(float32_t gain, uint8_t filterNum);
 
-void Equaliser_Set_Frame_Size(uint32_t size);
+void eqSetFrameSize(uint32_t eqFrameSize_);
 
-#endif /* EQUALISER_H_ */
+/*******************************************************************************
+ ******************************************************************************/
+
+
+#endif /* MCAL_EQUALISER_EQUALISER_H_ */
