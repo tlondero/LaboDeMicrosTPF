@@ -8,7 +8,8 @@
  * INCLUDE HEADER FILES
  ******************************************************************************/
 #include "button_ev_handler.h"
-#include "board.h"
+#include "board.h
+#include "stdbool.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
