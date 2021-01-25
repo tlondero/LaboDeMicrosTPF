@@ -87,8 +87,8 @@ void cbackout(void);
  *                              VARIABLES WITH LOCAL SCOPE                                    *
  **********************************************************************************************/
 
-app_context_t g_appContext;
-bool g_kinetisWakeupArmed = true;
+static app_context_t appContext;
+static bool kinetisWakeupArmed = true;
 
 static short buffer_1[MP3_DECODED_BUFFER_SIZE];
 static short buffer_2[MP3_DECODED_BUFFER_SIZE];
@@ -109,7 +109,7 @@ int main(void) {
 
 		event_t events = EVHANDLER_GetEvents();											/* Get events */
 
-		switch(g_appContext.appState){
+		switch(appContext.appState){
 
 				/***************/
 				/*  OFF STATE  */
@@ -117,7 +117,7 @@ int main(void) {
 
 			case kAPP_STATE_OFF:
 				switchOffKinetis();														/* Turn off */
-				switchAppState(g_appContext.menuState, kAPP_STATE_IDDLE);				/* Go back to IDDLE */
+				switchAppState(appContext.menuState, kAPP_STATE_IDDLE);				/* Go back to IDDLE */
 
 				break;
 
@@ -127,18 +127,18 @@ int main(void) {
 
 			case kAPP_STATE_IDDLE:
 				if(SDWRAPPER_GetMounted() && SDWRAPPER_getJustIn()){					/* If SD is mounted */
-					g_appContext.currentFile = FSEXP_exploreFS(FSEXP_ROOT_DIR);			/* Explore filesystem */
+					appContext.currentFile = FSEXP_exploreFS(FSEXP_ROOT_DIR);			/* Explore filesystem */
 #ifdef DEBUG_PRINTF_APP
-					g_appContext.currentFile = FSEXP_getNext();
-					printf("Pointing currently to: %s\n", g_appContext.currentFile);
+					appContext.currentFile = FSEXP_getNext();
+					printf("Pointing currently to: %s\n", appContext.currentFile);
 #endif
 				}
 				else if(SDWRAPPER_getJustOut()){										/* If SD is removed */
-					if(g_appContext.menuState == kAPP_MENU_FILESYSTEM){					/* and menu is exploring FS*/
-						g_appContext.menuState = kAPP_MENU_MAIN;						/* Go back to main menu */
+					if(appContext.menuState == kAPP_MENU_FILESYSTEM){					/* and menu is exploring FS*/
+						appContext.menuState = kAPP_MENU_MAIN;						/* Go back to main menu */
 					}
 				}
-				runMenu(&events, &g_appContext);										/* Run menu in background */
+				runMenu(&events, &appContext);										/* Run menu in background */
 				break;
 
 				/***************/
@@ -147,16 +147,16 @@ int main(void) {
 
 			case kAPP_STATE_PLAYING:
 				if(SDWRAPPER_getJustOut()){												/* If SD is removed */
-					if(g_appContext.menuState == kAPP_MENU_FILESYSTEM){					/* and menu is exploring FS*/
-						g_appContext.menuState = kAPP_MENU_MAIN;						/* Go back to main menu */
+					if(appContext.menuState == kAPP_MENU_FILESYSTEM){					/* and menu is exploring FS*/
+						appContext.menuState = kAPP_MENU_MAIN;						/* Go back to main menu */
 						//TODO stop music, stop spectogram
 						//...
-						switchAppState(g_appContext.menuState, kAPP_STATE_IDDLE); 		/* Return to iddle state */
+						switchAppState(appContext.menuState, kAPP_STATE_IDDLE); 		/* Return to iddle state */
 						break;
 					}
 				}
-				runMenu(&events, &g_appContext);										/* Run menu in background */
-				runPlayer(&events, &g_appContext);										/* Run player in background */
+				runMenu(&events, &appContext);										/* Run menu in background */
+				runPlayer(&events, &appContext);										/* Run player in background */
 				break;
 
 
@@ -215,23 +215,23 @@ void switchAppState(app_state_t current, app_state_t target){
 	case kAPP_STATE_OFF: 							/* Can only come from IDDLE */
 		if(current == kAPP_STATE_IDDLE){
 			prepareForSwitchOff();
-			g_appContext.appState = target;
+			appContext.appState = target;
 		}
 		break;
 	case kAPP_STATE_IDDLE:							/* Can come from OFF or PLAYING */
 		if(current == kAPP_STATE_OFF){
 			prepareForSwitchOn();
-			g_appContext.appState = target;
+			appContext.appState = target;
 		}
 		else if(current == kAPP_STATE_PLAYING){
 			//TODO: Stop player, spectrogram..
-			g_appContext.appState = target;
+			appContext.appState = target;
 		}
 		break;
 	case kAPP_STATE_PLAYING:						/* Can only come from IDDLE */
 		if(current == kAPP_STATE_IDDLE){
 			//TODO: Start player, spectrogram..
-			g_appContext.appState = target;
+			appContext.appState = target;
 		}
 		break;
 
@@ -266,11 +266,11 @@ void prepareForSwitchOn(void){
 }
 
 void resetAppContext(void){
-	g_appContext.appState = kAPP_STATE_OFF;
-	g_appContext.menuState = kAPP_MENU_MAIN;
-	g_appContext.spectrogramEnable = false;
-	g_appContext.volume = 50;
-	g_appContext.currentFile = NULL;
+	appContext.appState = kAPP_STATE_OFF;
+	appContext.menuState = kAPP_MENU_MAIN;
+	appContext.spectrogramEnable = false;
+	appContext.volume = 50;
+	appContext.currentFile = NULL;
 }
 
 void switchOffKinetis(void){
@@ -283,7 +283,7 @@ void switchOffKinetis(void){
 	LED_GREEN_OFF();
 	#endif
 
-	g_kinetisWakeupArmed = true;
+	kinetisWakeupArmed = true;
 	SMC_PreEnterStopModes();						//Pre entro al stop mode
 	SMC_SetPowerModeStop(SMC, kSMC_PartialStop);	//Entro al stop mode
 	SMC_PostExitStopModes();						//Despues de apretar el SW2, se sigue en esta linea de codigo
@@ -303,17 +303,17 @@ void switchOffKinetis(void){
 
 void APP_WAKEUP_BUTTON_IRQ_HANDLER(void){ //Esta es la rutina de interrupción del botoncino
 
-    if (g_kinetisWakeupArmed && ((1U << APP_WAKEUP_BUTTON_GPIO_PIN) & PORT_GetPinsInterruptFlags(APP_WAKEUP_BUTTON_PORT)))
+    if (kinetisWakeupArmed && ((1U << APP_WAKEUP_BUTTON_GPIO_PIN) & PORT_GetPinsInterruptFlags(APP_WAKEUP_BUTTON_PORT)))
     {
         PORT_ClearPinsInterruptFlags(APP_WAKEUP_BUTTON_PORT, (1U << APP_WAKEUP_BUTTON_GPIO_PIN));
         /* Add for ARM errata 838869, affects Cortex-M4, Cortex-M4F Store immediate overlapping
         exception return operation might vector to incorrect interrupt */
         __DSB();
-        g_kinetisWakeupArmed = false;
+        kinetisWakeupArmed = false;
     }
-    else if(!g_kinetisWakeupArmed && ((1U << APP_WAKEUP_BUTTON_GPIO_PIN) & PORT_GetPinsInterruptFlags(APP_WAKEUP_BUTTON_PORT))){
+    else if(!kinetisWakeupArmed && ((1U << APP_WAKEUP_BUTTON_GPIO_PIN) & PORT_GetPinsInterruptFlags(APP_WAKEUP_BUTTON_PORT))){
     	PORT_ClearPinsInterruptFlags(APP_WAKEUP_BUTTON_PORT, (1U << APP_WAKEUP_BUTTON_GPIO_PIN));
-    	switchAppState(g_appContext.appState, kAPP_STATE_OFF);
+    	switchAppState(appContext.appState, kAPP_STATE_OFF);
     }
 }
 
