@@ -7,7 +7,8 @@
 /*******************************************************************************
  * INCLUDE HEADER FILES
  ******************************************************************************/
-#include "stdbool.h"
+#include "button_ev_handler.h"
+#include "board.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
@@ -31,6 +32,8 @@ static bool enter_button;
 static bool off_on_button;
 static bool pause_play_button;
 
+static bool kinetisWakeupArmed = true;
+
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH GLOBAL SCOPE
  ******************************************************************************/
@@ -41,12 +44,12 @@ void get_event_buttons(button_event_t *button_event) {
 	button_event->off_on_button = off_on_button;
 	button_event->pause_play_button = pause_play_button;
 	button_event->prev_button = prev_button;
-	back_button = 0;
-	next_button = 0;
-	prev_button = 0;
-	enter_button = 0;
-	off_on_button = 0;
-	pause_play_button = 0;
+	back_button = false;
+	next_button = false;
+	prev_button = false;
+	enter_button = false;
+	off_on_button = false;
+	pause_play_button = false;
 }
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH FILE SCOPE
@@ -55,4 +58,18 @@ void get_event_buttons(button_event_t *button_event) {
 /*******************************************************************************
  *						 INTERRUPTION ROUTINES
  ******************************************************************************/
+void APP_WAKEUP_BUTTON_IRQ_HANDLER(void){ //Esta es la rutina de interrupción del botoncino
 
+    if (kinetisWakeupArmed && ((1U << APP_WAKEUP_BUTTON_GPIO_PIN) & PORT_GetPinsInterruptFlags(APP_WAKEUP_BUTTON_PORT)))
+    {
+        PORT_ClearPinsInterruptFlags(APP_WAKEUP_BUTTON_PORT, (1U << APP_WAKEUP_BUTTON_GPIO_PIN));
+        /* Add for ARM errata 838869, affects Cortex-M4, Cortex-M4F Store immediate overlapping
+        exception return operation might vector to incorrect interrupt */
+        __DSB();
+        kinetisWakeupArmed = false;
+    }
+    else if(!kinetisWakeupArmed && ((1U << APP_WAKEUP_BUTTON_GPIO_PIN) & PORT_GetPinsInterruptFlags(APP_WAKEUP_BUTTON_PORT))){
+    	PORT_ClearPinsInterruptFlags(APP_WAKEUP_BUTTON_PORT, (1U << APP_WAKEUP_BUTTON_GPIO_PIN));
+    	off_on_button = true;
+    }
+}

@@ -32,15 +32,6 @@
 #define MP3_MIN_VALUE		-100000//-32768
 #define MP3_GAP				MP3_MAX_VALUE - MP3_MIN_VALUE
 
-
-#define APP_WAKEUP_BUTTON_GPIO        BOARD_SW2_GPIO
-#define APP_WAKEUP_BUTTON_PORT        BOARD_SW2_PORT
-#define APP_WAKEUP_BUTTON_GPIO_PIN    BOARD_SW2_GPIO_PIN
-#define APP_WAKEUP_BUTTON_IRQ         BOARD_SW2_IRQ
-#define APP_WAKEUP_BUTTON_IRQ_HANDLER BOARD_SW2_IRQ_HANDLER
-#define APP_WAKEUP_BUTTON_NAME        BOARD_SW2_NAME
-#define APP_WAKEUP_BUTTON_IRQ_TYPE    kPORT_InterruptFallingEdge
-
 /**********************************************************************************************
  *                                    TYPEDEFS AND ENUMS                                      *
  **********************************************************************************************/
@@ -88,7 +79,6 @@ void cbackout(void);
  **********************************************************************************************/
 
 static app_context_t appContext;
-static bool kinetisWakeupArmed = true;
 
 static short buffer_1[MP3_DECODED_BUFFER_SIZE];
 static short buffer_2[MP3_DECODED_BUFFER_SIZE];
@@ -127,7 +117,7 @@ int main(void) {
 
 			case kAPP_STATE_IDDLE:
 				if(SDWRAPPER_getJustOut()){										/* If SD is removed */
-					if(appContext.mappState == kAPP_MENU_FILESYSTEM){					/* and menu is exploring FS*/
+					if(appContext.appState == kAPP_MENU_FILESYSTEM){					/* and menu is exploring FS*/
 						appContext.menuState = kAPP_MENU_MAIN;						/* Go back to main menu */
 					}
 				}
@@ -293,23 +283,6 @@ void switchOffKinetis(void){
 	printf("\nKinetis has gone iddle.\n");
 #endif
 }
-
-void APP_WAKEUP_BUTTON_IRQ_HANDLER(void){ //Esta es la rutina de interrupción del botoncino
-
-    if (kinetisWakeupArmed && ((1U << APP_WAKEUP_BUTTON_GPIO_PIN) & PORT_GetPinsInterruptFlags(APP_WAKEUP_BUTTON_PORT)))
-    {
-        PORT_ClearPinsInterruptFlags(APP_WAKEUP_BUTTON_PORT, (1U << APP_WAKEUP_BUTTON_GPIO_PIN));
-        /* Add for ARM errata 838869, affects Cortex-M4, Cortex-M4F Store immediate overlapping
-        exception return operation might vector to incorrect interrupt */
-        __DSB();
-        kinetisWakeupArmed = false;
-    }
-    else if(!kinetisWakeupArmed && ((1U << APP_WAKEUP_BUTTON_GPIO_PIN) & PORT_GetPinsInterruptFlags(APP_WAKEUP_BUTTON_PORT))){
-    	PORT_ClearPinsInterruptFlags(APP_WAKEUP_BUTTON_PORT, (1U << APP_WAKEUP_BUTTON_GPIO_PIN));
-    	switchAppState(appContext.appState, kAPP_STATE_OFF);
-    }
-}
-
 
 void cbackin(void) {
 #ifdef DEBUG_PRINTF_APP
