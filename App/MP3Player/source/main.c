@@ -117,7 +117,7 @@ int main(void) {
 
 			case kAPP_STATE_OFF:
 				switchOffKinetis();														/* Turn off */
-				switchAppState(appContext.menuState, kAPP_STATE_IDDLE);				/* Go back to IDDLE */
+				switchAppState(appContext.appState, kAPP_STATE_IDDLE);				/* Go back to IDDLE */
 
 				break;
 
@@ -126,15 +126,8 @@ int main(void) {
 				/***************/
 
 			case kAPP_STATE_IDDLE:
-				if(SDWRAPPER_GetMounted() && SDWRAPPER_getJustIn()){					/* If SD is mounted */
-					appContext.currentFile = FSEXP_exploreFS(FSEXP_ROOT_DIR);			/* Explore filesystem */
-#ifdef DEBUG_PRINTF_APP
-					appContext.currentFile = FSEXP_getNext();
-					printf("Pointing currently to: %s\n", appContext.currentFile);
-#endif
-				}
-				else if(SDWRAPPER_getJustOut()){										/* If SD is removed */
-					if(appContext.menuState == kAPP_MENU_FILESYSTEM){					/* and menu is exploring FS*/
+				if(SDWRAPPER_getJustOut()){										/* If SD is removed */
+					if(appContext.mappState == kAPP_MENU_FILESYSTEM){					/* and menu is exploring FS*/
 						appContext.menuState = kAPP_MENU_MAIN;						/* Go back to main menu */
 					}
 				}
@@ -151,7 +144,7 @@ int main(void) {
 						appContext.menuState = kAPP_MENU_MAIN;						/* Go back to main menu */
 						//TODO stop music, stop spectogram
 						//...
-						switchAppState(appContext.menuState, kAPP_STATE_IDDLE); 		/* Return to iddle state */
+						switchAppState(appContext.appState, kAPP_STATE_IDDLE); 		/* Return to iddle state */
 						break;
 					}
 				}
@@ -321,6 +314,11 @@ void APP_WAKEUP_BUTTON_IRQ_HANDLER(void){ //Esta es la rutina de interrupción d
 void cbackin(void) {
 #ifdef DEBUG_PRINTF_APP
 	printf("[App] SD Card inserted.\r\n");
+	appContext.currentFile = FSEXP_exploreFS(FSEXP_ROOT_DIR);				/* Explore filesystem */
+	#ifdef DEBUG_PRINTF_APP
+	appContext.currentFile = FSEXP_getNext();
+	printf("[App] Pointing currently to: %s\n", appContext.currentFile);
+	#endif
 #endif
 }
 
