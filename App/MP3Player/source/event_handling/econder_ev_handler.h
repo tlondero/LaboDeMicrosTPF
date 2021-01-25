@@ -5,8 +5,8 @@
  *      Author: Acer
  */
 
-#ifndef EVENT_HANDLING_EVENT_GETTER_ENCODER_H_
-#define EVENT_HANDLING_EVENT_GETTER_ENCODER_H_
+#ifndef EVENT_HANDLING_ECONDER_EV_HANDLER_H_
+#define EVENT_HANDLING_ECONDER_EV_HANDLER_H_
 
 typedef struct {
 	int huevo;
@@ -15,4 +15,4 @@ typedef struct {
 encoder_event_t ENC_EVHANDLER_GetEvents();
 
 
-#endif /* EVENT_HANDLING_EVENT_GETTER_ENCODER_H_ */
+#endif /* EVENT_HANDLING_ECONDER_EV_HANDLER_H_ */
