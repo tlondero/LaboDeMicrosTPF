@@ -92,4 +92,13 @@ char * FSEXP_getPath(void);
  * @return --
 */
 void FSEXP_addCallbackForFile(cback cb);
+
+/**
+ * @brief  FSEXP_closeDir: closes directory
+ * @param  --
+ * @return --
+*/
+void FSEXP_closeDir(void);
+
+
 #endif /* FS_EXPLORER_H_ */
