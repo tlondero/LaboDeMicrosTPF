@@ -1,16 +1,13 @@
-
-/***************************************************************************/ /**
-  @file     sd_ev_handler.c
-  @brief	handler for the ev_handler
-  @author   Guido Lambertucci
+/***************************************************************************//**
+ @file     FileName.c
+ @brief
+ @author   Guido Lambertucci
  ******************************************************************************/
 
 /*******************************************************************************
  * INCLUDE HEADER FILES
  ******************************************************************************/
-#include "sd_ev_handler.h"
-#include "../SD_Detect_Wraper.h"
-
+#include "stdbool.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
@@ -27,12 +24,29 @@
  * VARIABLE DECLARATION WITH FILE SCOPE
  ******************************************************************************/
 
+static bool back_button;
+static bool next_button;
+static bool prev_button;
+static bool enter_button;
+static bool off_on_button;
+static bool pause_play_button;
+
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH GLOBAL SCOPE
  ******************************************************************************/
-void get_event_SD(sd_event_t * sd_event){
-	sd_event->sd_just_out = SDWRAPPER_getJustOut();
-	sd_event->sd_just_in =  SDWRAPPER_getJustIn();
+void get_event_buttons(button_event_t *button_event) {
+	button_event->back_button = back_button;
+	button_event->enter_button = enter_button;
+	button_event->next_button = next_button;
+	button_event->off_on_button = off_on_button;
+	button_event->pause_play_button = pause_play_button;
+	button_event->prev_button = prev_button;
+	back_button = 0;
+	next_button = 0;
+	prev_button = 0;
+	enter_button = 0;
+	off_on_button = 0;
+	pause_play_button = 0;
 }
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH FILE SCOPE
@@ -41,5 +55,4 @@ void get_event_SD(sd_event_t * sd_event){
 /*******************************************************************************
  *						 INTERRUPTION ROUTINES
  ******************************************************************************/
-
 

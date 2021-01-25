@@ -10,12 +10,13 @@
  * INCLUDE HEADER FILES
  ******************************************************************************/
 #include "sd_ev_handler.h"
-
+#include "button_ev_handler.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 typedef struct{
 	sd_event_t sd_evs;
+	button_event_t btn_evs;
 }event_t;
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
