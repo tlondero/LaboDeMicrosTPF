@@ -106,8 +106,9 @@ int main(void) {
 	prepareForSwitchOff();																/*and turn off */
 
 	while(true){
+		event_t ev;
 
-		event_t events = EVHANDLER_GetEvents();											/* Get events */
+		event_handler_get_event(&ev);											/* Get events */
 
 		switch(appContext.appState){
 
@@ -131,7 +132,7 @@ int main(void) {
 						appContext.menuState = kAPP_MENU_MAIN;						/* Go back to main menu */
 					}
 				}
-				runMenu(&events, &appContext);										/* Run menu in background */
+				runMenu(&ev, &appContext);										/* Run menu in background */
 				break;
 
 				/***************/
@@ -148,8 +149,8 @@ int main(void) {
 						break;
 					}
 				}
-				runMenu(&events, &appContext);										/* Run menu in background */
-				runPlayer(&events, &appContext);										/* Run player in background */
+				runMenu(&ev, &appContext);										/* Run menu in background */
+				runPlayer(&ev, &appContext);										/* Run player in background */
 				break;
 
 
