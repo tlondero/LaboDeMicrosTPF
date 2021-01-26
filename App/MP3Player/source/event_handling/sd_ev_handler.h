@@ -1,7 +1,7 @@
 /***************************************************************************/ /**
   @file     FileName.h
   @brief	///
-  @author   Guido Lambertucci
+  @author   MAGT
  ******************************************************************************/
 #ifndef EVENT_HANDLING_SD_EV_HANDLER_H_
 #define EVENT_HANDLING_SD_EV_HANDLER_H_
@@ -21,6 +21,7 @@
 typedef struct{
 	bool sd_just_in;
 	bool sd_just_out;
+	bool opened_nondir;
 } sd_event_t;
 
 /*******************************************************************************
@@ -36,6 +37,7 @@ typedef struct{
  * @param  sd_event: event structure for the sd
  * @return --
 */
-void get_event_SD(sd_event_t * sd_event);
+void SD_EVHANDLER_GetEvents(sd_event_t * sd_event);
+
 
 #endif /* EVENT_HANDLING_SD_EV_HANDLER_H_ */

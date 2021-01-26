@@ -15,7 +15,8 @@
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
-
+#define BINES 8
+#define SIZE 1024
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
@@ -61,6 +62,22 @@ void icfft(float32_t * inputF32, float32_t * outputF32, bool doBitReverse)
 void fftGetMag(float32_t * inputF32, float32_t * outputF32)
 {
   arm_cmplx_mag_f32(inputF32, outputF32, fftInstanceToSize(fftInstance));
+}
+
+
+void fftMakeBines8(float32_t *src,float32_t * dst) {
+	float32_t maxValue=0;
+	uint32_t index=0;
+	arm_max_f32(src, SIZE, &maxValue, &index);
+	for (int j = 0; j < BINES; j++) {
+		float32_t aux=0;
+		for (int i = 0; i < SIZE/BINES; i++) {
+			aux+=src[i+(SIZE/BINES)*j]/maxValue;
+			if(i==(SIZE/BINES)-1){
+				dst[j]=aux/128;
+			}
+		}
+	}
 }
 
 /*******************************************************************************

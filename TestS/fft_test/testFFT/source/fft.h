@@ -73,6 +73,15 @@ void ifft(float32_t * inputF32, float32_t * outputF32, bool doBitReverse);
  */
 void fftGetMag(float32_t * inputF32, float32_t * outputF32);
 
+
+
+/**
+ * @brief changes the 1024 fft to 8 bines.
+ * @param inputF32      Buffer with input data.
+ * @param outputF32     buffer with the 8 bines.
+ */
+
+void fftMakeBines8(float32_t *src,float32_t * dst);
 /*******************************************************************************
  ******************************************************************************/
 

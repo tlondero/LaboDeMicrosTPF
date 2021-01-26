@@ -1,42 +1,42 @@
 /* ----------------------------------------------------------------------
-* Copyright (C) 2010-2012 ARM Limited. All rights reserved.
-*
-* $Date:         17. January 2013
-* $Revision:     V1.4.0
-*
-* Project:       CMSIS DSP Library
-* Title:	     arm_fft_bin_example_f32.c
-*
-* Description:   Example code demonstrating calculation of Max energy bin of
-*                frequency domain of input signal.
-*
-* Target Processor: Cortex-M4/Cortex-M3
-*
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided that the following conditions
-* are met:
-*   - Redistributions of source code must retain the above copyright
-*     notice, this list of conditions and the following disclaimer.
-*   - Redistributions in binary form must reproduce the above copyright
-*     notice, this list of conditions and the following disclaimer in
-*     the documentation and/or other materials provided with the
-*     distribution.
-*   - Neither the name of ARM LIMITED nor the names of its contributors
-*     may be used to endorse or promote products derived from this
-*     software without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-* "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-* LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-* FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-* COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-* INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-* BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-* LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-* CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
-* ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-* POSSIBILITY OF SUCH DAMAGE.
+ * Copyright (C) 2010-2012 ARM Limited. All rights reserved.
+ *
+ * $Date:         17. January 2013
+ * $Revision:     V1.4.0
+ *
+ * Project:       CMSIS DSP Library
+ * Title:	     arm_fft_bin_example_f32.c
+ *
+ * Description:   Example code demonstrating calculation of Max energy bin of
+ *                frequency domain of input signal.
+ *
+ * Target Processor: Cortex-M4/Cortex-M3
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *   - Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *   - Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in
+ *     the documentation and/or other materials provided with the
+ *     distribution.
+ *   - Neither the name of ARM LIMITED nor the names of its contributors
+ *     may be used to endorse or promote products derived from this
+ *     software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  * -------------------------------------------------------------------- */
 
 /**
@@ -89,10 +89,8 @@
  *
  */
 
-
 /** \example arm_fft_bin_example_f32.c
-  */
-
+ */
 
 #include <fft.h>
 #include "math_helper.h"
@@ -100,17 +98,17 @@
 #define SNR_THRESHOLD_F32    	130.0f
 
 /* -------------------------------------------------------------------
-* External Input and Output buffer Declarations for FFT Bin Example
-* ------------------------------------------------------------------- */
+ * External Input and Output buffer Declarations for FFT Bin Example
+ * ------------------------------------------------------------------- */
 extern float32_t testInput_f32_10khz[TEST_LENGTH_SAMPLES];
 static float32_t ifftmode[TEST_LENGTH_SAMPLES];
-extern float32_t refOutput[TEST_LENGTH_SAMPLES/2];
+extern float32_t refOutput[TEST_LENGTH_SAMPLES / 2];
 static float32_t cfftOutput[TEST_LENGTH_SAMPLES];
-static float32_t testOutput[TEST_LENGTH_SAMPLES/2];
+static float32_t testOutput[TEST_LENGTH_SAMPLES / 2];
 
 /* ------------------------------------------------------------------
-* Global variables for FFT Bin Example
-* ------------------------------------------------------------------- */
+ * Global variables for FFT Bin Example
+ * ------------------------------------------------------------------- */
 uint32_t fftSize = 1024;
 uint32_t ifftFlag = 0;
 uint32_t doBitReverse = 1;
@@ -118,41 +116,42 @@ uint32_t doBitReverse = 1;
 /* Reference index at which max energy of bin occurs */
 uint32_t refIndex = 213, testIndex = 0;
 
+void makeBines8(float32_t *src);
+float32_t bines_out[8];
 /* ----------------------------------------------------------------------
-* Max magnitude FFT Bin test
-* ------------------------------------------------------------------- */
-float32_t deltas[32]={1, 0, 4, 0, 69, 0, 69, 0, 15, 0, 69, 0, 87, 0, 23, 0, 5, 0, 69, 0, 96, 0, 47, 0, 5, 0, 15, 0, 14, 0, 7};//{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0};
-float32_t deltout[32]={0};
-float32_t magdelt[16]={0};
-int32_t main(void)
-{
-
-  arm_status status;
-  float32_t maxValue;
-  //cfftInit(CFFT_1024);
-  fftInit(CFFT_16);
+ * Max magnitude FFT Bin test
+ * ------------------------------------------------------------------- */
+//float32_t deltas[1024] = { 1, 0, 4, 0, 69, 0, 69, 0, 15, 0, 69, 0, 87, 0, 23, 0,
+//		5, 0, 69, 0, 96, 0, 47, 0, 5, 0, 15, 0, 14, 0, 7 }; //{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1, 0, 4, 0, 69, 0, 69, 0, 15, 0, 69, 0, 87, 0, 23, 0, 5, 0, 69, 0, 96, 0, 47, 0, 5, 0, 15, 0, 14, 0, 7};//{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1, 0, 4, 0, 69, 0, 69, 0, 15, 0, 69, 0, 87, 0, 23, 0, 5, 0, 69, 0, 96, 0, 47, 0, 5, 0, 15, 0, 14, 0, 7};//{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1, 0, 4, 0, 69, 0, 69, 0, 15, 0, 69, 0, 87, 0, 23, 0, 5, 0, 69, 0, 96, 0, 47, 0, 5, 0, 15, 0, 14, 0, 7};//{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1, 0, 4, 0, 69, 0, 69, 0, 15, 0, 69, 0, 87, 0, 23, 0, 5, 0, 69, 0, 96, 0, 47, 0, 5, 0, 15, 0, 14, 0, 7};//{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1, 0, 4, 0, 69, 0, 69, 0, 15, 0, 69, 0, 87, 0, 23, 0, 5, 0, 69, 0, 96, 0, 47, 0, 5, 0, 15, 0, 14, 0, 7};//{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1, 0, 4, 0, 69, 0, 69, 0, 15, 0, 69, 0, 87, 0, 23, 0, 5, 0, 69, 0, 96, 0, 47, 0, 5, 0, 15, 0, 14, 0, 7};//{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1, 0, 4, 0, 69, 0, 69, 0, 15, 0, 69, 0, 87, 0, 23, 0, 5, 0, 69, 0, 96, 0, 47, 0, 5, 0, 15, 0, 14, 0, 7};//{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1, 0, 4, 0, 69, 0, 69, 0, 15, 0, 69, 0, 87, 0, 23, 0, 5, 0, 69, 0, 96, 0, 47, 0, 5, 0, 15, 0, 14, 0, 7};//{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1, 0, 4, 0, 69, 0, 69, 0, 15, 0, 69, 0, 87, 0, 23, 0, 5, 0, 69, 0, 96, 0, 47, 0, 5, 0, 15, 0, 14, 0, 7};//{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1, 0, 4, 0, 69, 0, 69, 0, 15, 0, 69, 0, 87, 0, 23, 0, 5, 0, 69, 0, 96, 0, 47, 0, 5, 0, 15, 0, 14, 0, 7};//{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1, 0, 4, 0, 69, 0, 69, 0, 15, 0, 69, 0, 87, 0, 23, 0, 5, 0, 69, 0, 96, 0, 47, 0, 5, 0, 15, 0, 14, 0, 7};//{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1, 0, 4, 0, 69, 0, 69, 0, 15, 0, 69, 0, 87, 0, 23, 0, 5, 0, 69, 0, 96, 0, 47, 0, 5, 0, 15, 0, 14, 0, 7};//{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1, 0, 4, 0, 69, 0, 69, 0, 15, 0, 69, 0, 87, 0, 23, 0, 5, 0, 69, 0, 96, 0, 47, 0, 5, 0, 15, 0, 14, 0, 7};//{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1, 0, 4, 0, 69, 0, 69, 0, 15, 0, 69, 0, 87, 0, 23, 0, 5, 0, 69, 0, 96, 0, 47, 0, 5, 0, 15, 0, 14, 0, 7};//{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1, 0, 4, 0, 69, 0, 69, 0, 15, 0, 69, 0, 87, 0, 23, 0, 5, 0, 69, 0, 96, 0, 47, 0, 5, 0, 15, 0, 14, 0, 7};//{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1, 0, 4, 0, 69, 0, 69, 0, 15, 0, 69, 0, 87, 0, 23, 0, 5, 0, 69, 0, 96, 0, 47, 0, 5, 0, 15, 0, 14, 0, 7};//{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1, 0, 4, 0, 69, 0, 69, 0, 15, 0, 69, 0, 87, 0, 23, 0, 5, 0, 69, 0, 96, 0, 47, 0, 5, 0, 15, 0, 14, 0, 7};//{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1, 0, 4, 0, 69, 0, 69, 0, 15, 0, 69, 0, 87, 0, 23, 0, 5, 0, 69, 0, 96, 0, 47, 0, 5, 0, 15, 0, 14, 0, 7};//{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1, 0, 4, 0, 69, 0, 69, 0, 15, 0, 69, 0, 87, 0, 23, 0, 5, 0, 69, 0, 96, 0, 47, 0, 5, 0, 15, 0, 14, 0, 7};//{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1, 0, 4, 0, 69, 0, 69, 0, 15, 0, 69, 0, 87, 0, 23, 0, 5, 0, 69, 0, 96, 0, 47, 0, 5, 0, 15, 0, 14, 0, 7};//{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1, 0, 4, 0, 69, 0, 69, 0, 15, 0, 69, 0, 87, 0, 23, 0, 5, 0, 69, 0, 96, 0, 47, 0, 5, 0, 15, 0, 14, 0, 7};//{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1, 0, 4, 0, 69, 0, 69, 0, 15, 0, 69, 0, 87, 0, 23, 0, 5, 0, 69, 0, 96, 0, 47, 0, 5, 0, 15, 0, 14, 0, 7};//{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1, 0, 4, 0, 69, 0, 69, 0, 15, 0, 69, 0, 87, 0, 23, 0, 5, 0, 69, 0, 96, 0, 47, 0, 5, 0, 15, 0, 14, 0, 7};//{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1, 0, 4, 0, 69, 0, 69, 0, 15, 0, 69, 0, 87, 0, 23, 0, 5, 0, 69, 0, 96, 0, 47, 0, 5, 0, 15, 0, 14, 0, 7};//{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1, 0, 4, 0, 69, 0, 69, 0, 15, 0, 69, 0, 87, 0, 23, 0, 5, 0, 69, 0, 96, 0, 47, 0, 5, 0, 15, 0, 14, 0, 7};//{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1, 0, 4, 0, 69, 0, 69, 0, 15, 0, 69, 0, 87, 0, 23, 0, 5, 0, 69, 0, 96, 0, 47, 0, 5, 0, 15, 0, 14, 0, 7};//{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1, 0, 4, 0, 69, 0, 69, 0, 15, 0, 69, 0, 87, 0, 23, 0, 5, 0, 69, 0, 96, 0, 47, 0, 5, 0, 15, 0, 14, 0, 7};//{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1, 0, 4, 0, 69, 0, 69, 0, 15, 0, 69, 0, 87, 0, 23, 0, 5, 0, 69, 0, 96, 0, 47, 0, 5, 0, 15, 0, 14, 0, 7};//{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1, 0, 4, 0, 69, 0, 69, 0, 15, 0, 69, 0, 87, 0, 23, 0, 5, 0, 69, 0, 96, 0, 47, 0, 5, 0, 15, 0, 14, 0, 7};//{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1, 0, 4, 0, 69, 0, 69, 0, 15, 0, 69, 0, 87, 0, 23, 0, 5, 0, 69, 0, 96, 0, 47, 0, 5, 0, 15, 0, 14, 0, 7};//{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1, 0, 4, 0, 69, 0, 69, 0, 15, 0, 69, 0, 87, 0, 23, 0, 5, 0, 69, 0, 96, 0, 47, 0, 5, 0, 15, 0, 14, 0, 7};//{1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0};
 
 
-  status = ARM_MATH_SUCCESS;
+float32_t deltas[2048] = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 };
 
-  /* Process the data through the CFFT/CIFFT module */
-  fft(deltas, deltout, doBitReverse);//test de trolos
+float32_t deltout[2048] = { 0 };
+float32_t magdelt[1024] = { 0 };
+int32_t main(void) {
 
-  //cfft(testInput_f32_10khz, cfftOutput, doBitReverse);
+	arm_status status;
 
-  /* Process the data through the Complex Magnitude Module for
-  calculating the magnitude at each bin */
-  fftGetMag(deltout, magdelt);//test de trolos
+	fftInit(CFFT_1024);
+	//fftInit(CFFT_16);
 
-  //cfftGetMag(cfftOutput, testOutput);
+	status = ARM_MATH_SUCCESS;
 
+	/* Process the data through the CFFT/CIFFT module */
+	fft(deltas, deltout, doBitReverse); //test de trolos
 
-  /* Calculates maxValue and returns corresponding BIN value */
- // arm_max_f32(testOutput, fftSize, &maxValue, &testIndex);
-  arm_max_f32(deltout, 16, &maxValue, &testIndex);
+	/* Process the data through the Complex Magnitude Module for
+	 calculating the magnitude at each bin */
+	fftGetMag(deltout, magdelt); //test de trolos
 
- __asm__("BKPT #0");
-  while (1);                             /* main function does not return */
+	/* Calculates maxValue and returns corresponding BIN value */
+	// arm_max_f32(testOutput, fftSize, &maxValue, &testIndex);
+
+	fftMakeBines8(magdelt,bines_out);
+
+	__asm__("BKPT #0");
+	while (1)
+		; /* main function does not return */
 }
 
- /** \endlink */
