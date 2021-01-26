@@ -1,6 +1,7 @@
-fft.c:44:6:fftInit	16	static
-fft.c:49:6:fft	24	static
-fft.c:55:6:icfft	24	static
-fft.c:61:6:fftGetMag	16	static
-fft.c:71:25:fftSizeToInstance	24	static
-fft.c:91:10:fftInstanceToSize	24	static
+fft.c:45:6:fftInit	16	static
+fft.c:50:6:fft	24	static
+fft.c:56:6:icfft	24	static
+fft.c:62:6:fftGetMag	16	static
+fft.c:68:6:fftMakeBines8	40	static
+fft.c:88:25:fftSizeToInstance	24	static
+fft.c:108:10:fftInstanceToSize	24	static
