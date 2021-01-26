@@ -50,7 +50,9 @@ typedef enum {
 } menu_state_t;
 
 typedef struct {
-	bool firstTime;
+	bool firstDacTransmition;
+	bool songPaused;
+	bool songResumed;
 	mp3_decoder_result_t res;
 	uint16_t sr_;	//Default config 4 mp3 stereo
 	uint8_t ch_;
@@ -608,7 +610,7 @@ void switchAppState(app_state_t current, app_state_t target) {
 			appContext.appState = target;
 		} else if (current == kAPP_STATE_PLAYING) {
 			DAC_Wrapper_Sleep();
-			appContext.playerContext.firstTime = true;
+			appContext.playerContext.firstDacTransmition = true;
 			prepareForSwitchOff();
 			appContext.appState = target;
 		}
@@ -620,7 +622,7 @@ void switchAppState(app_state_t current, app_state_t target) {
 		} else if (current == kAPP_STATE_PLAYING) {
 			//TODO: Stop player, spectrogram..
 			DAC_Wrapper_Sleep();
-			appContext.playerContext.firstTime = true;
+			appContext.playerContext.firstDacTransmition = true;
 			appContext.appState = target;
 		}
 		break;
@@ -678,9 +680,9 @@ void runPlayer(event_t *events, app_context_t *context) {
 	if (appContext.playerContext.res == MP3DECODER_NO_ERROR) {
 
 		if (DAC_Wrapper_Is_Transfer_Done()
-				|| appContext.playerContext.firstTime) { //Entro en la primera o cuando ya transmiti
+				|| appContext.playerContext.firstDacTransmition) { //Entro en la primera o cuando ya transmiti
 
-			appContext.playerContext.firstTime = false;
+			appContext.playerContext.firstDacTransmition = false;
 
 			MP3GetLastFrameData(&(appContext.playerContext.frameData));
 
@@ -771,7 +773,9 @@ void resetAppContext(void) {
 	appContext.volume = 50;
 	appContext.currentFile = NULL;
 
-	appContext.playerContext.firstTime = true;
+	appContext.playerContext.firstDacTransmition = true;
+	appContext.playerContext.songPaused = false;
+	appContext.playerContext.songResumed = false;
 	appContext.playerContext.res = MP3DECODER_FILE_END;
 	appContext.playerContext.sr_ = kMP3_44100Hz;
 	appContext.playerContext.ch_ = kMP3_Stereo;
