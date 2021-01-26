@@ -195,6 +195,52 @@ int main(void) {
 				if(ev.btn_evs.off_on_button){
 					switchAppState(appContext.appState, kAPP_STATE_OFF);
 				}
+				if(SDWRAPPER_GetMounted()&&SDWRAPPER_getSDInserted()){
+					if(ev.btn_evs.next_button){
+						if(FSEXP_getNext()){
+							appContext.currentFile = FSEXP_getFilename();
+						}
+						#ifdef DEBUG_PRINTF_APP
+						printf("[App] Pointing currently to: %s\n", appContext.currentFile);
+						#endif
+					}
+					if(ev.btn_evs.prev_button){
+						if(FSEXP_getPrev()){
+							appContext.currentFile = FSEXP_getFilename();
+						}
+						#ifdef DEBUG_PRINTF_APP
+						printf("[App] Pointing currently to: %s\n", appContext.currentFile);
+						#endif
+					}
+					if(ev.btn_evs.enter_button){
+						#ifdef DEBUG_PRINTF_APP
+						printf("[App] Opened %s\n", appContext.currentFile);
+						#endif
+						if(FSEXP_openSelected()){
+							appContext.currentFile = FSEXP_getFilename();
+						}
+						#ifdef DEBUG_PRINTF_APP
+						printf("[App] Pointing currently to: %s\n", appContext.currentFile);
+						#endif
+					}
+					if(ev.btn_evs.back_button){
+
+						if(FSEXP_goBackDir()){
+							appContext.currentFile = FSEXP_getFilename();
+						}
+						#ifdef DEBUG_PRINTF_APP
+						printf("[App] Went back a directory\n");
+						printf("[App] Pointing currently to: %s\n", appContext.currentFile);
+						#endif
+					}
+					if(ev.fsexp_evs.play_music){
+						#ifdef DEBUG_PRINTF_APP
+						printf("[App] Pointing currently to: %s\n", appContext.currentFile);
+						#endif
+						//TODO: Reiniciar todo para reproducir la proxima cancion.
+					}
+				}
+
 				runMenu(&ev, &appContext);											/* Run menu in background */
 				runPlayer(&ev, &appContext);										/* Run player in background */
 				break;

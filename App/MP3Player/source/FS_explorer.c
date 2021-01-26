@@ -2,7 +2,7 @@
 /***************************************************************************/ /**
   @file     FS_explorer.c
   @brief
-  @author   Guido Lambertucci
+  @author   MAGT
  ******************************************************************************/
 
 /*******************************************************************************
@@ -123,6 +123,7 @@ char * FSEXP_exploreFS(char * path){
 
 
 }
+
 char* FSEXP_getNext(){
 	FRESULT error;
 	if (data.directory_index < NAME_LIST_SIZE - 1) {
@@ -224,7 +225,6 @@ char *  FSEXP_openSelected(){
 		printf("File selected: %s\r\n",
 				data.directoryNames[data.directory_index].name);
 #endif
-		addToPath(data.directoryNames[data.directory_index].name);
 		if((data.directory_path[data.path_index-1]== '3') &&
 				(toupper(data.directory_path[data.path_index-2])== 'P')
 			&&
