@@ -143,6 +143,27 @@ void DAC_Wrapper_Loop(bool status) {
 	loopBufferActive = status;
 }
 
+void DAC_Wrapper_Sleep(void) {
+	DAC_Wrapper_Clear_Data_Array();
+
+	PDB_DisableInterrupts(PDB_BASEADDR, kPDB_DelayInterruptEnable);
+
+	EDMA_StopTransfer(&g_EDMA_Handle);
+	EDMA_DisableChannelInterrupts(DMA_BASEADDR, DMA_CHANNEL,
+			kEDMA_MajorInterruptEnable);
+
+	DAC_DisableBufferInterrupts(DAC_BASEADDR,
+			kDAC_BufferReadPointerTopInterruptEnable);
+}
+
+void DAC_Wrapper_Wake_Up(void) {
+	PDB_EnableInterrupts(PDB_BASEADDR, kPDB_DelayInterruptEnable);
+	DAC_EnableBufferInterrupts(DAC_BASEADDR, kDAC_BufferReadPointerTopInterruptEnable);
+
+	EDMA_EnableChannelInterrupts(DMA_BASEADDR, DMA_CHANNEL, kEDMA_MajorInterruptEnable);
+	EDMA_StartTransfer(&g_EDMA_Handle);
+}
+
 bool MP3_Set_Sample_Rate(uint16_t sr, uint8_t ch) {
 	bool ret = true;
 	uint32_t mod_val;

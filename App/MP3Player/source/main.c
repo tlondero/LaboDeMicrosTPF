@@ -445,6 +445,9 @@ prepareForSwitchOff();
 						printf("[App] Pointing currently to: %s\n", appContext.currentFile);
 						#endif
 					}
+					if(ev.fsexp_evs.play_music){
+						switchAppState(appContext.appState, kAPP_STATE_PLAYING);
+					}
 				}
 				runMenu(&ev, &appContext);										/* Run menu in background */
 				break;
@@ -524,6 +527,9 @@ int initDevice(void){
 	DAC_Wrapper_Init();		//Init DMAMUX, EDMA, PDB, DAC
 	DAC_Wrapper_Loop(false);
 
+	/* Init event handlers */
+	EVHANDLER_InitHandlers();
+
 	/* Reset app context */
 	resetAppContext();
 
@@ -533,8 +539,12 @@ int initDevice(void){
 
 void switchAppState(app_state_t current, app_state_t target){
 	switch(target){
-	case kAPP_STATE_OFF: 							/* Can only come from IDDLE */
+	case kAPP_STATE_OFF: 							/* Can come from IDDLE or PLAYING */
 		if(current == kAPP_STATE_IDDLE){
+			prepareForSwitchOff();
+			appContext.appState = target;
+		}
+		else if(current == kAPP_STATE_PLAYING){
 			prepareForSwitchOff();
 			appContext.appState = target;
 		}
@@ -552,6 +562,9 @@ void switchAppState(app_state_t current, app_state_t target){
 	case kAPP_STATE_PLAYING:						/* Can only come from IDDLE */
 		if(current == kAPP_STATE_IDDLE){
 			//TODO: Start player, spectrogram..
+			#ifdef DEBUG_PRINTF_APP
+			printf("[App] Playing music..\n");
+			#endif
 			appContext.appState = target;
 		}
 		break;

@@ -9,6 +9,7 @@
  * INCLUDE HEADER FILES
  ******************************************************************************/
 #include "fsexplorer_ev_handler.h"
+#include "FS_explorer.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
@@ -20,18 +21,22 @@
 /*******************************************************************************
  * FUNCTION PROTOTYPES WITH FILE SCOPE
  ******************************************************************************/
-
+void FSEXP_PLAY_INTERRUPT_ROUTINE(void);
 /*******************************************************************************
  * VARIABLE DECLARATION WITH FILE SCOPE
  ******************************************************************************/
-static fsexplorer_event_t fsexplorer_event;
+static bool play;
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH GLOBAL SCOPE
  ******************************************************************************/
 
-void FSEXPLORER_EVHANDLER_GetEvents(fsexplorer_event_t * fsexplorer_event){
-	//sd_event->sd_just_out = SDWRAPPER_getJustOut();
-	//sd_event->sd_just_in =  SDWRAPPER_getJustIn();
+void FSEXP_EVHANDLER_Init(void){
+	FSEXP_addCallbackForFile(FSEXP_PLAY_INTERRUPT_ROUTINE);
+}
+
+void FSEXP_EVHANDLER_GetEvents(fsexplorer_event_t * fsexplorer_event){
+	fsexplorer_event->play_music = play;
+	play = false;
 }
 
 /*******************************************************************************
@@ -42,4 +47,6 @@ void FSEXPLORER_EVHANDLER_GetEvents(fsexplorer_event_t * fsexplorer_event){
  *						 INTERRUPTION ROUTINES
  ******************************************************************************/
 
-
+void FSEXP_PLAY_INTERRUPT_ROUTINE(void){
+	play = true;
+}

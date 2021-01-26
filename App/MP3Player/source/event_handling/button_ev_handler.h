@@ -43,4 +43,11 @@ typedef struct{
  * @return --
 */
 void BUTTONS_EVHANDLER_GetEvents(button_event_t * button_event);
+
+/**
+ * @brief  initializates the ev handler
+ * @param  --
+ * @return --
+*/
+void BUTTONS_EVHANDLER_Init(void);
 #endif /* EVENT_HANDLING_BUTTON_EV_HANDLER_H_ */
