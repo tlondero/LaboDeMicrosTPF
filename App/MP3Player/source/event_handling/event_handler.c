@@ -27,9 +27,13 @@
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH GLOBAL SCOPE
  ******************************************************************************/
-void event_handler_get_event(event_t *evs) {
-	get_event_buttons(&(evs->btn_evs));
-	get_event_SD(&(evs->sd_evs));
+void EVHANDLER_GetEvents(event_t *evs) {
+	BUTTONS_EVHANDLER_GetEvents(&(evs->btn_evs));
+	SD_EVHANDLER_GetEvents(&(evs->sd_evs));
+
+}
+
+void EVHANDLER_InitHandlers(void){
 
 }
 /*******************************************************************************

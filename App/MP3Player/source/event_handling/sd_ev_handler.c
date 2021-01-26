@@ -2,7 +2,7 @@
 /***************************************************************************/ /**
   @file     sd_ev_handler.c
   @brief	handler for the ev_handler
-  @author   Guido Lambertucci
+  @author   MAGT
  ******************************************************************************/
 
 /*******************************************************************************
@@ -26,13 +26,15 @@
 /*******************************************************************************
  * VARIABLE DECLARATION WITH FILE SCOPE
  ******************************************************************************/
-
+static sd_event_t sd_event;
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH GLOBAL SCOPE
  ******************************************************************************/
-void get_event_SD(sd_event_t * sd_event){
+void SD_EVHANDLER_GetEvents(sd_event_t * _sd_event){
 	//sd_event->sd_just_out = SDWRAPPER_getJustOut();
-	//	sd_event->sd_just_in =  SDWRAPPER_getJustIn();
+	//sd_event->sd_just_in =  SDWRAPPER_getJustIn();
+	//sd_event->
+	//
 }
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH FILE SCOPE
@@ -41,5 +43,3 @@ void get_event_SD(sd_event_t * sd_event){
 /*******************************************************************************
  *						 INTERRUPTION ROUTINES
  ******************************************************************************/
-
-

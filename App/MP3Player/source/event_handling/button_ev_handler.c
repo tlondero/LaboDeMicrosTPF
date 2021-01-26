@@ -1,7 +1,7 @@
 /***************************************************************************//**
  @file     FileName.c
  @brief
- @author   Guido Lambertucci
+ @author   MAGT
  ******************************************************************************/
 
 /*******************************************************************************
@@ -40,7 +40,7 @@ static bool kinetisWakeupArmed = true;
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH GLOBAL SCOPE
  ******************************************************************************/
-void get_event_buttons(button_event_t *button_event) {
+void BUTTONS_EVHANDLER_GetEvents(button_event_t *button_event) {
 	button_event->back_button = back_button;
 	button_event->enter_button = enter_button;
 	button_event->next_button = next_button;

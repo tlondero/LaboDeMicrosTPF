@@ -12,11 +12,12 @@
 #include <stdio.h>
 #include <string.h>
 #include "ff.h"
+#include "ctype.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
-f_unmount()
+
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
@@ -73,6 +74,7 @@ static explorer_data_t data;
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH GLOBAL SCOPE
  ******************************************************************************/
+
 char * FSEXP_exploreFS(char * path){
 	FRESULT error;
 	if (data.directory_opened) {
@@ -223,14 +225,15 @@ char *  FSEXP_openSelected(){
 				data.directoryNames[data.directory_index].name);
 #endif
 		addToPath(data.directoryNames[data.directory_index].name);
+		if((data.directory_path[data.path_index-1]== '3') &&
+				(toupper(data.directory_path[data.path_index-2])== 'P')
+			&&
+			(toupper(data.directory_path[data.path_index-3])== 'M'))//if its a mp3 file
+		{
 
-		/*
-		 * aca iria codigo para hacer algo cuando me eligen el archivo mp3 para ponerle play
-		 *
-		 */
-		if (!data.mycb) {
+			if (data.mycb) {
 			data.mycb(); //calls the callback
-		}
+		}}
 		return NULL;
 	}
 }

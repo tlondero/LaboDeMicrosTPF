@@ -98,7 +98,7 @@ int main(void) {
 	while(true){
 		event_t ev;
 
-		event_handler_get_event(&ev);											/* Get events */
+		EVHANDLER_GetEvents(&ev);														/* Get events */
 
 		switch(appContext.appState){
 
@@ -108,7 +108,7 @@ int main(void) {
 
 			case kAPP_STATE_OFF:
 				switchOffKinetis();														/* Turn off */
-				switchAppState(appContext.appState, kAPP_STATE_IDDLE);				/* Go back to IDDLE */
+				switchAppState(appContext.appState, kAPP_STATE_IDDLE);					/* Go back to IDDLE */
 
 				break;
 
@@ -118,15 +118,15 @@ int main(void) {
 
 			case kAPP_STATE_IDDLE:
 				if(SDWRAPPER_GetMounted()&&SDWRAPPER_getJustIn()){
-					appContext.currentFile = FSEXP_exploreFS(FSEXP_ROOT_DIR);				/* Explore filesystem */
+					appContext.currentFile = FSEXP_exploreFS(FSEXP_ROOT_DIR);			/* Explore filesystem */
 					#ifdef DEBUG_PRINTF_APP
 					appContext.currentFile = FSEXP_getNext();
 					printf("[App] Pointing currently to: %s\n", appContext.currentFile);
 					#endif
 				}
-				if(SDWRAPPER_getJustOut()){										/* If SD is removed */
+				if(SDWRAPPER_getJustOut()){												/* If SD is removed */
 					if(appContext.menuState == kAPP_MENU_FILESYSTEM){					/* and menu is exploring FS*/
-						appContext.menuState = kAPP_MENU_MAIN;						/* Go back to main menu */
+						appContext.menuState = kAPP_MENU_MAIN;							/* Go back to main menu */
 					}
 				}
 				if(ev.btn_evs.off_on_button){
@@ -150,11 +150,14 @@ int main(void) {
 						#endif
 					}
 					if(ev.btn_evs.enter_button){
+						#ifdef DEBUG_PRINTF_APP
+						printf("[App] Opened %s\n", appContext.currentFile);
+						#endif
 						if(FSEXP_openSelected()){
 							appContext.currentFile = FSEXP_getFilename();
 						}
 						#ifdef DEBUG_PRINTF_APP
-						printf("[App] Opened %s\n", appContext.currentFile);
+						printf("[App] Pointing currently to: %s\n", appContext.currentFile);
 						#endif
 					}
 					if(ev.btn_evs.back_button){
