@@ -92,4 +92,11 @@ char * FSEXP_getPath(void);
  * @return --
 */
 void FSEXP_addCallbackForFile(cback cb);
+
+/**
+ * @brief  addCallbackForFile: returns name of pointed file
+ * @param  --
+ * @return pointed file
+*/
+char * FSEXP_getFilename(void);
 #endif /* FS_EXPLORER_H_ */

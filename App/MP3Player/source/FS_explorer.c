@@ -215,7 +215,7 @@ char *  FSEXP_openSelected(){
 				data.directoryNames[data.directory_index].name);
 #endif
 		addToPath(data.directoryNames[data.directory_index].name);
-		ret = exploreFS(data.directory_path);
+		ret = FSEXP_exploreFS(data.directory_path);
 		return ret;
 	} else {
 #ifdef DEBUG_PRINTF_FS_EXPLORER
@@ -239,7 +239,7 @@ char *  FSEXP_goBackDir(){
 		data.directory_depht--;
 		char *ret = NULL;
 		removeDirFromPath();
-		ret = exploreFS(data.directory_path);
+		ret = FSEXP_exploreFS(data.directory_path);
 		return ret;
 	} else {
 		return NULL;
@@ -247,6 +247,10 @@ char *  FSEXP_goBackDir(){
 }
 char * FSEXP_getPath(void){
 	return data.directory_path;
+}
+
+char * FSEXP_getFilename(void){
+	return data.directoryNames[data.directory_index].name;
 }
 void FSEXP_addCallbackForFile(cback cb){
 	if (!cb) {

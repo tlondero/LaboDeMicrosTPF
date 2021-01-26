@@ -9,7 +9,7 @@
  * INCLUDE HEADER FILES
  ******************************************************************************/
 #include "sd_ev_handler.h"
-#include "../SD_Detect_Wraper.h"
+//#include "../SD_Detect_Wraper.h"
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
@@ -31,8 +31,8 @@
  * FUNCTION DEFINITIONS WITH GLOBAL SCOPE
  ******************************************************************************/
 void get_event_SD(sd_event_t * sd_event){
-	sd_event->sd_just_out = SDWRAPPER_getJustOut();
-	sd_event->sd_just_in =  SDWRAPPER_getJustIn();
+	//sd_event->sd_just_out = SDWRAPPER_getJustOut();
+	//	sd_event->sd_just_in =  SDWRAPPER_getJustIn();
 }
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH FILE SCOPE

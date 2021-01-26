@@ -138,11 +138,13 @@ void BOARD_SetPortsForWakeupSW2(bool enable){
 		CLOCK_DisableClock(kCLOCK_PortA);                           /* Port A Clock Gate Control: Clock disabled */
 		CLOCK_DisableClock(kCLOCK_PortB);                           /* Port B Clock Gate Control: Clock disabled */
 		CLOCK_DisableClock(kCLOCK_PortE);                           /* Port E Clock Gate Control: Clock disabled */
+		CLOCK_DisableClock(kCLOCK_PortD);
 	}
 	else{
 		CLOCK_EnableClock(kCLOCK_PortA);                           /* Port A Clock Gate Control: Clock enabled */
 		CLOCK_EnableClock(kCLOCK_PortB);                           /* Port B Clock Gate Control: Clock enabled */
 		CLOCK_EnableClock(kCLOCK_PortE);                           /* Port E Clock Gate Control: Clock enabled */
+		CLOCK_EnableClock(kCLOCK_PortD);
 	}
 }
 /* FUNCTION ************************************************************************************************************
@@ -188,8 +190,9 @@ void BOARD_InitPins(void)
 {
 	CLOCK_EnableClock(kCLOCK_PortA);                           /* Port A Clock Gate Control: Clock enabled */
 	 CLOCK_EnableClock(kCLOCK_PortB);                           /* Port B Clock Gate Control: Clock enabled */
-	  CLOCK_EnableClock(kCLOCK_PortE);                           /* Port E Clock Gate Control: Clock enabled */
 	  CLOCK_EnableClock(kCLOCK_PortC);                           /* Port C Clock Gate Control: Clock enabled */
+	 CLOCK_EnableClock(kCLOCK_PortD);                           /* Port D Clock Gate Control: Clock enabled */
+	  CLOCK_EnableClock(kCLOCK_PortE);                           /* Port E Clock Gate Control: Clock enabled */
 
 #ifdef APP_KINETIS_LEDS
 	  PORT_SetPinMux(PORTB, 22U, kPORT_MuxAsGpio);				/* PORTB22 (LED RED) is configured as GPIO */
@@ -287,6 +290,23 @@ void BOARD_InitPins(void)
 	      /* PORTC6 (pin 78) is configured as PTC6 */
 	     PORT_SetPinConfig(PORTC, 6U, &portc6_pin78_config);
 
+	     const port_pin_config_t portA4_pin38_config = {/* Internal pull-up resistor is enabled */
+	     		 kPORT_PullDown,
+	     		 /* Fast slew rate is configured */
+	     		 kPORT_FastSlewRate,
+	     		 /* Passive filter is disabled */
+	     		 kPORT_PassiveFilterDisable,
+	     		 /* Open drain is disabled */
+	     		 kPORT_OpenDrainDisable,
+	     		 /* Low drive strength is configured */
+	     		 kPORT_LowDriveStrength,
+	     		 /* Pin is configured as PTC6 */
+	     		 kPORT_MuxAsGpio,
+	     		 /* Pin Control Register fields [15:0] are not locked */
+	     		 kPORT_UnlockRegister};
+	     	      /* PORTA4 (pin 38) is configured as PTA4 */
+	     	     PORT_SetPinConfig(PORTA, 4U, &portA4_pin38_config);
+
 		 PORTA->PCR[2] = ((PORTA->PCR[2] &
 						   /* Mask bits to zero which are setting */
 						   (~(PORT_PCR_PS_MASK | PORT_PCR_PE_MASK | PORT_PCR_DSE_MASK | PORT_PCR_ISF_MASK)))
@@ -301,6 +321,74 @@ void BOARD_InitPins(void)
 						  /* Drive Strength Enable: Low drive strength is configured on the corresponding pin, if pin
 						   * is configured as a digital output. */
 						  | PORT_PCR_DSE(kPORT_LowDriveStrength));
+
+	  const port_pin_config_t portd0_pin93_config = {/* Internal pull-down resistor is enabled */
+		 kPORT_PullDown,
+		 /* Fast slew rate is configured */
+		 kPORT_FastSlewRate,
+		 /* Passive filter is disabled */
+		 kPORT_PassiveFilterDisable,
+		 /* Open drain is disabled */
+		 kPORT_OpenDrainDisable,
+		 /* Low drive strength is configured */
+		 kPORT_LowDriveStrength,
+		 /* Pin is configured as PTD0 */
+		 kPORT_MuxAsGpio,
+		 /* Pin Control Register fields [15:0] are not locked */
+		 kPORT_UnlockRegister};
+		  /* PORTD0 (pin 93) is configured as PTD0 */
+		 PORT_SetPinConfig(PORTD, PIN0_IDX, &portd0_pin93_config);
+
+		 const port_pin_config_t portd0_pin94_config = {/* Internal pull-down resistor is enabled */
+		 		 kPORT_PullDown,
+		 		 /* Fast slew rate is configured */
+		 		 kPORT_FastSlewRate,
+		 		 /* Passive filter is disabled */
+		 		 kPORT_PassiveFilterDisable,
+		 		 /* Open drain is disabled */
+		 		 kPORT_OpenDrainDisable,
+		 		 /* Low drive strength is configured */
+		 		 kPORT_LowDriveStrength,
+		 		 /* Pin is configured as PTD0 */
+		 		 kPORT_MuxAsGpio,
+		 		 /* Pin Control Register fields [15:0] are not locked */
+		 		 kPORT_UnlockRegister};
+		 		  /* PORTD0 (pin 94) is configured as PTD0 */
+		 		 PORT_SetPinConfig(PORTD, PIN1_IDX, &portd0_pin94_config);
+
+		 		const port_pin_config_t portd0_pin95_config = {/* Internal pull-down resistor is enabled */
+		 				 kPORT_PullDown,
+		 				 /* Fast slew rate is configured */
+		 				 kPORT_FastSlewRate,
+		 				 /* Passive filter is disabled */
+		 				 kPORT_PassiveFilterDisable,
+		 				 /* Open drain is disabled */
+		 				 kPORT_OpenDrainDisable,
+		 				 /* Low drive strength is configured */
+		 				 kPORT_LowDriveStrength,
+		 				 /* Pin is configured as PTD0 */
+		 				 kPORT_MuxAsGpio,
+		 				 /* Pin Control Register fields [15:0] are not locked */
+		 				 kPORT_UnlockRegister};
+		 				  /* PORTD0 (pin 95) is configured as PTD0 */
+		 				 PORT_SetPinConfig(PORTD, PIN2_IDX, &portd0_pin95_config);
+
+		 				const port_pin_config_t portd0_pin96_config = {/* Internal pull-down resistor is enabled */
+		 						 				 kPORT_PullDown,
+		 						 				 /* Fast slew rate is configured */
+		 						 				 kPORT_FastSlewRate,
+		 						 				 /* Passive filter is disabled */
+		 						 				 kPORT_PassiveFilterDisable,
+		 						 				 /* Open drain is disabled */
+		 						 				 kPORT_OpenDrainDisable,
+		 						 				 /* Low drive strength is configured */
+		 						 				 kPORT_LowDriveStrength,
+		 						 				 /* Pin is configured as PTD0 */
+		 						 				 kPORT_MuxAsGpio,
+		 						 				 /* Pin Control Register fields [15:0] are not locked */
+		 						 				 kPORT_UnlockRegister};
+		 						 				  /* PORTD0 (pin 96) is configured as PTD0 */
+		 						 				 PORT_SetPinConfig(PORTD, PIN3_IDX, &portd0_pin96_config);
 
 	  SIM->SOPT5 = ((SIM->SOPT5 &
 	    (~(SIM_SOPT5_UART0TXSRC_MASK)))                          /* Mask bits to zero which are setting */

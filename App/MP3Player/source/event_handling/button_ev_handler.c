@@ -8,8 +8,10 @@
  * INCLUDE HEADER FILES
  ******************************************************************************/
 #include "button_ev_handler.h"
-#include "board.h
+#include "board.h"
+#include "fsl_gpio.h"
 #include "stdbool.h"
+#include "fsl_common.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
@@ -59,7 +61,7 @@ void get_event_buttons(button_event_t *button_event) {
 /*******************************************************************************
  *						 INTERRUPTION ROUTINES
  ******************************************************************************/
-void APP_WAKEUP_BUTTON_IRQ_HANDLER(void){ //Esta es la rutina de interrupción del botoncino
+void PORTC_IRQHandler(void){ //Esta es la rutina de interrupción del botoncino
 
     if (kinetisWakeupArmed && ((1U << APP_WAKEUP_BUTTON_GPIO_PIN) & PORT_GetPinsInterruptFlags(APP_WAKEUP_BUTTON_PORT)))
     {
@@ -72,5 +74,47 @@ void APP_WAKEUP_BUTTON_IRQ_HANDLER(void){ //Esta es la rutina de interrupción d
     else if(!kinetisWakeupArmed && ((1U << APP_WAKEUP_BUTTON_GPIO_PIN) & PORT_GetPinsInterruptFlags(APP_WAKEUP_BUTTON_PORT))){
     	PORT_ClearPinsInterruptFlags(APP_WAKEUP_BUTTON_PORT, (1U << APP_WAKEUP_BUTTON_GPIO_PIN));
     	off_on_button = true;
+    	kinetisWakeupArmed = true;  //TODO: esto puede que no este bien aca
     }
+}
+
+void PORTA_IRQHandler(void)   //SW2
+{
+	 if (((1U << BOARD_SW3_GPIO_PIN) & PORT_GetPinsInterruptFlags(BOARD_SW3_PORT))){
+	    PORT_ClearPinsInterruptFlags(BOARD_SW3_PORT, (1U << BOARD_SW3_GPIO_PIN));
+	    pause_play_button = true;
+	 }
+
+}
+
+void PORTD_IRQHandler(void)	//BOTONERA
+{
+	if (((1U << 0U) & PORT_GetPinsInterruptFlags(PORTD))){ //PTD0
+		SDK_DelayAtLeastUs(50 * 1000U, SDK_DEVICE_MAXIMUM_CPU_CLOCK_FREQUENCY);
+		if(GPIO_PinRead(GPIOD, 0U)){
+			PORT_ClearPinsInterruptFlags(PORTD, (1U << 0U));
+			next_button = true;
+		}
+	}
+	else if (((1U << 1U) & PORT_GetPinsInterruptFlags(PORTD))){ //PTD1
+		SDK_DelayAtLeastUs(50 * 1000U, SDK_DEVICE_MAXIMUM_CPU_CLOCK_FREQUENCY);
+		if(GPIO_PinRead(GPIOD, 1U)){
+			PORT_ClearPinsInterruptFlags(PORTD, (1U << 1U));
+			enter_button = true;
+		}
+	}
+	else if (((1U << 2U) & PORT_GetPinsInterruptFlags(PORTD))){ //PTD2
+		SDK_DelayAtLeastUs(50 * 1000U, SDK_DEVICE_MAXIMUM_CPU_CLOCK_FREQUENCY);
+		if(GPIO_PinRead(GPIOD, 2U)){
+			PORT_ClearPinsInterruptFlags(PORTD, (1U << 2U));
+			prev_button = true;
+		}
+	}
+	else if (((1U << 3U) & PORT_GetPinsInterruptFlags(PORTD))){ //PTD3
+		SDK_DelayAtLeastUs(50 * 1000U, SDK_DEVICE_MAXIMUM_CPU_CLOCK_FREQUENCY);
+		if(GPIO_PinRead(GPIOD, 3U)){
+			PORT_ClearPinsInterruptFlags(PORTD, (1U << 3U));
+			back_button = true;
+		}
+	}
 }
