@@ -16,7 +16,7 @@
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
-
+f_unmount()
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
@@ -256,6 +256,10 @@ void FSEXP_addCallbackForFile(cback cb){
 	if (!cb) {
 		data.mycb = cb;
 	}
+}
+
+void FSEXP_closeDir(void){
+	f_closedir(&data.directory);
 }
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH FILE SCOPE

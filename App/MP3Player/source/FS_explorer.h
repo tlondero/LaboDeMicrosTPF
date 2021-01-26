@@ -94,9 +94,17 @@ char * FSEXP_getPath(void);
 void FSEXP_addCallbackForFile(cback cb);
 
 /**
+
  * @brief  addCallbackForFile: returns name of pointed file
  * @param  --
  * @return pointed file
 */
 char * FSEXP_getFilename(void);
+/*
+ * @brief  FSEXP_closeDir: closes directory
+ * @param  --
+ * @return --
+*/
+void FSEXP_closeDir(void);
+
 #endif /* FS_EXPLORER_H_ */
