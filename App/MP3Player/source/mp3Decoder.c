@@ -157,7 +157,7 @@ bool MP3GetNextFrameData(mp3_decoder_frame_data_t *data) {
 mp3_decoder_result_t MP3GetDecodedFrame(short *outBuffer, uint16_t bufferSize,
 		uint16_t *samples_decoded, uint8_t depth) {
 	mp3_decoder_result_t ret = MP3DECODER_NO_ERROR; // Return value of the function
-#ifdef DEBUG_PRINTF_APP
+#ifdef DEBUG_PRINTF_BYTES_LEFT
 	printf("[App] File has %d bytes left to decode\n",
 			context_data.bytes_remaining);
 #endif

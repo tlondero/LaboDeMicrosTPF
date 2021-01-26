@@ -627,7 +627,8 @@ void switchAppState(app_state_t current, app_state_t target) {
 			//TODO: Start player, spectrogram..
 
 
-			MP3LoadFile(FSEXP_getMP3Path(), NULL);
+			char * songName = (FSEXP_getMP3Path()+1);
+			MP3LoadFile(songName, NULL);
 
 			DAC_Wrapper_Wake_Up();
 
