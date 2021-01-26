@@ -5,7 +5,7 @@ C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\liba
 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
                               C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_const_structs.o) (realCoefBQ15)
 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_max_f32.o)
-                              ./source/arm_fft_bin_example_f32.o (arm_max_f32)
+                              ./source/fft.o (arm_max_f32)
 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cfft_f32.o)
                               ./source/fft.o (arm_cfft_f32)
 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_bitreversal2.o)
@@ -363,6 +363,8 @@ Discarded input sections
  .data.fftSize  0x00000000        0x4 ./source/arm_fft_bin_example_f32.o
  .bss.ifftFlag  0x00000000        0x4 ./source/arm_fft_bin_example_f32.o
  .data.refIndex
+                0x00000000        0x4 ./source/arm_fft_bin_example_f32.o
+ .bss.testIndex
                 0x00000000        0x4 ./source/arm_fft_bin_example_f32.o
  .debug_macro   0x00000000      0xae4 ./source/arm_fft_bin_example_f32.o
  .debug_macro   0x00000000       0x10 ./source/arm_fft_bin_example_f32.o
@@ -2673,7 +2675,7 @@ END GROUP
                 0x14001000                __top_FLEX_RAM = 0x14001000
                 0x14001000                __top_RAM3 = 0x14001000
 
-.text           0x00000000    0x17640
+.text           0x00000000    0x176e0
  FILL mask 0xff
                 0x00000000                __vectors_start__ = ABSOLUTE (.)
  *(SORT_BY_ALIGNMENT(.isr_vector))
@@ -2683,19 +2685,19 @@ END GROUP
                 0x00000198                . = ALIGN (0x4)
                 0x00000198                __section_table_start = .
                 0x00000198                __data_section_table = .
-                0x00000198        0x4 LONG 0x17640 LOADADDR (.data)
+                0x00000198        0x4 LONG 0x176e0 LOADADDR (.data)
                 0x0000019c        0x4 LONG 0x20000000 ADDR (.data)
-                0x000001a0        0x4 LONG 0x88 SIZEOF (.data)
-                0x000001a4        0x4 LONG 0x17640 LOADADDR (.data_RAM2)
+                0x000001a0        0x4 LONG 0x2008 SIZEOF (.data)
+                0x000001a4        0x4 LONG 0x176e0 LOADADDR (.data_RAM2)
                 0x000001a8        0x4 LONG 0x1fff0000 ADDR (.data_RAM2)
                 0x000001ac        0x4 LONG 0x0 SIZEOF (.data_RAM2)
-                0x000001b0        0x4 LONG 0x17640 LOADADDR (.data_RAM3)
+                0x000001b0        0x4 LONG 0x176e0 LOADADDR (.data_RAM3)
                 0x000001b4        0x4 LONG 0x14000000 ADDR (.data_RAM3)
                 0x000001b8        0x4 LONG 0x0 SIZEOF (.data_RAM3)
                 0x000001bc                __data_section_table_end = .
                 0x000001bc                __bss_section_table = .
-                0x000001bc        0x4 LONG 0x20000088 ADDR (.bss)
-                0x000001c0        0x4 LONG 0x1b0 SIZEOF (.bss)
+                0x000001bc        0x4 LONG 0x20002008 ADDR (.bss)
+                0x000001c0        0x4 LONG 0x3110 SIZEOF (.bss)
                 0x000001c4        0x4 LONG 0x1fff0000 ADDR (.bss_RAM2)
                 0x000001c8        0x4 LONG 0x0 SIZEOF (.bss_RAM2)
                 0x000001cc        0x4 LONG 0x14000000 ADDR (.bss_RAM3)
@@ -2804,543 +2806,546 @@ END GROUP
                 0x00000410                PROVIDE (__FLASH_CONFIG_END__ = .)
                 0x00000001                ASSERT (! ((__FLASH_CONFIG_START__ == __FLASH_CONFIG_END__)), Linker Flash Config Support Enabled, but no .FlashConfig section provided within application)
  *(SORT_BY_ALIGNMENT(.text*))
- .text.main     0x00000410       0x54 ./source/arm_fft_bin_example_f32.o
+ .text.main     0x00000410       0x50 ./source/arm_fft_bin_example_f32.o
                 0x00000410                main
- .text.fftInit  0x00000464       0x24 ./source/fft.o
-                0x00000464                fftInit
- .text.fft      0x00000488       0x40 ./source/fft.o
-                0x00000488                fft
+ .text.fftInit  0x00000460       0x24 ./source/fft.o
+                0x00000460                fftInit
+ .text.fft      0x00000484       0x40 ./source/fft.o
+                0x00000484                fft
  .text.fftGetMag
-                0x000004c8       0x2c ./source/fft.o
-                0x000004c8                fftGetMag
+                0x000004c4       0x2c ./source/fft.o
+                0x000004c4                fftGetMag
+ .text.fftMakeBines8
+                0x000004f0       0xa4 ./source/fft.o
+                0x000004f0                fftMakeBines8
  .text.fftSizeToInstance
-                0x000004f4       0xa8 ./source/fft.o
+                0x00000594       0xa8 ./source/fft.o
  .text.fftInstanceToSize
-                0x0000059c       0xc8 ./source/fft.o
+                0x0000063c       0xc8 ./source/fft.o
  .text.I2C_TransferCommonIRQHandler
-                0x00000664       0x58 ./drivers/fsl_i2c.o
+                0x00000704       0x58 ./drivers/fsl_i2c.o
  .text.I2C0_DriverIRQHandler
-                0x000006bc       0x1c ./drivers/fsl_i2c.o
-                0x000006bc                I2C0_DriverIRQHandler
+                0x0000075c       0x1c ./drivers/fsl_i2c.o
+                0x0000075c                I2C0_DriverIRQHandler
  .text.I2C1_DriverIRQHandler
-                0x000006d8       0x1c ./drivers/fsl_i2c.o
-                0x000006d8                I2C1_DriverIRQHandler
+                0x00000778       0x1c ./drivers/fsl_i2c.o
+                0x00000778                I2C1_DriverIRQHandler
  .text.I2C2_DriverIRQHandler
-                0x000006f4       0x1c ./drivers/fsl_i2c.o
-                0x000006f4                I2C2_DriverIRQHandler
+                0x00000794       0x1c ./drivers/fsl_i2c.o
+                0x00000794                I2C2_DriverIRQHandler
  .text.UART0_DriverIRQHandler
-                0x00000710       0x28 ./drivers/fsl_uart.o
-                0x00000710                UART0_DriverIRQHandler
- .text.UART1_DriverIRQHandler
-                0x00000738       0x28 ./drivers/fsl_uart.o
-                0x00000738                UART1_DriverIRQHandler
- .text.UART2_DriverIRQHandler
-                0x00000760       0x28 ./drivers/fsl_uart.o
-                0x00000760                UART2_DriverIRQHandler
- .text.UART3_DriverIRQHandler
-                0x00000788       0x28 ./drivers/fsl_uart.o
-                0x00000788                UART3_DriverIRQHandler
- .text.UART4_DriverIRQHandler
                 0x000007b0       0x28 ./drivers/fsl_uart.o
-                0x000007b0                UART4_DriverIRQHandler
- .text.UART5_DriverIRQHandler
+                0x000007b0                UART0_DriverIRQHandler
+ .text.UART1_DriverIRQHandler
                 0x000007d8       0x28 ./drivers/fsl_uart.o
-                0x000007d8                UART5_DriverIRQHandler
+                0x000007d8                UART1_DriverIRQHandler
+ .text.UART2_DriverIRQHandler
+                0x00000800       0x28 ./drivers/fsl_uart.o
+                0x00000800                UART2_DriverIRQHandler
+ .text.UART3_DriverIRQHandler
+                0x00000828       0x28 ./drivers/fsl_uart.o
+                0x00000828                UART3_DriverIRQHandler
+ .text.UART4_DriverIRQHandler
+                0x00000850       0x28 ./drivers/fsl_uart.o
+                0x00000850                UART4_DriverIRQHandler
+ .text.UART5_DriverIRQHandler
+                0x00000878       0x28 ./drivers/fsl_uart.o
+                0x00000878                UART5_DriverIRQHandler
  .text.SystemInit
-                0x00000800       0x3c ./device/system_MK64F12.o
-                0x00000800                SystemInit
+                0x000008a0       0x3c ./device/system_MK64F12.o
+                0x000008a0                SystemInit
  .text.arm_max_f32
-                0x0000083c       0xd8 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_max_f32.o)
-                0x0000083c                arm_max_f32
+                0x000008dc       0xd8 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_max_f32.o)
+                0x000008dc                arm_max_f32
  .text.arm_cfft_radix8by2_f32
-                0x00000914      0x1a0 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cfft_f32.o)
-                0x00000914                arm_cfft_radix8by2_f32
+                0x000009b4      0x1a0 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cfft_f32.o)
+                0x000009b4                arm_cfft_radix8by2_f32
  .text.arm_cfft_radix8by4_f32
-                0x00000ab4      0x4ac C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cfft_f32.o)
-                0x00000ab4                arm_cfft_radix8by4_f32
+                0x00000b54      0x4ac C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cfft_f32.o)
+                0x00000b54                arm_cfft_radix8by4_f32
  .text.arm_cfft_f32
-                0x00000f60       0xf0 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cfft_f32.o)
-                0x00000f60                arm_cfft_f32
+                0x00001000       0xf0 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cfft_f32.o)
+                0x00001000                arm_cfft_f32
  .text.arm_bitreversal_32
-                0x00001050       0x40 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_bitreversal2.o)
-                0x00001050                arm_bitreversal_32
+                0x000010f0       0x40 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_bitreversal2.o)
+                0x000010f0                arm_bitreversal_32
  .text.arm_cmplx_mag_f32
-                0x00001090      0x248 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cmplx_mag_f32.o)
-                0x00001090                arm_cmplx_mag_f32
+                0x00001130      0x248 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cmplx_mag_f32.o)
+                0x00001130                arm_cmplx_mag_f32
  .text.arm_radix8_butterfly_f32
-                0x000012d8      0x580 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cfft_radix8_f32.o)
-                0x000012d8                arm_radix8_butterfly_f32
+                0x00001378      0x580 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cfft_radix8_f32.o)
+                0x00001378                arm_radix8_butterfly_f32
  .text._Cwritebuf
-                0x00001858       0x6c c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(_writebuf.o)
-                0x00001858                _Cwritebuf
- .text.fseek    0x000018c4      0x100 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(fseek.o)
-                0x000018c4                fseek
- .text.ftell    0x000019c4       0x44 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(ftell.o)
-                0x000019c4                ftell
- .text._initio  0x00001a08       0x78 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(initio.o)
-                0x00001a08                _initio
- .text.fflush   0x00001a80       0x44 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(fflush.o)
-                0x00001a80                fflush
+                0x000018f8       0x6c c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(_writebuf.o)
+                0x000018f8                _Cwritebuf
+ .text.fseek    0x00001964      0x100 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(fseek.o)
+                0x00001964                fseek
+ .text.ftell    0x00001a64       0x44 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(ftell.o)
+                0x00001a64                ftell
+ .text._initio  0x00001aa8       0x78 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(initio.o)
+                0x00001aa8                _initio
+ .text.fflush   0x00001b20       0x44 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(fflush.o)
+                0x00001b20                fflush
  .text.DMA0_IRQHandler
-                0x00001ac4        0x8 ./startup/startup_mk64f12.o
-                0x00001ac4                DMA0_IRQHandler
- .text.DMA1_IRQHandler
-                0x00001acc        0x8 ./startup/startup_mk64f12.o
-                0x00001acc                DMA1_IRQHandler
- .text.DMA2_IRQHandler
-                0x00001ad4        0x8 ./startup/startup_mk64f12.o
-                0x00001ad4                DMA2_IRQHandler
- .text.DMA3_IRQHandler
-                0x00001adc        0x8 ./startup/startup_mk64f12.o
-                0x00001adc                DMA3_IRQHandler
- .text.DMA4_IRQHandler
-                0x00001ae4        0x8 ./startup/startup_mk64f12.o
-                0x00001ae4                DMA4_IRQHandler
- .text.DMA5_IRQHandler
-                0x00001aec        0x8 ./startup/startup_mk64f12.o
-                0x00001aec                DMA5_IRQHandler
- .text.DMA6_IRQHandler
-                0x00001af4        0x8 ./startup/startup_mk64f12.o
-                0x00001af4                DMA6_IRQHandler
- .text.DMA7_IRQHandler
-                0x00001afc        0x8 ./startup/startup_mk64f12.o
-                0x00001afc                DMA7_IRQHandler
- .text.DMA8_IRQHandler
-                0x00001b04        0x8 ./startup/startup_mk64f12.o
-                0x00001b04                DMA8_IRQHandler
- .text.DMA9_IRQHandler
-                0x00001b0c        0x8 ./startup/startup_mk64f12.o
-                0x00001b0c                DMA9_IRQHandler
- .text.DMA10_IRQHandler
-                0x00001b14        0x8 ./startup/startup_mk64f12.o
-                0x00001b14                DMA10_IRQHandler
- .text.DMA11_IRQHandler
-                0x00001b1c        0x8 ./startup/startup_mk64f12.o
-                0x00001b1c                DMA11_IRQHandler
- .text.DMA12_IRQHandler
-                0x00001b24        0x8 ./startup/startup_mk64f12.o
-                0x00001b24                DMA12_IRQHandler
- .text.DMA13_IRQHandler
-                0x00001b2c        0x8 ./startup/startup_mk64f12.o
-                0x00001b2c                DMA13_IRQHandler
- .text.DMA14_IRQHandler
-                0x00001b34        0x8 ./startup/startup_mk64f12.o
-                0x00001b34                DMA14_IRQHandler
- .text.DMA15_IRQHandler
-                0x00001b3c        0x8 ./startup/startup_mk64f12.o
-                0x00001b3c                DMA15_IRQHandler
- .text.DMA_Error_IRQHandler
-                0x00001b44        0x8 ./startup/startup_mk64f12.o
-                0x00001b44                DMA_Error_IRQHandler
- .text.MCM_IRQHandler
-                0x00001b4c        0x8 ./startup/startup_mk64f12.o
-                0x00001b4c                MCM_IRQHandler
- .text.FTFE_IRQHandler
-                0x00001b54        0x8 ./startup/startup_mk64f12.o
-                0x00001b54                FTFE_IRQHandler
- .text.Read_Collision_IRQHandler
-                0x00001b5c        0x8 ./startup/startup_mk64f12.o
-                0x00001b5c                Read_Collision_IRQHandler
- .text.LVD_LVW_IRQHandler
                 0x00001b64        0x8 ./startup/startup_mk64f12.o
-                0x00001b64                LVD_LVW_IRQHandler
- .text.LLWU_IRQHandler
+                0x00001b64                DMA0_IRQHandler
+ .text.DMA1_IRQHandler
                 0x00001b6c        0x8 ./startup/startup_mk64f12.o
-                0x00001b6c                LLWU_IRQHandler
- .text.WDOG_EWM_IRQHandler
+                0x00001b6c                DMA1_IRQHandler
+ .text.DMA2_IRQHandler
                 0x00001b74        0x8 ./startup/startup_mk64f12.o
-                0x00001b74                WDOG_EWM_IRQHandler
- .text.RNG_IRQHandler
+                0x00001b74                DMA2_IRQHandler
+ .text.DMA3_IRQHandler
                 0x00001b7c        0x8 ./startup/startup_mk64f12.o
-                0x00001b7c                RNG_IRQHandler
- .text.I2C0_IRQHandler
+                0x00001b7c                DMA3_IRQHandler
+ .text.DMA4_IRQHandler
                 0x00001b84        0x8 ./startup/startup_mk64f12.o
-                0x00001b84                I2C0_IRQHandler
- .text.I2C1_IRQHandler
+                0x00001b84                DMA4_IRQHandler
+ .text.DMA5_IRQHandler
                 0x00001b8c        0x8 ./startup/startup_mk64f12.o
-                0x00001b8c                I2C1_IRQHandler
- .text.SPI0_IRQHandler
+                0x00001b8c                DMA5_IRQHandler
+ .text.DMA6_IRQHandler
                 0x00001b94        0x8 ./startup/startup_mk64f12.o
-                0x00001b94                SPI0_IRQHandler
- .text.SPI1_IRQHandler
+                0x00001b94                DMA6_IRQHandler
+ .text.DMA7_IRQHandler
                 0x00001b9c        0x8 ./startup/startup_mk64f12.o
-                0x00001b9c                SPI1_IRQHandler
- .text.I2S0_Tx_IRQHandler
+                0x00001b9c                DMA7_IRQHandler
+ .text.DMA8_IRQHandler
                 0x00001ba4        0x8 ./startup/startup_mk64f12.o
-                0x00001ba4                I2S0_Tx_IRQHandler
- .text.I2S0_Rx_IRQHandler
+                0x00001ba4                DMA8_IRQHandler
+ .text.DMA9_IRQHandler
                 0x00001bac        0x8 ./startup/startup_mk64f12.o
-                0x00001bac                I2S0_Rx_IRQHandler
- .text.UART0_LON_IRQHandler
+                0x00001bac                DMA9_IRQHandler
+ .text.DMA10_IRQHandler
                 0x00001bb4        0x8 ./startup/startup_mk64f12.o
-                0x00001bb4                UART0_LON_IRQHandler
- .text.UART0_RX_TX_IRQHandler
+                0x00001bb4                DMA10_IRQHandler
+ .text.DMA11_IRQHandler
                 0x00001bbc        0x8 ./startup/startup_mk64f12.o
-                0x00001bbc                UART0_RX_TX_IRQHandler
- .text.UART0_ERR_IRQHandler
+                0x00001bbc                DMA11_IRQHandler
+ .text.DMA12_IRQHandler
                 0x00001bc4        0x8 ./startup/startup_mk64f12.o
-                0x00001bc4                UART0_ERR_IRQHandler
- .text.UART1_RX_TX_IRQHandler
+                0x00001bc4                DMA12_IRQHandler
+ .text.DMA13_IRQHandler
                 0x00001bcc        0x8 ./startup/startup_mk64f12.o
-                0x00001bcc                UART1_RX_TX_IRQHandler
- .text.UART1_ERR_IRQHandler
+                0x00001bcc                DMA13_IRQHandler
+ .text.DMA14_IRQHandler
                 0x00001bd4        0x8 ./startup/startup_mk64f12.o
-                0x00001bd4                UART1_ERR_IRQHandler
- .text.UART2_RX_TX_IRQHandler
+                0x00001bd4                DMA14_IRQHandler
+ .text.DMA15_IRQHandler
                 0x00001bdc        0x8 ./startup/startup_mk64f12.o
-                0x00001bdc                UART2_RX_TX_IRQHandler
- .text.UART2_ERR_IRQHandler
+                0x00001bdc                DMA15_IRQHandler
+ .text.DMA_Error_IRQHandler
                 0x00001be4        0x8 ./startup/startup_mk64f12.o
-                0x00001be4                UART2_ERR_IRQHandler
- .text.UART3_RX_TX_IRQHandler
+                0x00001be4                DMA_Error_IRQHandler
+ .text.MCM_IRQHandler
                 0x00001bec        0x8 ./startup/startup_mk64f12.o
-                0x00001bec                UART3_RX_TX_IRQHandler
- .text.UART3_ERR_IRQHandler
+                0x00001bec                MCM_IRQHandler
+ .text.FTFE_IRQHandler
                 0x00001bf4        0x8 ./startup/startup_mk64f12.o
-                0x00001bf4                UART3_ERR_IRQHandler
- .text.ADC0_IRQHandler
+                0x00001bf4                FTFE_IRQHandler
+ .text.Read_Collision_IRQHandler
                 0x00001bfc        0x8 ./startup/startup_mk64f12.o
-                0x00001bfc                ADC0_IRQHandler
- .text.CMP0_IRQHandler
+                0x00001bfc                Read_Collision_IRQHandler
+ .text.LVD_LVW_IRQHandler
                 0x00001c04        0x8 ./startup/startup_mk64f12.o
-                0x00001c04                CMP0_IRQHandler
- .text.CMP1_IRQHandler
+                0x00001c04                LVD_LVW_IRQHandler
+ .text.LLWU_IRQHandler
                 0x00001c0c        0x8 ./startup/startup_mk64f12.o
-                0x00001c0c                CMP1_IRQHandler
- .text.FTM0_IRQHandler
+                0x00001c0c                LLWU_IRQHandler
+ .text.WDOG_EWM_IRQHandler
                 0x00001c14        0x8 ./startup/startup_mk64f12.o
-                0x00001c14                FTM0_IRQHandler
- .text.FTM1_IRQHandler
+                0x00001c14                WDOG_EWM_IRQHandler
+ .text.RNG_IRQHandler
                 0x00001c1c        0x8 ./startup/startup_mk64f12.o
-                0x00001c1c                FTM1_IRQHandler
- .text.FTM2_IRQHandler
+                0x00001c1c                RNG_IRQHandler
+ .text.I2C0_IRQHandler
                 0x00001c24        0x8 ./startup/startup_mk64f12.o
-                0x00001c24                FTM2_IRQHandler
- .text.CMT_IRQHandler
+                0x00001c24                I2C0_IRQHandler
+ .text.I2C1_IRQHandler
                 0x00001c2c        0x8 ./startup/startup_mk64f12.o
-                0x00001c2c                CMT_IRQHandler
- .text.RTC_IRQHandler
+                0x00001c2c                I2C1_IRQHandler
+ .text.SPI0_IRQHandler
                 0x00001c34        0x8 ./startup/startup_mk64f12.o
-                0x00001c34                RTC_IRQHandler
- .text.RTC_Seconds_IRQHandler
+                0x00001c34                SPI0_IRQHandler
+ .text.SPI1_IRQHandler
                 0x00001c3c        0x8 ./startup/startup_mk64f12.o
-                0x00001c3c                RTC_Seconds_IRQHandler
- .text.PIT0_IRQHandler
+                0x00001c3c                SPI1_IRQHandler
+ .text.I2S0_Tx_IRQHandler
                 0x00001c44        0x8 ./startup/startup_mk64f12.o
-                0x00001c44                PIT0_IRQHandler
- .text.PIT1_IRQHandler
+                0x00001c44                I2S0_Tx_IRQHandler
+ .text.I2S0_Rx_IRQHandler
                 0x00001c4c        0x8 ./startup/startup_mk64f12.o
-                0x00001c4c                PIT1_IRQHandler
- .text.PIT2_IRQHandler
+                0x00001c4c                I2S0_Rx_IRQHandler
+ .text.UART0_LON_IRQHandler
                 0x00001c54        0x8 ./startup/startup_mk64f12.o
-                0x00001c54                PIT2_IRQHandler
- .text.PIT3_IRQHandler
+                0x00001c54                UART0_LON_IRQHandler
+ .text.UART0_RX_TX_IRQHandler
                 0x00001c5c        0x8 ./startup/startup_mk64f12.o
-                0x00001c5c                PIT3_IRQHandler
- .text.PDB0_IRQHandler
+                0x00001c5c                UART0_RX_TX_IRQHandler
+ .text.UART0_ERR_IRQHandler
                 0x00001c64        0x8 ./startup/startup_mk64f12.o
-                0x00001c64                PDB0_IRQHandler
- .text.USB0_IRQHandler
+                0x00001c64                UART0_ERR_IRQHandler
+ .text.UART1_RX_TX_IRQHandler
                 0x00001c6c        0x8 ./startup/startup_mk64f12.o
-                0x00001c6c                USB0_IRQHandler
- .text.USBDCD_IRQHandler
+                0x00001c6c                UART1_RX_TX_IRQHandler
+ .text.UART1_ERR_IRQHandler
                 0x00001c74        0x8 ./startup/startup_mk64f12.o
-                0x00001c74                USBDCD_IRQHandler
- .text.Reserved71_IRQHandler
+                0x00001c74                UART1_ERR_IRQHandler
+ .text.UART2_RX_TX_IRQHandler
                 0x00001c7c        0x8 ./startup/startup_mk64f12.o
-                0x00001c7c                Reserved71_IRQHandler
- .text.DAC0_IRQHandler
+                0x00001c7c                UART2_RX_TX_IRQHandler
+ .text.UART2_ERR_IRQHandler
                 0x00001c84        0x8 ./startup/startup_mk64f12.o
-                0x00001c84                DAC0_IRQHandler
- .text.MCG_IRQHandler
+                0x00001c84                UART2_ERR_IRQHandler
+ .text.UART3_RX_TX_IRQHandler
                 0x00001c8c        0x8 ./startup/startup_mk64f12.o
-                0x00001c8c                MCG_IRQHandler
- .text.LPTMR0_IRQHandler
+                0x00001c8c                UART3_RX_TX_IRQHandler
+ .text.UART3_ERR_IRQHandler
                 0x00001c94        0x8 ./startup/startup_mk64f12.o
-                0x00001c94                LPTMR0_IRQHandler
- .text.PORTA_IRQHandler
+                0x00001c94                UART3_ERR_IRQHandler
+ .text.ADC0_IRQHandler
                 0x00001c9c        0x8 ./startup/startup_mk64f12.o
-                0x00001c9c                PORTA_IRQHandler
- .text.PORTB_IRQHandler
+                0x00001c9c                ADC0_IRQHandler
+ .text.CMP0_IRQHandler
                 0x00001ca4        0x8 ./startup/startup_mk64f12.o
-                0x00001ca4                PORTB_IRQHandler
- .text.PORTC_IRQHandler
+                0x00001ca4                CMP0_IRQHandler
+ .text.CMP1_IRQHandler
                 0x00001cac        0x8 ./startup/startup_mk64f12.o
-                0x00001cac                PORTC_IRQHandler
- .text.PORTD_IRQHandler
+                0x00001cac                CMP1_IRQHandler
+ .text.FTM0_IRQHandler
                 0x00001cb4        0x8 ./startup/startup_mk64f12.o
-                0x00001cb4                PORTD_IRQHandler
- .text.PORTE_IRQHandler
+                0x00001cb4                FTM0_IRQHandler
+ .text.FTM1_IRQHandler
                 0x00001cbc        0x8 ./startup/startup_mk64f12.o
-                0x00001cbc                PORTE_IRQHandler
- .text.SWI_IRQHandler
+                0x00001cbc                FTM1_IRQHandler
+ .text.FTM2_IRQHandler
                 0x00001cc4        0x8 ./startup/startup_mk64f12.o
-                0x00001cc4                SWI_IRQHandler
- .text.SPI2_IRQHandler
+                0x00001cc4                FTM2_IRQHandler
+ .text.CMT_IRQHandler
                 0x00001ccc        0x8 ./startup/startup_mk64f12.o
-                0x00001ccc                SPI2_IRQHandler
- .text.UART4_RX_TX_IRQHandler
+                0x00001ccc                CMT_IRQHandler
+ .text.RTC_IRQHandler
                 0x00001cd4        0x8 ./startup/startup_mk64f12.o
-                0x00001cd4                UART4_RX_TX_IRQHandler
- .text.UART4_ERR_IRQHandler
+                0x00001cd4                RTC_IRQHandler
+ .text.RTC_Seconds_IRQHandler
                 0x00001cdc        0x8 ./startup/startup_mk64f12.o
-                0x00001cdc                UART4_ERR_IRQHandler
- .text.UART5_RX_TX_IRQHandler
+                0x00001cdc                RTC_Seconds_IRQHandler
+ .text.PIT0_IRQHandler
                 0x00001ce4        0x8 ./startup/startup_mk64f12.o
-                0x00001ce4                UART5_RX_TX_IRQHandler
- .text.UART5_ERR_IRQHandler
+                0x00001ce4                PIT0_IRQHandler
+ .text.PIT1_IRQHandler
                 0x00001cec        0x8 ./startup/startup_mk64f12.o
-                0x00001cec                UART5_ERR_IRQHandler
- .text.CMP2_IRQHandler
+                0x00001cec                PIT1_IRQHandler
+ .text.PIT2_IRQHandler
                 0x00001cf4        0x8 ./startup/startup_mk64f12.o
-                0x00001cf4                CMP2_IRQHandler
- .text.FTM3_IRQHandler
+                0x00001cf4                PIT2_IRQHandler
+ .text.PIT3_IRQHandler
                 0x00001cfc        0x8 ./startup/startup_mk64f12.o
-                0x00001cfc                FTM3_IRQHandler
- .text.DAC1_IRQHandler
+                0x00001cfc                PIT3_IRQHandler
+ .text.PDB0_IRQHandler
                 0x00001d04        0x8 ./startup/startup_mk64f12.o
-                0x00001d04                DAC1_IRQHandler
- .text.ADC1_IRQHandler
+                0x00001d04                PDB0_IRQHandler
+ .text.USB0_IRQHandler
                 0x00001d0c        0x8 ./startup/startup_mk64f12.o
-                0x00001d0c                ADC1_IRQHandler
- .text.I2C2_IRQHandler
+                0x00001d0c                USB0_IRQHandler
+ .text.USBDCD_IRQHandler
                 0x00001d14        0x8 ./startup/startup_mk64f12.o
-                0x00001d14                I2C2_IRQHandler
- .text.CAN0_ORed_Message_buffer_IRQHandler
+                0x00001d14                USBDCD_IRQHandler
+ .text.Reserved71_IRQHandler
                 0x00001d1c        0x8 ./startup/startup_mk64f12.o
-                0x00001d1c                CAN0_ORed_Message_buffer_IRQHandler
- .text.CAN0_Bus_Off_IRQHandler
+                0x00001d1c                Reserved71_IRQHandler
+ .text.DAC0_IRQHandler
                 0x00001d24        0x8 ./startup/startup_mk64f12.o
-                0x00001d24                CAN0_Bus_Off_IRQHandler
- .text.CAN0_Error_IRQHandler
+                0x00001d24                DAC0_IRQHandler
+ .text.MCG_IRQHandler
                 0x00001d2c        0x8 ./startup/startup_mk64f12.o
-                0x00001d2c                CAN0_Error_IRQHandler
- .text.CAN0_Tx_Warning_IRQHandler
+                0x00001d2c                MCG_IRQHandler
+ .text.LPTMR0_IRQHandler
                 0x00001d34        0x8 ./startup/startup_mk64f12.o
-                0x00001d34                CAN0_Tx_Warning_IRQHandler
- .text.CAN0_Rx_Warning_IRQHandler
+                0x00001d34                LPTMR0_IRQHandler
+ .text.PORTA_IRQHandler
                 0x00001d3c        0x8 ./startup/startup_mk64f12.o
-                0x00001d3c                CAN0_Rx_Warning_IRQHandler
- .text.CAN0_Wake_Up_IRQHandler
+                0x00001d3c                PORTA_IRQHandler
+ .text.PORTB_IRQHandler
                 0x00001d44        0x8 ./startup/startup_mk64f12.o
-                0x00001d44                CAN0_Wake_Up_IRQHandler
- .text.SDHC_IRQHandler
+                0x00001d44                PORTB_IRQHandler
+ .text.PORTC_IRQHandler
                 0x00001d4c        0x8 ./startup/startup_mk64f12.o
-                0x00001d4c                SDHC_IRQHandler
- .text.ENET_1588_Timer_IRQHandler
+                0x00001d4c                PORTC_IRQHandler
+ .text.PORTD_IRQHandler
                 0x00001d54        0x8 ./startup/startup_mk64f12.o
-                0x00001d54                ENET_1588_Timer_IRQHandler
- .text.ENET_Transmit_IRQHandler
+                0x00001d54                PORTD_IRQHandler
+ .text.PORTE_IRQHandler
                 0x00001d5c        0x8 ./startup/startup_mk64f12.o
-                0x00001d5c                ENET_Transmit_IRQHandler
- .text.ENET_Receive_IRQHandler
+                0x00001d5c                PORTE_IRQHandler
+ .text.SWI_IRQHandler
                 0x00001d64        0x8 ./startup/startup_mk64f12.o
-                0x00001d64                ENET_Receive_IRQHandler
- .text.ENET_Error_IRQHandler
+                0x00001d64                SWI_IRQHandler
+ .text.SPI2_IRQHandler
                 0x00001d6c        0x8 ./startup/startup_mk64f12.o
-                0x00001d6c                ENET_Error_IRQHandler
+                0x00001d6c                SPI2_IRQHandler
+ .text.UART4_RX_TX_IRQHandler
+                0x00001d74        0x8 ./startup/startup_mk64f12.o
+                0x00001d74                UART4_RX_TX_IRQHandler
+ .text.UART4_ERR_IRQHandler
+                0x00001d7c        0x8 ./startup/startup_mk64f12.o
+                0x00001d7c                UART4_ERR_IRQHandler
+ .text.UART5_RX_TX_IRQHandler
+                0x00001d84        0x8 ./startup/startup_mk64f12.o
+                0x00001d84                UART5_RX_TX_IRQHandler
+ .text.UART5_ERR_IRQHandler
+                0x00001d8c        0x8 ./startup/startup_mk64f12.o
+                0x00001d8c                UART5_ERR_IRQHandler
+ .text.CMP2_IRQHandler
+                0x00001d94        0x8 ./startup/startup_mk64f12.o
+                0x00001d94                CMP2_IRQHandler
+ .text.FTM3_IRQHandler
+                0x00001d9c        0x8 ./startup/startup_mk64f12.o
+                0x00001d9c                FTM3_IRQHandler
+ .text.DAC1_IRQHandler
+                0x00001da4        0x8 ./startup/startup_mk64f12.o
+                0x00001da4                DAC1_IRQHandler
+ .text.ADC1_IRQHandler
+                0x00001dac        0x8 ./startup/startup_mk64f12.o
+                0x00001dac                ADC1_IRQHandler
+ .text.I2C2_IRQHandler
+                0x00001db4        0x8 ./startup/startup_mk64f12.o
+                0x00001db4                I2C2_IRQHandler
+ .text.CAN0_ORed_Message_buffer_IRQHandler
+                0x00001dbc        0x8 ./startup/startup_mk64f12.o
+                0x00001dbc                CAN0_ORed_Message_buffer_IRQHandler
+ .text.CAN0_Bus_Off_IRQHandler
+                0x00001dc4        0x8 ./startup/startup_mk64f12.o
+                0x00001dc4                CAN0_Bus_Off_IRQHandler
+ .text.CAN0_Error_IRQHandler
+                0x00001dcc        0x8 ./startup/startup_mk64f12.o
+                0x00001dcc                CAN0_Error_IRQHandler
+ .text.CAN0_Tx_Warning_IRQHandler
+                0x00001dd4        0x8 ./startup/startup_mk64f12.o
+                0x00001dd4                CAN0_Tx_Warning_IRQHandler
+ .text.CAN0_Rx_Warning_IRQHandler
+                0x00001ddc        0x8 ./startup/startup_mk64f12.o
+                0x00001ddc                CAN0_Rx_Warning_IRQHandler
+ .text.CAN0_Wake_Up_IRQHandler
+                0x00001de4        0x8 ./startup/startup_mk64f12.o
+                0x00001de4                CAN0_Wake_Up_IRQHandler
+ .text.SDHC_IRQHandler
+                0x00001dec        0x8 ./startup/startup_mk64f12.o
+                0x00001dec                SDHC_IRQHandler
+ .text.ENET_1588_Timer_IRQHandler
+                0x00001df4        0x8 ./startup/startup_mk64f12.o
+                0x00001df4                ENET_1588_Timer_IRQHandler
+ .text.ENET_Transmit_IRQHandler
+                0x00001dfc        0x8 ./startup/startup_mk64f12.o
+                0x00001dfc                ENET_Transmit_IRQHandler
+ .text.ENET_Receive_IRQHandler
+                0x00001e04        0x8 ./startup/startup_mk64f12.o
+                0x00001e04                ENET_Receive_IRQHandler
+ .text.ENET_Error_IRQHandler
+                0x00001e0c        0x8 ./startup/startup_mk64f12.o
+                0x00001e0c                ENET_Error_IRQHandler
  .text.HardFault_Handler
-                0x00001d74       0x2c ./source/semihost_hardfault.o
-                0x00001d74                HardFault_Handler
+                0x00001e14       0x2c ./source/semihost_hardfault.o
+                0x00001e14                HardFault_Handler
  .text.UART0_RX_TX_DriverIRQHandler
-                0x00001da0       0x12 ./drivers/fsl_uart.o
-                0x00001da0                UART0_RX_TX_DriverIRQHandler
+                0x00001e40       0x12 ./drivers/fsl_uart.o
+                0x00001e40                UART0_RX_TX_DriverIRQHandler
  .text.UART1_RX_TX_DriverIRQHandler
-                0x00001db2       0x12 ./drivers/fsl_uart.o
-                0x00001db2                UART1_RX_TX_DriverIRQHandler
+                0x00001e52       0x12 ./drivers/fsl_uart.o
+                0x00001e52                UART1_RX_TX_DriverIRQHandler
  .text.UART2_RX_TX_DriverIRQHandler
-                0x00001dc4       0x12 ./drivers/fsl_uart.o
-                0x00001dc4                UART2_RX_TX_DriverIRQHandler
+                0x00001e64       0x12 ./drivers/fsl_uart.o
+                0x00001e64                UART2_RX_TX_DriverIRQHandler
  .text.UART3_RX_TX_DriverIRQHandler
-                0x00001dd6       0x12 ./drivers/fsl_uart.o
-                0x00001dd6                UART3_RX_TX_DriverIRQHandler
+                0x00001e76       0x12 ./drivers/fsl_uart.o
+                0x00001e76                UART3_RX_TX_DriverIRQHandler
  .text.UART4_RX_TX_DriverIRQHandler
-                0x00001de8       0x12 ./drivers/fsl_uart.o
-                0x00001de8                UART4_RX_TX_DriverIRQHandler
+                0x00001e88       0x12 ./drivers/fsl_uart.o
+                0x00001e88                UART4_RX_TX_DriverIRQHandler
  .text.UART5_RX_TX_DriverIRQHandler
-                0x00001dfa       0x12 ./drivers/fsl_uart.o
-                0x00001dfa                UART5_RX_TX_DriverIRQHandler
+                0x00001e9a       0x12 ./drivers/fsl_uart.o
+                0x00001e9a                UART5_RX_TX_DriverIRQHandler
  .text.SystemInitHook
-                0x00001e0c        0xe ./device/system_MK64F12.o
-                0x00001e0c                SystemInitHook
- .text.__main   0x00001e1a        0xe c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_semihost_nf.a(_cr__main.o)
-                0x00001e1a                __CR_SEMIHOST
-                0x00001e1a                __main
- .text.sqrtf    0x00001e28        0x6 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(sqrtf_m4_hardfp.o)
-                0x00001e28                sqrtf
- .text.memcpy   0x00001e2e        0x4 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(memcpy.o)
-                0x00001e2e                memcpy
- .text.memset   0x00001e32        0x4 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(memset.o)
-                0x00001e32                memset
+                0x00001eac        0xe ./device/system_MK64F12.o
+                0x00001eac                SystemInitHook
+ .text.__main   0x00001eba        0xe c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_semihost_nf.a(_cr__main.o)
+                0x00001eba                __CR_SEMIHOST
+                0x00001eba                __main
+ .text.sqrtf    0x00001ec8        0x6 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(sqrtf_m4_hardfp.o)
+                0x00001ec8                sqrtf
+ .text.memcpy   0x00001ece        0x4 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(memcpy.o)
+                0x00001ece                memcpy
+ .text.memset   0x00001ed2        0x4 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(memset.o)
+                0x00001ed2                memset
  .text._deferredlazyseek
-                0x00001e36       0x40 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(_deferredlazyseek.o)
-                0x00001e36                _deferredlazyseek
- .text._fflush  0x00001e76       0x52 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(_fflush.o)
-                0x00001e76                _fflush
- .text.free     0x00001ec8       0x30 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(alloc.o)
-                0x00001ec8                free
- .text.setvbuf  0x00001ef8       0x3e c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(setvbuf.o)
-                0x00001ef8                setvbuf
- .text.strlen   0x00001f36       0x4c c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(strlen.o)
-                0x00001f36                strlen
- .text._fdopen  0x00001f82       0x68 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(_fdopen.o)
-                0x00001f82                _fdopen
- .text.fclose   0x00001fea       0x58 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(fclose.o)
-                0x00001fea                fclose
- .text.remove   0x00002042       0x14 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(remove.o)
-                0x00002042                remove
+                0x00001ed6       0x40 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(_deferredlazyseek.o)
+                0x00001ed6                _deferredlazyseek
+ .text._fflush  0x00001f16       0x52 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(_fflush.o)
+                0x00001f16                _fflush
+ .text.free     0x00001f68       0x30 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(alloc.o)
+                0x00001f68                free
+ .text.setvbuf  0x00001f98       0x3e c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(setvbuf.o)
+                0x00001f98                setvbuf
+ .text.strlen   0x00001fd6       0x4c c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(strlen.o)
+                0x00001fd6                strlen
+ .text._fdopen  0x00002022       0x68 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(_fdopen.o)
+                0x00002022                _fdopen
+ .text.fclose   0x0000208a       0x58 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(fclose.o)
+                0x0000208a                fclose
+ .text.remove   0x000020e2       0x14 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(remove.o)
+                0x000020e2                remove
  .text._do_fflush
-                0x00002056       0x40 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(_do_fflush.o)
-                0x00002056                _do_fflush
+                0x000020f6       0x40 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(_do_fflush.o)
+                0x000020f6                _do_fflush
  .text.__aeabi_memcpy
-                0x00002096       0x34 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/thumb/v7e-m+fp/hard\libcr_eabihelpers.a(memcpy.o)
-                0x00002096                __aeabi_memcpy
-                0x000020a0                __aeabi_memcpy8
-                0x000020a0                __aeabi_memcpy4
+                0x00002136       0x34 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/thumb/v7e-m+fp/hard\libcr_eabihelpers.a(memcpy.o)
+                0x00002136                __aeabi_memcpy
+                0x00002140                __aeabi_memcpy8
+                0x00002140                __aeabi_memcpy4
  .text.__aeabi_memset_lowlevel
-                0x000020ca       0x32 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/thumb/v7e-m+fp/hard\libcr_eabihelpers.a(memcpy.o)
-                0x000020ca                __aeabi_lowlevel_memset
+                0x0000216a       0x32 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/thumb/v7e-m+fp/hard\libcr_eabihelpers.a(memcpy.o)
+                0x0000216a                __aeabi_lowlevel_memset
  .text.__sys_close
-                0x000020fc        0xc c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_semihost_nf.a(__sys_close.o)
-                0x000020fc                __sys_close
+                0x0000219c        0xc c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_semihost_nf.a(__sys_close.o)
+                0x0000219c                __sys_close
  .text.__sys_flen
-                0x00002108        0xc c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_semihost_nf.a(__sys_flen.o)
-                0x00002108                __sys_flen
+                0x000021a8        0xc c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_semihost_nf.a(__sys_flen.o)
+                0x000021a8                __sys_flen
  .text.__sys_istty
-                0x00002114        0xc c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_semihost_nf.a(__sys_istty.o)
-                0x00002114                __sys_istty
+                0x000021b4        0xc c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_semihost_nf.a(__sys_istty.o)
+                0x000021b4                __sys_istty
  .text.__sys_remove
-                0x00002120        0xc c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_semihost_nf.a(__sys_remove.o)
-                0x00002120                __sys_remove
+                0x000021c0        0xc c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_semihost_nf.a(__sys_remove.o)
+                0x000021c0                __sys_remove
  .text.__sys_seek
-                0x0000212c        0xc c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_semihost_nf.a(__sys_seek.o)
-                0x0000212c                __sys_seek
+                0x000021cc        0xc c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_semihost_nf.a(__sys_seek.o)
+                0x000021cc                __sys_seek
  .text.__sys_tmpnam
-                0x00002138        0xc c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_semihost_nf.a(__sys_tmpnam.o)
-                0x00002138                __sys_tmpnam
+                0x000021d8        0xc c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_semihost_nf.a(__sys_tmpnam.o)
+                0x000021d8                __sys_tmpnam
  .text.__sys_write
-                0x00002144        0xc c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_semihost_nf.a(__sys_write.o)
-                0x00002144                __sys_write
+                0x000021e4        0xc c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_semihost_nf.a(__sys_write.o)
+                0x000021e4                __sys_write
  *(SORT_BY_ALIGNMENT(.rodata) SORT_BY_ALIGNMENT(.rodata.*) SORT_BY_ALIGNMENT(.constdata) SORT_BY_ALIGNMENT(.constdata.*))
  .rodata.arm_cfft_sR_f32_len1024
-                0x00002150       0x10 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_const_structs.o)
-                0x00002150                arm_cfft_sR_f32_len1024
+                0x000021f0       0x10 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_const_structs.o)
+                0x000021f0                arm_cfft_sR_f32_len1024
  .rodata.arm_cfft_sR_f32_len128
-                0x00002160       0x10 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_const_structs.o)
-                0x00002160                arm_cfft_sR_f32_len128
+                0x00002200       0x10 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_const_structs.o)
+                0x00002200                arm_cfft_sR_f32_len128
  .rodata.arm_cfft_sR_f32_len16
-                0x00002170       0x10 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_const_structs.o)
-                0x00002170                arm_cfft_sR_f32_len16
+                0x00002210       0x10 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_const_structs.o)
+                0x00002210                arm_cfft_sR_f32_len16
  .rodata.arm_cfft_sR_f32_len2048
-                0x00002180       0x10 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_const_structs.o)
-                0x00002180                arm_cfft_sR_f32_len2048
+                0x00002220       0x10 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_const_structs.o)
+                0x00002220                arm_cfft_sR_f32_len2048
  .rodata.arm_cfft_sR_f32_len256
-                0x00002190       0x10 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_const_structs.o)
-                0x00002190                arm_cfft_sR_f32_len256
+                0x00002230       0x10 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_const_structs.o)
+                0x00002230                arm_cfft_sR_f32_len256
  .rodata.arm_cfft_sR_f32_len32
-                0x000021a0       0x10 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_const_structs.o)
-                0x000021a0                arm_cfft_sR_f32_len32
+                0x00002240       0x10 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_const_structs.o)
+                0x00002240                arm_cfft_sR_f32_len32
  .rodata.arm_cfft_sR_f32_len4096
-                0x000021b0       0x10 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_const_structs.o)
-                0x000021b0                arm_cfft_sR_f32_len4096
+                0x00002250       0x10 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_const_structs.o)
+                0x00002250                arm_cfft_sR_f32_len4096
  .rodata.arm_cfft_sR_f32_len512
-                0x000021c0       0x10 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_const_structs.o)
-                0x000021c0                arm_cfft_sR_f32_len512
+                0x00002260       0x10 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_const_structs.o)
+                0x00002260                arm_cfft_sR_f32_len512
  .rodata.arm_cfft_sR_f32_len64
-                0x000021d0       0x10 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_const_structs.o)
-                0x000021d0                arm_cfft_sR_f32_len64
+                0x00002270       0x10 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_const_structs.o)
+                0x00002270                arm_cfft_sR_f32_len64
  .rodata.armBitRevIndexTable1024
-                0x000021e0      0xe10 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
-                0x000021e0                armBitRevIndexTable1024
+                0x00002280      0xe10 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
+                0x00002280                armBitRevIndexTable1024
  .rodata.armBitRevIndexTable128
-                0x00002ff0      0x1a0 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
-                0x00002ff0                armBitRevIndexTable128
+                0x00003090      0x1a0 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
+                0x00003090                armBitRevIndexTable128
  .rodata.armBitRevIndexTable16
-                0x00003190       0x28 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
-                0x00003190                armBitRevIndexTable16
+                0x00003230       0x28 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
+                0x00003230                armBitRevIndexTable16
  .rodata.armBitRevIndexTable2048
-                0x000031b8     0x1dc0 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
-                0x000031b8                armBitRevIndexTable2048
+                0x00003258     0x1dc0 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
+                0x00003258                armBitRevIndexTable2048
  .rodata.armBitRevIndexTable256
-                0x00004f78      0x370 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
-                0x00004f78                armBitRevIndexTable256
+                0x00005018      0x370 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
+                0x00005018                armBitRevIndexTable256
  .rodata.armBitRevIndexTable32
-                0x000052e8       0x60 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
-                0x000052e8                armBitRevIndexTable32
+                0x00005388       0x60 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
+                0x00005388                armBitRevIndexTable32
  .rodata.armBitRevIndexTable4096
-                0x00005348     0x1f80 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
-                0x00005348                armBitRevIndexTable4096
+                0x000053e8     0x1f80 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
+                0x000053e8                armBitRevIndexTable4096
  .rodata.armBitRevIndexTable512
-                0x000072c8      0x380 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
-                0x000072c8                armBitRevIndexTable512
+                0x00007368      0x380 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
+                0x00007368                armBitRevIndexTable512
  .rodata.armBitRevIndexTable64
-                0x00007648       0x70 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
-                0x00007648                armBitRevIndexTable64
+                0x000076e8       0x70 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
+                0x000076e8                armBitRevIndexTable64
  .rodata.twiddleCoef_1024
-                0x000076b8     0x2000 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
-                0x000076b8                twiddleCoef_1024
+                0x00007758     0x2000 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
+                0x00007758                twiddleCoef_1024
  .rodata.twiddleCoef_128
-                0x000096b8      0x400 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
-                0x000096b8                twiddleCoef_128
+                0x00009758      0x400 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
+                0x00009758                twiddleCoef_128
  .rodata.twiddleCoef_16
-                0x00009ab8       0x80 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
-                0x00009ab8                twiddleCoef_16
+                0x00009b58       0x80 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
+                0x00009b58                twiddleCoef_16
  .rodata.twiddleCoef_2048
-                0x00009b38     0x4000 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
-                0x00009b38                twiddleCoef_2048
+                0x00009bd8     0x4000 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
+                0x00009bd8                twiddleCoef_2048
  .rodata.twiddleCoef_256
-                0x0000db38      0x800 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
-                0x0000db38                twiddleCoef_256
+                0x0000dbd8      0x800 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
+                0x0000dbd8                twiddleCoef_256
  .rodata.twiddleCoef_32
-                0x0000e338      0x100 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
-                0x0000e338                twiddleCoef_32
+                0x0000e3d8      0x100 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
+                0x0000e3d8                twiddleCoef_32
  .rodata.twiddleCoef_4096
-                0x0000e438     0x8000 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
-                0x0000e438                twiddleCoef_4096
+                0x0000e4d8     0x8000 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
+                0x0000e4d8                twiddleCoef_4096
  .rodata.twiddleCoef_512
-                0x00016438     0x1000 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
-                0x00016438                twiddleCoef_512
+                0x000164d8     0x1000 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
+                0x000164d8                twiddleCoef_512
  .rodata.twiddleCoef_64
-                0x00017438      0x200 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
-                0x00017438                twiddleCoef_64
+                0x000174d8      0x200 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
+                0x000174d8                twiddleCoef_64
  .rodata.__num_Ciob_streams
-                0x00017638        0x4 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_semihost_nf.a(__ciob.o)
-                0x00017638                __num_Ciob_streams
+                0x000176d8        0x4 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_semihost_nf.a(__ciob.o)
+                0x000176d8                __num_Ciob_streams
  .rodata._initio.str1.1
-                0x0001763c        0x4 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(initio.o)
-                0x00017640                . = ALIGN (0x8)
+                0x000176dc        0x4 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(initio.o)
+                0x000176e0                . = ALIGN (0x8)
 
-.glue_7         0x00017640        0x0
- .glue_7        0x00017640        0x0 linker stubs
+.glue_7         0x000176e0        0x0
+ .glue_7        0x000176e0        0x0 linker stubs
 
-.glue_7t        0x00017640        0x0
- .glue_7t       0x00017640        0x0 linker stubs
+.glue_7t        0x000176e0        0x0
+ .glue_7t       0x000176e0        0x0 linker stubs
 
-.vfp11_veneer   0x00017640        0x0
- .vfp11_veneer  0x00017640        0x0 linker stubs
+.vfp11_veneer   0x000176e0        0x0
+ .vfp11_veneer  0x000176e0        0x0 linker stubs
 
-.v4_bx          0x00017640        0x0
- .v4_bx         0x00017640        0x0 linker stubs
+.v4_bx          0x000176e0        0x0
+ .v4_bx         0x000176e0        0x0 linker stubs
 
-.iplt           0x00017640        0x0
- .iplt          0x00017640        0x0 ./startup/startup_mk64f12.o
+.iplt           0x000176e0        0x0
+ .iplt          0x000176e0        0x0 ./startup/startup_mk64f12.o
 
-.rel.dyn        0x00017640        0x0
- .rel.iplt      0x00017640        0x0 ./startup/startup_mk64f12.o
+.rel.dyn        0x000176e0        0x0
+ .rel.iplt      0x000176e0        0x0 ./startup/startup_mk64f12.o
 
 .ARM.extab
  *(SORT_BY_ALIGNMENT(.ARM.extab*) SORT_BY_ALIGNMENT(.gnu.linkonce.armextab.*))
 
-.ARM.exidx      0x00017640        0x0
-                0x00017640                __exidx_start = .
+.ARM.exidx      0x000176e0        0x0
+                0x000176e0                __exidx_start = .
  *(SORT_BY_ALIGNMENT(.ARM.exidx*) SORT_BY_ALIGNMENT(.gnu.linkonce.armexidx.*))
-                0x00017640                __exidx_end = .
-                0x00017640                _etext = .
+                0x000176e0                __exidx_end = .
+                0x000176e0                _etext = .
 
 .m_usb_data
  *(SORT_BY_ALIGNMENT(m_usb_bdt))
 
-.data_RAM2      0x1fff0000        0x0 load address 0x00017640
+.data_RAM2      0x1fff0000        0x0 load address 0x000176e0
  FILL mask 0xff
                 [!provide]                PROVIDE (__start_data_RAM2 = .)
                 [!provide]                PROVIDE (__start_data_SRAM_LOWER = .)
@@ -3354,7 +3359,7 @@ END GROUP
                 [!provide]                PROVIDE (__end_data_RAM2 = .)
                 [!provide]                PROVIDE (__end_data_SRAM_LOWER = .)
 
-.data_RAM3      0x14000000        0x0 load address 0x00017640
+.data_RAM3      0x14000000        0x0 load address 0x000176e0
  FILL mask 0xff
                 [!provide]                PROVIDE (__start_data_RAM3 = .)
                 [!provide]                PROVIDE (__start_data_FLEX_RAM = .)
@@ -3375,7 +3380,7 @@ END GROUP
                 0x20000000                . = ALIGN (0x8)
                 0x20000000                _end_uninit_RESERVED = .
 
-.data           0x20000000       0x88 load address 0x00017640
+.data           0x20000000     0x2008 load address 0x000176e0
  FILL mask 0xff
                 0x20000000                _data = .
                 [!provide]                PROVIDE (__start_data_RAM = .)
@@ -3389,16 +3394,16 @@ END GROUP
  .data.doBitReverse
                 0x20000000        0x4 ./source/arm_fft_bin_example_f32.o
                 0x20000000                doBitReverse
- .data.deltas   0x20000004       0x80 ./source/arm_fft_bin_example_f32.o
+ .data.deltas   0x20000004     0x2000 ./source/arm_fft_bin_example_f32.o
                 0x20000004                deltas
-                0x20000088                . = ALIGN (0x8)
- *fill*         0x20000084        0x4 ff
-                0x20000088                _edata = .
+                0x20002008                . = ALIGN (0x8)
+ *fill*         0x20002004        0x4 ff
+                0x20002008                _edata = .
                 [!provide]                PROVIDE (__end_data_RAM = .)
                 [!provide]                PROVIDE (__end_data_SRAM_UPPER = .)
 
-.igot.plt       0x20000088        0x0 load address 0x000176c8
- .igot.plt      0x20000088        0x0 ./startup/startup_mk64f12.o
+.igot.plt       0x20002008        0x0 load address 0x000196e8
+ .igot.plt      0x20002008        0x0 ./startup/startup_mk64f12.o
 
 .bss_RAM2       0x1fff0000        0x0
                 [!provide]                PROVIDE (__start_bss_RAM2 = .)
@@ -3422,38 +3427,39 @@ END GROUP
                 [!provide]                PROVIDE (__end_bss_RAM3 = .)
                 [!provide]                PROVIDE (__end_bss_FLEX_RAM = .)
 
-.bss            0x20000088      0x1b0
-                0x20000088                _bss = .
+.bss            0x20002008     0x3110
+                0x20002008                _bss = .
                 [!provide]                PROVIDE (__start_bss_RAM = .)
                 [!provide]                PROVIDE (__start_bss_SRAM_UPPER = .)
  *(SORT_BY_ALIGNMENT(.bss*))
- .bss.testIndex
-                0x20000088        0x4 ./source/arm_fft_bin_example_f32.o
-                0x20000088                testIndex
- .bss.deltout   0x2000008c       0x80 ./source/arm_fft_bin_example_f32.o
-                0x2000008c                deltout
- .bss.magdelt   0x2000010c       0x40 ./source/arm_fft_bin_example_f32.o
-                0x2000010c                magdelt
+ .bss.bines_out
+                0x20002008       0x20 ./source/arm_fft_bin_example_f32.o
+                0x20002008                bines_out
+ .bss.deltout   0x20002028     0x2000 ./source/arm_fft_bin_example_f32.o
+                0x20002028                deltout
+ .bss.magdelt   0x20004028     0x1000 ./source/arm_fft_bin_example_f32.o
+                0x20004028                magdelt
  .bss.fftInstance
-                0x2000014c        0x4 ./source/fft.o
-                0x2000014c                fftInstance
+                0x20005028        0x4 ./source/fft.o
+                0x20005028                fftInstance
  .bss.s_i2cHandle
-                0x20000150        0xc ./drivers/fsl_i2c.o
+                0x2000502c        0xc ./drivers/fsl_i2c.o
  .bss.s_i2cMasterIsr
-                0x2000015c        0x4 ./drivers/fsl_i2c.o
+                0x20005038        0x4 ./drivers/fsl_i2c.o
  .bss.s_i2cSlaveIsr
-                0x20000160        0x4 ./drivers/fsl_i2c.o
+                0x2000503c        0x4 ./drivers/fsl_i2c.o
  .bss.s_uartHandle
-                0x20000164       0x18 ./drivers/fsl_uart.o
+                0x20005040       0x18 ./drivers/fsl_uart.o
  .bss.s_uartIsr
-                0x2000017c        0x4 ./drivers/fsl_uart.o
- .bss.__Ciob    0x20000180       0xb4 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_semihost_nf.a(__ciob.o)
-                0x20000180                __Ciob
- .bss.errno     0x20000234        0x4 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(errno.o)
-                0x20000234                errno
+                0x20005058        0x4 ./drivers/fsl_uart.o
+ .bss.__Ciob    0x2000505c       0xb4 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_semihost_nf.a(__ciob.o)
+                0x2000505c                __Ciob
+ .bss.errno     0x20005110        0x4 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(errno.o)
+                0x20005110                errno
  *(SORT_BY_ALIGNMENT(COMMON))
-                0x20000238                . = ALIGN (0x8)
-                0x20000238                _ebss = .
+                0x20005118                . = ALIGN (0x8)
+ *fill*         0x20005114        0x4 
+                0x20005118                _ebss = .
                 [!provide]                PROVIDE (__end_bss_RAM = .)
                 [!provide]                PROVIDE (__end_bss_SRAM_UPPER = .)
                 [!provide]                PROVIDE (end = .)
@@ -3480,171 +3486,171 @@ END GROUP
                 [!provide]                PROVIDE (__end_noinit_RAM3 = .)
                 [!provide]                PROVIDE (__end_noinit_FLEX_RAM = .)
 
-.noinit         0x20000238        0x0
-                0x20000238                _noinit = .
+.noinit         0x20005118        0x0
+                0x20005118                _noinit = .
                 [!provide]                PROVIDE (__start_noinit_RAM = .)
                 [!provide]                PROVIDE (__start_noinit_SRAM_UPPER = .)
  *(SORT_BY_ALIGNMENT(.noinit*))
-                0x20000238                . = ALIGN (0x8)
-                0x20000238                _end_noinit = .
+                0x20005118                . = ALIGN (0x8)
+                0x20005118                _end_noinit = .
                 [!provide]                PROVIDE (__end_noinit_RAM = .)
                 [!provide]                PROVIDE (__end_noinit_SRAM_UPPER = .)
                 0x00001000                _HeapSize = 0x1000
 
-.heap           0x20000238     0x1000
-                0x20000238                _pvHeapStart = .
-                0x20001238                . = (. + _HeapSize)
- *fill*         0x20000238     0x1000 
-                0x20001238                . = ALIGN (0x8)
-                0x20001238                _pvHeapLimit = .
+.heap           0x20005118     0x1000
+                0x20005118                _pvHeapStart = .
+                0x20006118                . = (. + _HeapSize)
+ *fill*         0x20005118     0x1000 
+                0x20006118                . = ALIGN (0x8)
+                0x20006118                _pvHeapLimit = .
                 0x00001000                _StackSize = 0x1000
 
 .heap2stackfill
-                0x20001238     0x1000
-                0x20002238                . = (. + _StackSize)
- *fill*         0x20001238     0x1000 
+                0x20006118     0x1000
+                0x20007118                . = (. + _StackSize)
+ *fill*         0x20006118     0x1000 
 
 .stack          0x2002f000        0x0
                 0x2002f000                _vStackBase = .
                 0x2002f000                . = ALIGN (0x8)
                 0x20030000                _vStackTop = (. + _StackSize)
                 0x00000000                _image_start = LOADADDR (.text)
-                0x000176c8                _image_end = (LOADADDR (.data) + SIZEOF (.data))
-                0x000176c8                _image_size = (_image_end - _image_start)
+                0x000196e8                _image_end = (LOADADDR (.data) + SIZEOF (.data))
+                0x000196e8                _image_size = (_image_end - _image_start)
 OUTPUT(testFFT.axf elf32-littlearm)
 
-.debug_info     0x00000000     0xf01e
+.debug_info     0x00000000     0xf0ab
  .debug_info    0x00000000      0x92e ./startup/startup_mk64f12.o
- .debug_info    0x0000092e      0x2b5 ./source/arm_fft_bin_example_f32.o
- .debug_info    0x00000be3     0x1032 ./source/fft.o
- .debug_info    0x00001c15       0x3c ./source/semihost_hardfault.o
- .debug_info    0x00001c51     0x1f08 ./drivers/fsl_i2c.o
- .debug_info    0x00003b59     0x1cbb ./drivers/fsl_uart.o
- .debug_info    0x00005814      0x69f ./device/system_MK64F12.o
- .debug_info    0x00005eb3     0x1d16 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_const_structs.o)
- .debug_info    0x00007bc9     0x1a84 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
- .debug_info    0x0000964d      0xb3c C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_max_f32.o)
- .debug_info    0x0000a189     0x1c5b C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cfft_f32.o)
- .debug_info    0x0000bde4     0x16a6 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_bitreversal2.o)
- .debug_info    0x0000d48a      0xcba C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cmplx_mag_f32.o)
- .debug_info    0x0000e144      0xeda C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cfft_radix8_f32.o)
+ .debug_info    0x0000092e      0x2a8 ./source/arm_fft_bin_example_f32.o
+ .debug_info    0x00000bd6     0x10cc ./source/fft.o
+ .debug_info    0x00001ca2       0x3c ./source/semihost_hardfault.o
+ .debug_info    0x00001cde     0x1f08 ./drivers/fsl_i2c.o
+ .debug_info    0x00003be6     0x1cbb ./drivers/fsl_uart.o
+ .debug_info    0x000058a1      0x69f ./device/system_MK64F12.o
+ .debug_info    0x00005f40     0x1d16 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_const_structs.o)
+ .debug_info    0x00007c56     0x1a84 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
+ .debug_info    0x000096da      0xb3c C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_max_f32.o)
+ .debug_info    0x0000a216     0x1c5b C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cfft_f32.o)
+ .debug_info    0x0000be71     0x16a6 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_bitreversal2.o)
+ .debug_info    0x0000d517      0xcba C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cmplx_mag_f32.o)
+ .debug_info    0x0000e1d1      0xeda C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cfft_radix8_f32.o)
 
-.debug_abbrev   0x00000000     0x1c33
+.debug_abbrev   0x00000000     0x1c5e
  .debug_abbrev  0x00000000      0x17a ./startup/startup_mk64f12.o
  .debug_abbrev  0x0000017a      0x119 ./source/arm_fft_bin_example_f32.o
- .debug_abbrev  0x00000293      0x1a9 ./source/fft.o
- .debug_abbrev  0x0000043c       0x31 ./source/semihost_hardfault.o
- .debug_abbrev  0x0000046d      0x395 ./drivers/fsl_i2c.o
- .debug_abbrev  0x00000802      0x358 ./drivers/fsl_uart.o
- .debug_abbrev  0x00000b5a      0x170 ./device/system_MK64F12.o
- .debug_abbrev  0x00000cca      0x201 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_const_structs.o)
- .debug_abbrev  0x00000ecb      0x1dd C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
- .debug_abbrev  0x000010a8      0x212 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_max_f32.o)
- .debug_abbrev  0x000012ba      0x2e0 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cfft_f32.o)
- .debug_abbrev  0x0000159a      0x206 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_bitreversal2.o)
- .debug_abbrev  0x000017a0      0x288 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cmplx_mag_f32.o)
- .debug_abbrev  0x00001a28      0x20b C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cfft_radix8_f32.o)
+ .debug_abbrev  0x00000293      0x1d4 ./source/fft.o
+ .debug_abbrev  0x00000467       0x31 ./source/semihost_hardfault.o
+ .debug_abbrev  0x00000498      0x395 ./drivers/fsl_i2c.o
+ .debug_abbrev  0x0000082d      0x358 ./drivers/fsl_uart.o
+ .debug_abbrev  0x00000b85      0x170 ./device/system_MK64F12.o
+ .debug_abbrev  0x00000cf5      0x201 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_const_structs.o)
+ .debug_abbrev  0x00000ef6      0x1dd C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
+ .debug_abbrev  0x000010d3      0x212 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_max_f32.o)
+ .debug_abbrev  0x000012e5      0x2e0 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cfft_f32.o)
+ .debug_abbrev  0x000015c5      0x206 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_bitreversal2.o)
+ .debug_abbrev  0x000017cb      0x288 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cmplx_mag_f32.o)
+ .debug_abbrev  0x00001a53      0x20b C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cfft_radix8_f32.o)
 
-.debug_aranges  0x00000000      0x7d0
+.debug_aranges  0x00000000      0x7d8
  .debug_aranges
                 0x00000000      0x330 ./startup/startup_mk64f12.o
  .debug_aranges
                 0x00000330       0x20 ./source/arm_fft_bin_example_f32.o
  .debug_aranges
-                0x00000350       0x48 ./source/fft.o
+                0x00000350       0x50 ./source/fft.o
  .debug_aranges
-                0x00000398       0x20 ./source/semihost_hardfault.o
+                0x000003a0       0x20 ./source/semihost_hardfault.o
  .debug_aranges
-                0x000003b8      0x180 ./drivers/fsl_i2c.o
+                0x000003c0      0x180 ./drivers/fsl_i2c.o
  .debug_aranges
-                0x00000538      0x180 ./drivers/fsl_uart.o
+                0x00000540      0x180 ./drivers/fsl_uart.o
  .debug_aranges
-                0x000006b8       0x30 ./device/system_MK64F12.o
+                0x000006c0       0x30 ./device/system_MK64F12.o
  .debug_aranges
-                0x000006e8       0x18 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_const_structs.o)
+                0x000006f0       0x18 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_const_structs.o)
  .debug_aranges
-                0x00000700       0x18 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
+                0x00000708       0x18 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
  .debug_aranges
-                0x00000718       0x20 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_max_f32.o)
+                0x00000720       0x20 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_max_f32.o)
  .debug_aranges
-                0x00000738       0x30 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cfft_f32.o)
+                0x00000740       0x30 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cfft_f32.o)
  .debug_aranges
-                0x00000768       0x28 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_bitreversal2.o)
+                0x00000770       0x28 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_bitreversal2.o)
  .debug_aranges
-                0x00000790       0x20 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cmplx_mag_f32.o)
+                0x00000798       0x20 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cmplx_mag_f32.o)
  .debug_aranges
-                0x000007b0       0x20 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cfft_radix8_f32.o)
+                0x000007b8       0x20 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cfft_radix8_f32.o)
 
-.debug_ranges   0x00000000      0x7b0
+.debug_ranges   0x00000000      0x7b8
  .debug_ranges  0x00000000      0x320 ./startup/startup_mk64f12.o
  .debug_ranges  0x00000320       0x10 ./source/arm_fft_bin_example_f32.o
- .debug_ranges  0x00000330       0x38 ./source/fft.o
- .debug_ranges  0x00000368       0x10 ./source/semihost_hardfault.o
- .debug_ranges  0x00000378      0x170 ./drivers/fsl_i2c.o
- .debug_ranges  0x000004e8      0x170 ./drivers/fsl_uart.o
- .debug_ranges  0x00000658       0x20 ./device/system_MK64F12.o
- .debug_ranges  0x00000678       0x10 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_max_f32.o)
- .debug_ranges  0x00000688       0x20 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cfft_f32.o)
- .debug_ranges  0x000006a8       0x18 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_bitreversal2.o)
- .debug_ranges  0x000006c0       0xe0 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cmplx_mag_f32.o)
- .debug_ranges  0x000007a0       0x10 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cfft_radix8_f32.o)
+ .debug_ranges  0x00000330       0x40 ./source/fft.o
+ .debug_ranges  0x00000370       0x10 ./source/semihost_hardfault.o
+ .debug_ranges  0x00000380      0x170 ./drivers/fsl_i2c.o
+ .debug_ranges  0x000004f0      0x170 ./drivers/fsl_uart.o
+ .debug_ranges  0x00000660       0x20 ./device/system_MK64F12.o
+ .debug_ranges  0x00000680       0x10 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_max_f32.o)
+ .debug_ranges  0x00000690       0x20 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cfft_f32.o)
+ .debug_ranges  0x000006b0       0x18 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_bitreversal2.o)
+ .debug_ranges  0x000006c8       0xe0 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cmplx_mag_f32.o)
+ .debug_ranges  0x000007a8       0x10 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cfft_radix8_f32.o)
 
-.debug_macro    0x00000000      0x510
+.debug_macro    0x00000000      0x51c
  .debug_macro   0x00000000       0x29 ./startup/startup_mk64f12.o
  .debug_macro   0x00000029       0xb2 ./source/arm_fft_bin_example_f32.o
- .debug_macro   0x000000db       0xc6 ./source/fft.o
- .debug_macro   0x000001a1       0x8e ./source/fft.o
- .debug_macro   0x0000022f       0x11 ./source/semihost_hardfault.o
- .debug_macro   0x00000240      0x103 ./drivers/fsl_i2c.o
- .debug_macro   0x00000343       0x1c ./drivers/fsl_i2c.o
- .debug_macro   0x0000035f      0x109 ./drivers/fsl_uart.o
- .debug_macro   0x00000468       0x10 ./drivers/fsl_uart.o
- .debug_macro   0x00000478       0x98 ./device/system_MK64F12.o
+ .debug_macro   0x000000db       0xd2 ./source/fft.o
+ .debug_macro   0x000001ad       0x8e ./source/fft.o
+ .debug_macro   0x0000023b       0x11 ./source/semihost_hardfault.o
+ .debug_macro   0x0000024c      0x103 ./drivers/fsl_i2c.o
+ .debug_macro   0x0000034f       0x1c ./drivers/fsl_i2c.o
+ .debug_macro   0x0000036b      0x109 ./drivers/fsl_uart.o
+ .debug_macro   0x00000474       0x10 ./drivers/fsl_uart.o
+ .debug_macro   0x00000484       0x98 ./device/system_MK64F12.o
 
-.debug_line     0x00000000     0x6773
+.debug_line     0x00000000     0x67d7
  .debug_line    0x00000000      0x90e ./startup/startup_mk64f12.o
- .debug_line    0x0000090e      0x2af ./source/arm_fft_bin_example_f32.o
- .debug_line    0x00000bbd      0x3cd ./source/fft.o
- .debug_line    0x00000f8a       0x59 ./source/semihost_hardfault.o
- .debug_line    0x00000fe3     0x13f1 ./drivers/fsl_i2c.o
- .debug_line    0x000023d4     0x1338 ./drivers/fsl_uart.o
- .debug_line    0x0000370c      0x3ec ./device/system_MK64F12.o
- .debug_line    0x00003af8      0x25a C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_const_structs.o)
- .debug_line    0x00003d52      0x243 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
- .debug_line    0x00003f95      0x36f C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_max_f32.o)
- .debug_line    0x00004304      0xf14 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cfft_f32.o)
- .debug_line    0x00005218      0x353 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_bitreversal2.o)
- .debug_line    0x0000556b      0x531 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cmplx_mag_f32.o)
- .debug_line    0x00005a9c      0xcd7 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cfft_radix8_f32.o)
+ .debug_line    0x0000090e      0x2ad ./source/arm_fft_bin_example_f32.o
+ .debug_line    0x00000bbb      0x433 ./source/fft.o
+ .debug_line    0x00000fee       0x59 ./source/semihost_hardfault.o
+ .debug_line    0x00001047     0x13f1 ./drivers/fsl_i2c.o
+ .debug_line    0x00002438     0x1338 ./drivers/fsl_uart.o
+ .debug_line    0x00003770      0x3ec ./device/system_MK64F12.o
+ .debug_line    0x00003b5c      0x25a C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_const_structs.o)
+ .debug_line    0x00003db6      0x243 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
+ .debug_line    0x00003ff9      0x36f C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_max_f32.o)
+ .debug_line    0x00004368      0xf14 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cfft_f32.o)
+ .debug_line    0x0000527c      0x353 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_bitreversal2.o)
+ .debug_line    0x000055cf      0x531 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cmplx_mag_f32.o)
+ .debug_line    0x00005b00      0xcd7 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cfft_radix8_f32.o)
 
-.debug_str      0x00000000    0x7f30e
+.debug_str      0x00000000    0x7f338
  .debug_str     0x00000000     0x3715 ./startup/startup_mk64f12.o
                                0x3777 (size before relaxing)
- .debug_str     0x00003715     0x2e03 ./source/arm_fft_bin_example_f32.o
-                               0x5deb (size before relaxing)
- .debug_str     0x00006518     0x117e ./source/fft.o
-                               0x6e22 (size before relaxing)
- .debug_str     0x00007696       0x1f ./source/semihost_hardfault.o
+ .debug_str     0x00003715     0x2e04 ./source/arm_fft_bin_example_f32.o
+                               0x5dec (size before relaxing)
+ .debug_str     0x00006519     0x11ad ./source/fft.o
+                               0x6e51 (size before relaxing)
+ .debug_str     0x000076c6       0x1f ./source/semihost_hardfault.o
                                0x2f08 (size before relaxing)
- .debug_str     0x000076b5    0x760a3 ./drivers/fsl_i2c.o
+ .debug_str     0x000076e5    0x760a3 ./drivers/fsl_i2c.o
                               0x7b087 (size before relaxing)
- .debug_str     0x0007d758      0xe31 ./drivers/fsl_uart.o
+ .debug_str     0x0007d788      0xe31 ./drivers/fsl_uart.o
                               0x7b1ed (size before relaxing)
- .debug_str     0x0007e589      0x1d3 ./device/system_MK64F12.o
+ .debug_str     0x0007e5b9      0x1d3 ./device/system_MK64F12.o
                               0x783b9 (size before relaxing)
- .debug_str     0x0007e75c      0x8d1 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_const_structs.o)
+ .debug_str     0x0007e78c      0x8d1 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_const_structs.o)
                                0x135c (size before relaxing)
- .debug_str     0x0007f02d       0x2e C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
+ .debug_str     0x0007f05d       0x2e C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
                                 0xd1d (size before relaxing)
- .debug_str     0x0007f05b       0x76 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_max_f32.o)
+ .debug_str     0x0007f08b       0x70 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_max_f32.o)
                                 0x68b (size before relaxing)
- .debug_str     0x0007f0d1      0x11b C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cfft_f32.o)
+ .debug_str     0x0007f0fb      0x11b C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cfft_f32.o)
                                 0xe7e (size before relaxing)
- .debug_str     0x0007f1ec       0x5b C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_bitreversal2.o)
+ .debug_str     0x0007f216       0x5b C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_bitreversal2.o)
                                 0xd76 (size before relaxing)
- .debug_str     0x0007f247       0x7a C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cmplx_mag_f32.o)
+ .debug_str     0x0007f271       0x7a C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cmplx_mag_f32.o)
                                 0x734 (size before relaxing)
- .debug_str     0x0007f2c1       0x4d C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cfft_radix8_f32.o)
+ .debug_str     0x0007f2eb       0x4d C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cfft_radix8_f32.o)
                                 0x69b (size before relaxing)
 
 .comment        0x00000000       0xee
@@ -3771,19 +3777,19 @@ OUTPUT(testFFT.axf elf32-littlearm)
  .ARM.attributes
                 0x000007c8       0x20 c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_semihost_nf.a(__sys_write.o)
 
-.debug_frame    0x00000000     0x19f0
+.debug_frame    0x00000000     0x1a14
  .debug_frame   0x00000000      0x904 ./startup/startup_mk64f12.o
  .debug_frame   0x00000904       0x30 ./source/arm_fft_bin_example_f32.o
- .debug_frame   0x00000934       0xf0 ./source/fft.o
- .debug_frame   0x00000a24       0x20 ./source/semihost_hardfault.o
- .debug_frame   0x00000a44      0x694 ./drivers/fsl_i2c.o
- .debug_frame   0x000010d8      0x63c ./drivers/fsl_uart.o
- .debug_frame   0x00001714       0x74 ./device/system_MK64F12.o
- .debug_frame   0x00001788       0x30 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_max_f32.o)
- .debug_frame   0x000017b8       0xfc C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cfft_f32.o)
- .debug_frame   0x000018b4       0x5c C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_bitreversal2.o)
- .debug_frame   0x00001910       0x4c C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cmplx_mag_f32.o)
- .debug_frame   0x0000195c       0x94 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cfft_radix8_f32.o)
+ .debug_frame   0x00000934      0x114 ./source/fft.o
+ .debug_frame   0x00000a48       0x20 ./source/semihost_hardfault.o
+ .debug_frame   0x00000a68      0x694 ./drivers/fsl_i2c.o
+ .debug_frame   0x000010fc      0x63c ./drivers/fsl_uart.o
+ .debug_frame   0x00001738       0x74 ./device/system_MK64F12.o
+ .debug_frame   0x000017ac       0x30 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_max_f32.o)
+ .debug_frame   0x000017dc       0xfc C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cfft_f32.o)
+ .debug_frame   0x000018d8       0x5c C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_bitreversal2.o)
+ .debug_frame   0x00001934       0x4c C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cmplx_mag_f32.o)
+ .debug_frame   0x00001980       0x94 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_cfft_radix8_f32.o)
 
 .debug_loc      0x00000000     0x2baf
  .debug_loc     0x00000000      0x363 C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_max_f32.o)
@@ -4521,7 +4527,7 @@ arm_float_to_q28                                  ./source/math_helper.o
 arm_float_to_q29                                  ./source/math_helper.o
 arm_float_to_q30                                  ./source/math_helper.o
 arm_max_f32                                       C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_max_f32.o)
-                                                  ./source/arm_fft_bin_example_f32.o
+                                                  ./source/fft.o
 arm_provide_guard_bits_q15                        ./source/math_helper.o
 arm_provide_guard_bits_q31                        ./source/math_helper.o
 arm_provide_guard_bits_q7                         ./source/math_helper.o
@@ -4557,6 +4563,7 @@ arm_snr_f32                                       ./source/math_helper.o
 atof                                              c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(scanf.o)
 atoi                                              c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(scanf.o)
 atol                                              c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(scanf.o)
+bines_out                                         ./source/arm_fft_bin_example_f32.o
 bss_init                                          ./startup/startup_mk64f12.o
 calloc                                            c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(alloc.o)
 cos_factorsQ15_128                                C:\Users\Guido\Documents\GitHub\LaboDeMicrosTPF\TestS\fft_test\testFFT\libs\libarm_cortexM4lf_math.a(arm_common_tables.o)
@@ -4593,6 +4600,8 @@ fftGetMag                                         ./source/fft.o
 fftInit                                           ./source/fft.o
                                                   ./source/arm_fft_bin_example_f32.o
 fftInstance                                       ./source/fft.o
+fftMakeBines8                                     ./source/fft.o
+                                                  ./source/arm_fft_bin_example_f32.o
 fftSize                                           ./source/arm_fft_bin_example_f32.o
 fputs                                             c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_c.a(fputs.o)
                                                   c:/nxp/mcuxpressoide_11.2.1_4149/ide/plugins/com.nxp.mcuxpresso.tools.win32_11.2.0.202008311134/tools/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard\libcr_semihost_nf.a(_cr_assert.o)
