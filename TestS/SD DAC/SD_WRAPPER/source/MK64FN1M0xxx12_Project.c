@@ -75,7 +75,7 @@ int main(void) {
 		if (getJustIn()) {
 
 			if (MP3LoadFile("test_500.mp3", "test_500.wav")) {
-				//if (MP3LoadFile("dakiti.mp3", "dakiti.wav")) {
+			//if (MP3LoadFile("dakiti.mp3", "dakiti.wav")) {
 				int i = 0;
 
 				if (MP3GetTagData(&ID3Data)) {

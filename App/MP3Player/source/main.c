@@ -94,16 +94,12 @@ static app_context_t appContext;
 static short u_buffer_1[MP3_DECODED_BUFFER_SIZE];
 static short u_buffer_2[MP3_DECODED_BUFFER_SIZE];
 
-mp3_decoder_frame_data_t frameData;
-mp3_decoder_tag_data_t ID3Data;
-
 /**********************************************************************************************
  *                                         MAIN                                               *
  **********************************************************************************************/
 
 int main(void) {
 	/*and turn off */
-
 
 //	float32_t bines_out[8];
 //	//float32_t deltas[2048] = {1,3,4,1,1,1,1,1,1,1,5,1,1,1,1,0,1,0,1,1,1,1,1,1,21,1,1,1,1,1,1,1,61,1,1,1,1,1,1,1,1,1,211,1,1,1,1,122,1,1,1231,1,41,1,15,1,1,61,1,1,1,1,1,81,1,1,1,1,1,1,1,19,1,1,1,1,1,12,1,1,1,1,1,1,1,1213,1,1,1,1,1,41,1,1,1,1,1,16,1,1,1,1,1,1,1,71,1,1,1,1,1,81,1,1,1,1,1,1,1,91,1,1,1,1,1,1,51,1,1,1,1,1,1,1,11,1,1,1,1,15,1,1,1,1,1,1,16,1,1,1,1,1,1,71,1,1,1,1,81,1,1,1,1,1,1,1,91,1,1,1,1,01,1,1,1,1,13,1,1,1,1,1,1,51,1,1,1,1,11,1,1,1,1,1,12,1,1,1,1,1,13,1,1,1,1,16,1,1,1,1,1,71,1,1,1,1,1,-81,1,1,1,1,1,1,1,1,-631,1,13,1,1,1,1,1,1,1,1,1,1,14,1,1,1,1,1,1,1,1,1345,1,1,1,1,1,1,1,1,1,21,1,1,1,1,1,1,1,1,15,1,61,61,113,1,1231,512,1236,1,61,17,18,13,134,51345,3415,3415,345134,531,34134,3415,3451345,3415,345134,53415,34512,42134,1,1,21,1,1,1,1,1,1,1,1,1,1,21,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 };
@@ -367,7 +363,6 @@ int main(void) {
 //			-2.097831202853255, 	0.000000000000000, 	2.711952282071310, 	0.000000000000000, 	1.498539238246888, 	0.000000000000000, 	1.317457282535915, 	0.000000000000000,
 //			-0.302765938349717, 	0.000000000000000, 	-0.044623707947201, 	0.000000000000000, 	2.337405215062395, 	0.000000000000000, 	-3.980689173859100, 	0.000000000000000,
 //	};
-
 //
 //	float32_t deltout[2048] = { 0 };
 //	float32_t magdelt[1024] = { 0 };
@@ -376,161 +371,170 @@ int main(void) {
 //	fftGetMag(deltout, magdelt); //test de trolos
 //	fftMakeBines8(magdelt,bines_out);
 //	__asm__("BKPT #0");
-
-initDevice();																		/* Init device */
+	initDevice(); /* Init device */
 	prepareForSwitchOff();
-	while(true){
+	while (true) {
 		event_t ev;
 
-		EVHANDLER_GetEvents(&ev);														/* Get events */
+		EVHANDLER_GetEvents(&ev); /* Get events */
 
-		switch(appContext.appState){
+		switch (appContext.appState) {
 
-				/***************/
-				/*  OFF STATE  */
-				/***************/
+		/***************/
+		/*  OFF STATE  */
+		/***************/
 
-			case kAPP_STATE_OFF:
-				switchOffKinetis();														/* Turn off */
-				switchAppState(appContext.appState, kAPP_STATE_IDDLE);					/* Go back to IDDLE */
+		case kAPP_STATE_OFF:
+			switchOffKinetis(); /* Turn off */
+			switchAppState(appContext.appState, kAPP_STATE_IDDLE); /* Go back to IDDLE */
 
-				break;
+			break;
 
-				/***************/
-				/* IDDLE STATE */
-				/***************/
+			/***************/
+			/* IDDLE STATE */
+			/***************/
 
-			case kAPP_STATE_IDDLE:
-				if(SDWRAPPER_GetMounted()&&SDWRAPPER_getJustIn()){
-					appContext.currentFile = FSEXP_exploreFS(FSEXP_ROOT_DIR);			/* Explore filesystem */
-					#ifdef DEBUG_PRINTF_APP
-					appContext.currentFile = FSEXP_getNext();
-					printf("[App] Pointing currently to: %s\n", appContext.currentFile);
-					#endif
+		case kAPP_STATE_IDDLE:
+			if (SDWRAPPER_GetMounted() && SDWRAPPER_getJustIn()) {
+				appContext.currentFile = FSEXP_exploreFS(FSEXP_ROOT_DIR); /* Explore filesystem */
+#ifdef DEBUG_PRINTF_APP
+				appContext.currentFile = FSEXP_getNext();
+				printf("[App] Pointing currently to: %s\n",
+						appContext.currentFile);
+#endif
+			}
+			if (SDWRAPPER_getJustOut()) { /* If SD is removed */
+				if (appContext.menuState == kAPP_MENU_FILESYSTEM) { /* and menu is exploring FS*/
+					appContext.menuState = kAPP_MENU_MAIN; /* Go back to main menu */
 				}
-				if(SDWRAPPER_getJustOut()){												/* If SD is removed */
-					if(appContext.menuState == kAPP_MENU_FILESYSTEM){					/* and menu is exploring FS*/
-						appContext.menuState = kAPP_MENU_MAIN;							/* Go back to main menu */
+			}
+			if (ev.btn_evs.off_on_button) {
+				switchAppState(appContext.appState, kAPP_STATE_OFF);
+			}
+			if (SDWRAPPER_GetMounted() && SDWRAPPER_getSDInserted()) {
+				if (ev.btn_evs.next_button) {
+					if (FSEXP_getNext()) {
+						appContext.currentFile = FSEXP_getFilename();
 					}
+#ifdef DEBUG_PRINTF_APP
+					printf("[App] Pointing currently to: %s\n",
+							appContext.currentFile);
+#endif
 				}
-				if(ev.btn_evs.off_on_button){
-					switchAppState(appContext.appState, kAPP_STATE_OFF);
+				if (ev.btn_evs.prev_button) {
+					if (FSEXP_getPrev()) {
+						appContext.currentFile = FSEXP_getFilename();
+					}
+#ifdef DEBUG_PRINTF_APP
+					printf("[App] Pointing currently to: %s\n",
+							appContext.currentFile);
+#endif
 				}
-				if(SDWRAPPER_GetMounted()&&SDWRAPPER_getSDInserted()){
-					if(ev.btn_evs.next_button){
-						if(FSEXP_getNext()){
-							appContext.currentFile = FSEXP_getFilename();
-						}
-						#ifdef DEBUG_PRINTF_APP
-						printf("[App] Pointing currently to: %s\n", appContext.currentFile);
-						#endif
+				if (ev.btn_evs.enter_button) {
+#ifdef DEBUG_PRINTF_APP
+					printf("[App] Opened %s\n", appContext.currentFile);
+#endif
+					if (FSEXP_openSelected()) {
+						appContext.currentFile = FSEXP_getFilename();
 					}
-					if(ev.btn_evs.prev_button){
-						if(FSEXP_getPrev()){
-							appContext.currentFile = FSEXP_getFilename();
-						}
-						#ifdef DEBUG_PRINTF_APP
-						printf("[App] Pointing currently to: %s\n", appContext.currentFile);
-						#endif
-					}
-					if(ev.btn_evs.enter_button){
-						#ifdef DEBUG_PRINTF_APP
-						printf("[App] Opened %s\n", appContext.currentFile);
-						#endif
-						if(FSEXP_openSelected()){
-							appContext.currentFile = FSEXP_getFilename();
-						}
-						#ifdef DEBUG_PRINTF_APP
-						printf("[App] Pointing currently to: %s\n", FSEXP_getMP3Path());
-						#endif
-					}
-					if(ev.btn_evs.back_button){
-
-						if(FSEXP_goBackDir()){
-							appContext.currentFile = FSEXP_getFilename();
-						}
-						#ifdef DEBUG_PRINTF_APP
-						printf("[App] Went back a directory\n");
-						printf("[App] Pointing currently to: %s\n", appContext.currentFile);
-						#endif
-					}
-					if(ev.fsexp_evs.play_music){
-						switchAppState(appContext.appState, kAPP_STATE_PLAYING);
-					}
+#ifdef DEBUG_PRINTF_APP
+					printf("[App] Pointing currently to: %s\n",
+							FSEXP_getMP3Path());
+#endif
 				}
-				runMenu(&ev, &appContext);										/* Run menu in background */
-				break;
+				if (ev.btn_evs.back_button) {
 
-				/***************/
-				/*PLAYING STATE*/
-				/***************/
-
-			case kAPP_STATE_PLAYING:
-
-				if(SDWRAPPER_getJustOut()){											/* If SD is removed */
-					if(appContext.menuState == kAPP_MENU_FILESYSTEM){				/* and menu is exploring FS*/
-						appContext.menuState = kAPP_MENU_MAIN;						/* Go back to main menu */
-						//TODO stop music, stop spectogram
-						//...
-						switchAppState(appContext.appState, kAPP_STATE_IDDLE); 		/* Return to iddle state */
-						break;
+					if (FSEXP_goBackDir()) {
+						appContext.currentFile = FSEXP_getFilename();
 					}
+#ifdef DEBUG_PRINTF_APP
+					printf("[App] Went back a directory\n");
+					printf("[App] Pointing currently to: %s\n",
+							appContext.currentFile);
+#endif
 				}
-				if(ev.btn_evs.off_on_button){
-					switchAppState(appContext.appState, kAPP_STATE_OFF);
+				if (ev.fsexp_evs.play_music) {
+					switchAppState(appContext.appState, kAPP_STATE_PLAYING);
 				}
-				if(SDWRAPPER_GetMounted()&&SDWRAPPER_getSDInserted()){
-					if(ev.btn_evs.next_button){
-						if(FSEXP_getNext()){
-							appContext.currentFile = FSEXP_getFilename();
-						}
-						#ifdef DEBUG_PRINTF_APP
-						printf("[App] Pointing currently to: %s\n", appContext.currentFile);
-						#endif
-					}
-					if(ev.btn_evs.prev_button){
-						if(FSEXP_getPrev()){
-							appContext.currentFile = FSEXP_getFilename();
-						}
-						#ifdef DEBUG_PRINTF_APP
-						printf("[App] Pointing currently to: %s\n", appContext.currentFile);
-						#endif
-					}
-					if(ev.btn_evs.enter_button){
-						#ifdef DEBUG_PRINTF_APP
-						printf("[App] Opened %s\n", appContext.currentFile);
-						#endif
-						if(FSEXP_openSelected()){
-							appContext.currentFile = FSEXP_getFilename();
-						}
-						#ifdef DEBUG_PRINTF_APP
-						printf("[App] Pointing currently to: %s\n", appContext.currentFile);
-						#endif
-					}
-					if(ev.btn_evs.back_button){
+			}
+			runMenu(&ev, &appContext); /* Run menu in background */
+			break;
 
-						if(FSEXP_goBackDir()){
-							appContext.currentFile = FSEXP_getFilename();
-						}
-						#ifdef DEBUG_PRINTF_APP
-						printf("[App] Went back a directory\n");
-						printf("[App] Pointing currently to: %s\n", appContext.currentFile);
-						#endif
-					}
-					if(ev.fsexp_evs.play_music){
-						#ifdef DEBUG_PRINTF_APP
-						printf("[App] Switched to playing: %s\n", FSEXP_getMP3Path());
-						#endif
-						//TODO: Reiniciar todo para reproducir la proxima cancion.
-					}
+			/***************/
+			/*PLAYING STATE*/
+			/***************/
+
+		case kAPP_STATE_PLAYING:
+
+			if (SDWRAPPER_getJustOut()) { /* If SD is removed */
+				if (appContext.menuState == kAPP_MENU_FILESYSTEM) { /* and menu is exploring FS*/
+					appContext.menuState = kAPP_MENU_MAIN; /* Go back to main menu */
+					//TODO stop music, stop spectogram
+					//...
+					switchAppState(appContext.appState, kAPP_STATE_IDDLE); /* Return to iddle state */
+					break;
 				}
+			}
+			if (ev.btn_evs.off_on_button) {
+				switchAppState(appContext.appState, kAPP_STATE_OFF);
+			}
+			if (SDWRAPPER_GetMounted() && SDWRAPPER_getSDInserted()) {
+				if (ev.btn_evs.next_button) {
+					if (FSEXP_getNext()) {
+						appContext.currentFile = FSEXP_getFilename();
+					}
+#ifdef DEBUG_PRINTF_APP
+					printf("[App] Pointing currently to: %s\n",
+							appContext.currentFile);
+#endif
+				}
+				if (ev.btn_evs.prev_button) {
+					if (FSEXP_getPrev()) {
+						appContext.currentFile = FSEXP_getFilename();
+					}
+#ifdef DEBUG_PRINTF_APP
+					printf("[App] Pointing currently to: %s\n",
+							appContext.currentFile);
+#endif
+				}
+				if (ev.btn_evs.enter_button) {
+#ifdef DEBUG_PRINTF_APP
+					printf("[App] Opened %s\n", appContext.currentFile);
+#endif
+					if (FSEXP_openSelected()) {
+						appContext.currentFile = FSEXP_getFilename();
+					}
+#ifdef DEBUG_PRINTF_APP
+					printf("[App] Pointing currently to: %s\n",
+							appContext.currentFile);
+#endif
+				}
+				if (ev.btn_evs.back_button) {
 
-				runMenu(&ev, &appContext);											/* Run menu in background */
-				runPlayer(&ev, &appContext);										/* Run player in background */
-				break;
+					if (FSEXP_goBackDir()) {
+						appContext.currentFile = FSEXP_getFilename();
+					}
+#ifdef DEBUG_PRINTF_APP
+					printf("[App] Went back a directory\n");
+					printf("[App] Pointing currently to: %s\n",
+							appContext.currentFile);
+#endif
+				}
+				if (ev.fsexp_evs.play_music) {
+#ifdef DEBUG_PRINTF_APP
+					printf("[App] Switched to playing: %s\n",
+							FSEXP_getMP3Path());
+#endif
+					//TODO: Reiniciar todo para reproducir la proxima cancion.
+				}
+			}
 
+			runMenu(&ev, &appContext); /* Run menu in background */
+			runPlayer(&ev, &appContext); /* Run player in background */
+			break;
 
-			default: break;
+		default:
+			break;
 		}
 	}
 	return 0;
@@ -604,7 +608,6 @@ void switchAppState(app_state_t current, app_state_t target) {
 			appContext.appState = target;
 		} else if (current == kAPP_STATE_PLAYING) {
 			DAC_Wrapper_Sleep();
-			close_file_wav();
 			appContext.playerContext.firstTime = true;
 			prepareForSwitchOff();
 			appContext.appState = target;
@@ -617,7 +620,6 @@ void switchAppState(app_state_t current, app_state_t target) {
 		} else if (current == kAPP_STATE_PLAYING) {
 			//TODO: Stop player, spectrogram..
 			DAC_Wrapper_Sleep();
-			close_file_wav();
 			appContext.playerContext.firstTime = true;
 			appContext.appState = target;
 		}
@@ -626,37 +628,38 @@ void switchAppState(app_state_t current, app_state_t target) {
 		if (current == kAPP_STATE_IDDLE) {
 			//TODO: Start player, spectrogram..
 
-
-			char * songName = (FSEXP_getMP3Path()+1);
-			MP3LoadFile(songName, NULL);
-
-			DAC_Wrapper_Wake_Up();
-
-			//Empiezo por el buffer 1
-			appContext.playerContext.res = MP3GetDecodedFrame(
-					(int16_t*) u_buffer_1,
-					MP3_DECODED_BUFFER_SIZE, &appContext.playerContext.sampleCount, 0);
-
-			uint16_t j;
-			for (j = 0; j < appContext.playerContext.frameData.sampleCount; j++) {
-				u_buffer_1[j] = (uint16_t) ((u_buffer_1[j] + 32768) * 4095
-						/ 65535.0);
-			}
-			MP3_Set_Sample_Rate(appContext.playerContext.sr_,
-					appContext.playerContext.ch_);
+			char *songName = FSEXP_getMP3Path();
+			MP3LoadFile(&songName[1]);
 
 #ifdef DEBUG_PRINTF_APP
 			//TODO Calculo que vamos a tener que hacer algo con esta data
 			printf("[App] Playing music...");
 			if (MP3GetTagData(&appContext.playerContext.ID3Data)) {
 				printf("\nSONG INFO\n");
-				printf("TITLE: %s\n", ID3Data.title);
-				printf("ARTIST: %s\n", ID3Data.artist);
-				printf("ALBUM: %s\n", ID3Data.album);
-				printf("TRACK NUM: %s\n", ID3Data.trackNum);
-				printf("YEAR: %s\n", ID3Data.year);
+				printf("TITLE: %s\n", appContext.playerContext.ID3Data.title);
+				printf("ARTIST: %s\n", appContext.playerContext.ID3Data.artist);
+				printf("ALBUM: %s\n", appContext.playerContext.ID3Data.album);
+				printf("TRACK NUM: %s\n",
+						appContext.playerContext.ID3Data.trackNum);
+				printf("YEAR: %s\n", appContext.playerContext.ID3Data.year);
 			}
 #endif
+			//Empiezo por el buffer 1
+			appContext.playerContext.res = MP3GetDecodedFrame(
+					(int16_t*) u_buffer_1,
+					MP3_DECODED_BUFFER_SIZE,
+					&appContext.playerContext.sampleCount, 0);
+
+			uint16_t j;
+			for (j = 0; j < appContext.playerContext.frameData.sampleCount;
+					j++) {
+				u_buffer_1[j] = (uint16_t) ((u_buffer_1[j] + 32768) * 4095
+						/ 65535.0);
+			}
+			MP3_Set_Sample_Rate(appContext.playerContext.sr_,
+					appContext.playerContext.ch_);
+
+			DAC_Wrapper_Wake_Up();
 			appContext.appState = target;
 		}
 		break;
@@ -678,14 +681,18 @@ void runPlayer(event_t *events, app_context_t *context) {
 
 			appContext.playerContext.firstTime = false;
 
-			MP3GetLastFrameData(&frameData);
+			MP3GetLastFrameData(&(appContext.playerContext.frameData));
 
 			//No debería cambiar el sample rate entre frame y frame
 			//Pero si lo hace...
-			if ((appContext.playerContext.sr_ != appContext.playerContext.frameData.sampleRate)
-					|| (appContext.playerContext.ch_ != frameData.channelCount)) {
-				appContext.playerContext.sr_ = appContext.playerContext.frameData.sampleRate;
-				appContext.playerContext.ch_ = appContext.playerContext.frameData.channelCount;
+			if ((appContext.playerContext.sr_
+					!= appContext.playerContext.frameData.sampleRate)
+					|| (appContext.playerContext.ch_
+							!= appContext.playerContext.frameData.channelCount)) {
+				appContext.playerContext.sr_ =
+						appContext.playerContext.frameData.sampleRate;
+				appContext.playerContext.ch_ =
+						appContext.playerContext.frameData.channelCount;
 				MP3_Set_Sample_Rate(appContext.playerContext.sr_,
 						appContext.playerContext.ch_);
 			}
@@ -695,28 +702,34 @@ void runPlayer(event_t *events, app_context_t *context) {
 			uint16_t j;
 			if (appContext.playerContext.using_buffer_1) {
 				//Envio el buffer 1 al dac
-				DAC_Wrapper_Set_Data_Array(&u_buffer_1, appContext.playerContext.frameData.sampleCount);
+				DAC_Wrapper_Set_Data_Array(&u_buffer_1,
+						appContext.playerContext.frameData.sampleCount);
 				DAC_Wrapper_Set_Next_Buffer(&u_buffer_2);
 
 				//Cargo el y normalizo el buffer 2
 				appContext.playerContext.res = MP3GetDecodedFrame(
 						(int16_t*) u_buffer_2,
-						MP3_DECODED_BUFFER_SIZE, &appContext.playerContext.sampleCount, 0);
+						MP3_DECODED_BUFFER_SIZE,
+						&(appContext.playerContext.sampleCount), 0);
 
-				for (j = 0; j < appContext.playerContext.frameData.sampleCount; j++) {
+				for (j = 0; j < appContext.playerContext.frameData.sampleCount;
+						j++) {
 					u_buffer_2[j] = (uint16_t) ((u_buffer_2[j] + 32768) * 4095
 							/ 65535.0);
 				}
 			} else {
 				//Envio el buffer 2 al dac
-				DAC_Wrapper_Set_Data_Array(&u_buffer_2, appContext.playerContext.frameData.sampleCount);
+				DAC_Wrapper_Set_Data_Array(&u_buffer_2,
+						appContext.playerContext.frameData.sampleCount);
 				DAC_Wrapper_Set_Next_Buffer(&u_buffer_1);
 
 				//Cargo el y normalizo el buffer 1
 				appContext.playerContext.res = MP3GetDecodedFrame(
 						(int16_t*) u_buffer_1,
-						MP3_DECODED_BUFFER_SIZE, &appContext.playerContext.sampleCount, 0);
-				for (j = 0; j < appContext.playerContext.frameData.sampleCount; j++) {
+						MP3_DECODED_BUFFER_SIZE,
+						&(appContext.playerContext.sampleCount), 0);
+				for (j = 0; j < appContext.playerContext.frameData.sampleCount;
+						j++) {
 					u_buffer_1[j] = (uint16_t) ((u_buffer_1[j] + 32768) * 4095
 							/ 65535.0);
 				}
@@ -807,127 +820,3 @@ void cbackout(void) {
 	printf("[App] SD Card removed.\r\n");
 #endif
 }
-/*
- #ifdef DEBUG_PRINTF_INFO
- uint32_t sr = 0;
- #endif
- uint16_t sampleCount;
- if (getJustIn()) {
- if (MP3LoadFile("test.mp3", "test.wav")) {
- int i = 0;
- if (MP3GetTagData(&ID3Data)) {
- #ifdef DEBUG_PRINTF_APP
- printf("\nSONG INFO\n");
- printf("TITLE: %s\n", ID3Data.title);
- printf("ARTIST: %s\n", ID3Data.artist);
- printf("ALBUM: %s\n", ID3Data.album);
- printf("TRACK NUM: %s\n", ID3Data.trackNum);
- printf("YEAR: %s\n", ID3Data.year);
- #endif
- }
- DAC_Wrapper_Start_Trigger();
-
- //Empiezo por el buffer 1
- mp3_decoder_result_t res = MP3GetDecodedFrame(buffer_1,
- MP3_DECODED_BUFFER_SIZE, &sampleCount, 0);
- bool using_buffer_1 = true;
-
- uint16_t sr_ = kMP3_44100Hz;	//Default config 4 mp3 stereo
- uint8_t ch_ = kMP3_Stereo;
- MP3_Set_Sample_Rate(sr_, ch_);
- //Por defecto ya está configurado así, solo lo explicito y ayuda
- //si hay que cambiarlo mientras corre el codigo
-
- while (true) {
-
- #ifdef DEBUG_PRINTF_INFO
- printf("\n[APP] Frame %d decoding started.\n", i);
- #endif
-
- if (res == MP3DECODER_NO_ERROR) {
-
- if (DAC_Wrapper_Is_Transfer_Done() || i == 0) {	//Entro en la primera o cuando ya transmiti
-
- MP3GetLastFrameData(&frameData);
-
- //No debería cambiar el sample rate entre frame y frame
- //Pero si lo hace...
- if ((sr_ != frameData.sampleRate)
- || (ch_ != frameData.channelCount)) {
- sr_ = frameData.sampleRate;
- ch_ = frameData.channelCount;
- MP3_Set_Sample_Rate(sr_, ch_);
- }
-
- DAC_Wrapper_Clear_Transfer_Done();
-
- //uint16_t* nullptr = NULL;
- if (using_buffer_1) {
- //Envio el buffer 1 al dac
- DAC_Wrapper_Set_Data_Array(&buffer_1,
- frameData.sampleCount);
- DAC_Wrapper_Set_Next_Buffer(&buffer_2);
-
- //Cargo el y normalizo el buffer 2
- res = MP3GetDecodedFrame(buffer_2,
- MP3_DECODED_BUFFER_SIZE, &sampleCount, 0);
- uint16_t j;
- for (j = 0; j < frameData.sampleCount; j++) {
- buffer_2[j] = (uint16_t) ((buffer_2[j]
- + 100000) * 4095 / 200000);
- }
- } else {
- //Envio el buffer 2 al dac
- DAC_Wrapper_Set_Data_Array(&buffer_2,
- frameData.sampleCount);
- DAC_Wrapper_Set_Next_Buffer(&buffer_1);
-
- //Cargo el y normalizo el buffer 1
- res = MP3GetDecodedFrame(buffer_1,
- MP3_DECODED_BUFFER_SIZE, &sampleCount, 0);
- uint16_t j;
- for (j = 0; j < frameData.sampleCount; j++) {
- buffer_1[j] = (uint16_t) ((buffer_1[j]
- + 100000) * 4095 / 200000);
- }
- }
-
- using_buffer_1 = !using_buffer_1;//Cambio el buffer al siguiente
-
- i++;
- }
-
- #ifdef DEBUG_PRINTF_INFO
- printf("[APP] Wrote %d bytes to wav.\n", wrote);
-
- printf("[APP] Frame %d decoded.\n", i);
- #endif
-
- #ifdef DEBUG_PRINTF_INFO
- sr = frameData.sampleRate;
-
- printf("[APP] FRAME SAMPLE RATE: %d \n", sr);
- #endif
-
- #ifdef DEBUG_FRAME_DELAY
- printf("[APP] Un pequenio delay para el dios de la SD bro.\n");
- while(!nextFrameFlag){
- //wait
- }
- nextFrameFlag = false;
- #endif
-
- } else if (res == MP3DECODER_FILE_END) {
- #ifdef DEBUG_PRINTF_APP
- printf("[APP] FILE ENDED. Decoded %d frames.\n", i - 1);
- #endif
- finished = true;
- break;
- }
- }
- }
- }
- close_file_wav();
- //REMEMBER TO CLOSE FILES
- *
- */

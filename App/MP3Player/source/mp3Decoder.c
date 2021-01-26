@@ -102,16 +102,13 @@ void MP3DecoderInit(void) {
 
 }
 
-bool MP3LoadFile(const char *file_name, const char *file_name_wav) {
+bool MP3LoadFile(const char *file_name) {
 	bool res = false;
 	if (context_data.file_opened == true) { //if there was a opened file, i must close it before opening a new one
 		resetContextData();
 		close_file();
 	}
 	if (open_file(_T(file_name))) {
-		if (file_name_wav != NULL) {
-			open_file_wav(_T(file_name_wav));
-		}
 		context_data.file_opened = true;
 		context_data.f_size = getFileSize();
 		context_data.bytes_remaining = context_data.f_size;
