@@ -1,13 +1,15 @@
-/***************************************************************************//**
- @file     event_handler.c
- @brief
- @author   MAGT
+
+/***************************************************************************/ /**
+  @file     dac_ev_handler.c
+  @brief	handler for the ev_handler
+  @author   MAGT
  ******************************************************************************/
 
 /*******************************************************************************
  * INCLUDE HEADER FILES
  ******************************************************************************/
-#include "event_handler.h"
+#include "dac_ev_handler.h"
+
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
@@ -23,22 +25,17 @@
 /*******************************************************************************
  * VARIABLE DECLARATION WITH FILE SCOPE
  ******************************************************************************/
-
+static dac_event_t dac_event;
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH GLOBAL SCOPE
  ******************************************************************************/
-void EVHANDLER_GetEvents(event_t *evs) {
-	BUTTONS_EVHANDLER_GetEvents(&(evs->btn_evs));
-	SD_EVHANDLER_GetEvents(&(evs->sd_evs));
-	FSEXP_EVHANDLER_GetEvents(&(evs->fsexp_evs));
-	DAC_EVHANDLER_GetEvents(&(evs->dac_evs));
+void DAC_EVHANDLER_GetEvents(dac_event_t * _dac_event){
+	//dac_event->dac_start_playing;
+	//dac_event->dac_end_playing;
 }
 
-void EVHANDLER_InitHandlers(void){
-	FSEXP_EVHANDLER_Init();
-	SD_EVHANDLER_Init();
-	BUTTONS_EVHANDLER_Init();
-	DAC_EVHANDLER_Init();
+void DAC_EVHANDLER_Init(void){
+
 }
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH FILE SCOPE
@@ -47,4 +44,3 @@ void EVHANDLER_InitHandlers(void){
 /*******************************************************************************
  *						 INTERRUPTION ROUTINES
  ******************************************************************************/
-

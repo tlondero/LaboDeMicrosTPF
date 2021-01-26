@@ -47,8 +47,6 @@ bool nextFrameFlag = false;
 static uint16_t u_buffer_1[MP3_DECODED_BUFFER_SIZE];
 static uint16_t u_buffer_2[MP3_DECODED_BUFFER_SIZE];
 
-//static float32_t eq_buffer[MP3_DECODED_BUFFER_SIZE];
-
 mp3_decoder_frame_data_t frameData;
 mp3_decoder_tag_data_t ID3Data;
 
@@ -61,6 +59,10 @@ int main(void) {
 	/* Init board hardware. */
 	BOARD_InitBootPins();
 	BOARD_InitBootClocks();
+	DAC_Wrapper_Init();
+	DAC_Wrapper_Loop(false);
+	DAC_Wrapper_Start_Trigger();
+	DAC_Wrapper_Sleep();
 #ifndef BOARD_INIT_DEBUG_CONSOLE_PERIPHERAL
 
 	/* Init FSL debug console. */
@@ -75,6 +77,7 @@ int main(void) {
 			if (MP3LoadFile("test_500.mp3", "test_500.wav")) {
 				//if (MP3LoadFile("dakiti.mp3", "dakiti.wav")) {
 				int i = 0;
+
 				if (MP3GetTagData(&ID3Data)) {
 					printf("\nSONG INFO\n");
 					printf("TITLE: %s\n", ID3Data.title);
@@ -84,19 +87,13 @@ int main(void) {
 					printf("YEAR: %s\n", ID3Data.year);
 				}
 
-				//eqInit(MP3_DECODED_BUFFER_SIZE);
-
-				DAC_Wrapper_Init();
-				DAC_Wrapper_Loop(false);
-				DAC_Wrapper_Start_Trigger();
+				DAC_Wrapper_Wake_Up();
 
 				//Empiezo por el buffer 1
 				mp3_decoder_result_t res = MP3GetDecodedFrame(
 						(int16_t*) u_buffer_1, MP3_DECODED_BUFFER_SIZE,
 						&sampleCount, 0);
 
-				//eqSetFrameSize(frameData.sampleCount);
-				//eqFilterFrame(u_buffer_1, frameData.sampleCount, eq_buffer);
 				uint16_t j;
 				for (j = 0; j < frameData.sampleCount; j++) {
 					u_buffer_1[j] = (uint16_t) ((u_buffer_1[j] + 32768) * 4095
@@ -144,8 +141,6 @@ int main(void) {
 								res = MP3GetDecodedFrame((int16_t*) u_buffer_2,
 								MP3_DECODED_BUFFER_SIZE, &sampleCount, 0);
 
-								//eqSetFrameSize(frameData.sampleCount);
-								//eqFilterFrame(u_buffer_2, frameData.sampleCount, eq_buffer);
 								for (j = 0; j < frameData.sampleCount; j++) {
 									u_buffer_2[j] = (uint16_t) ((u_buffer_2[j]
 											+ 32768) * 4095 / 65535.0);
@@ -159,14 +154,10 @@ int main(void) {
 								//Cargo el y normalizo el buffer 1
 								res = MP3GetDecodedFrame((int16_t*) u_buffer_1,
 								MP3_DECODED_BUFFER_SIZE, &sampleCount, 0);
-
-								//eqSetFrameSize(frameData.sampleCount);
-								//eqFilterFrame(u_buffer_1, frameData.sampleCount, eq_buffer);
 								for (j = 0; j < frameData.sampleCount; j++) {
 									u_buffer_1[j] = (uint16_t) ((u_buffer_1[j]
 											+ 32768) * 4095 / 65535.0);
 								}
-
 							}
 
 							using_buffer_1 = !using_buffer_1;//Cambio el buffer al siguiente
@@ -200,15 +191,12 @@ int main(void) {
 #endif
 						finished = true;
 						break;
-					} else {
-						int huevo = 0;
-						huevo++;
 					}
 				}
 			}
 		}
 	}
-	DAC_Wrapper_Clear_Data_Array();
+	DAC_Wrapper_Sleep();
 	close_file_wav();
 //REMEMBER TO CLOSE FILES
 	printf("\nHasta la proxima\n");

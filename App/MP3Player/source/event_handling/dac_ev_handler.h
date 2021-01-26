@@ -3,28 +3,25 @@
   @brief	///
   @author   MAGT
  ******************************************************************************/
-#ifndef EVENT_HANDLING_EVENT_HANDLER_H_
-#define EVENT_HANDLING_EVENT_HANDLER_H_
+#ifndef EVENT_HANDLING_DAC_EV_HANDLER_H_
+#define EVENT_HANDLING_DAC_EV_HANDLER_H_
 
 /*******************************************************************************
  * INCLUDE HEADER FILES
  ******************************************************************************/
-#include "sd_ev_handler.h"
-#include "button_ev_handler.h"
-#include "fsexplorer_ev_handler.h"
+
+#include "stdbool.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
-typedef struct{
-	sd_event_t sd_evs;
-	button_event_t btn_evs;
-	fsexplorer_event_t fsexp_evs;
-	dac_event_t dac_evs;
-}event_t;
+
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
-
+typedef struct{
+	bool dac_start_playing;
+	bool dac_end_playing;
+} dac_event_t;
 
 /*******************************************************************************
  * VARIABLE PROTOTYPES WITH GLOBAL SCOPE
@@ -35,17 +32,16 @@ typedef struct{
  ******************************************************************************/
 
 /**
- * @brief  event_handler_get_event
- * @param evs pointer to the Evs to be filled by the event handler
+ * @brief  get_event_DAC
+ * @param  sd_event: event structure for the dac
  * @return --
 */
-void EVHANDLER_GetEvents(event_t * evs);
+void DAC_EVHANDLER_GetEvents(dac_event_t * _dac_event);
 
 /**
- * @brief  initializates all the event handlers
- * @param --
+ * @brief  initializates the event handler
+ * @param  --
  * @return --
 */
-void EVHANDLER_InitHandlers(void);
-
-#endif /* EVENT_HANDLING_EVENT_HANDLER_H_ */
+void DAC_EVHANDLER_Init(void);
+#endif /* EVENT_HANDLING_DAC_EV_HANDLER_H_ */
