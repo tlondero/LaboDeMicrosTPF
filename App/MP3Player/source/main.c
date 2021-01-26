@@ -626,7 +626,8 @@ void switchAppState(app_state_t current, app_state_t target) {
 		if (current == kAPP_STATE_IDDLE) {
 			//TODO: Start player, spectrogram..
 
-			//MP3LoadFile("test_500.mp3", "test_500.wav");
+
+			MP3LoadFile(FSEXP_getMP3Path, NULL);
 
 			DAC_Wrapper_Wake_Up();
 
