@@ -98,7 +98,7 @@ int main(void) {
 	while(true){
 		event_t ev;
 
-		event_handler_get_event(&ev);											/* Get events */
+		EVHANDLER_GetEvents(&ev);														/* Get events */
 
 		switch(appContext.appState){
 
@@ -108,7 +108,7 @@ int main(void) {
 
 			case kAPP_STATE_OFF:
 				switchOffKinetis();														/* Turn off */
-				switchAppState(appContext.appState, kAPP_STATE_IDDLE);				/* Go back to IDDLE */
+				switchAppState(appContext.appState, kAPP_STATE_IDDLE);					/* Go back to IDDLE */
 
 				break;
 
@@ -117,9 +117,58 @@ int main(void) {
 				/***************/
 
 			case kAPP_STATE_IDDLE:
-				if(SDWRAPPER_getJustOut()){										/* If SD is removed */
-					if(appContext.appState == kAPP_MENU_FILESYSTEM){					/* and menu is exploring FS*/
-						appContext.menuState = kAPP_MENU_MAIN;						/* Go back to main menu */
+				if(SDWRAPPER_GetMounted()&&SDWRAPPER_getJustIn()){
+					appContext.currentFile = FSEXP_exploreFS(FSEXP_ROOT_DIR);			/* Explore filesystem */
+					#ifdef DEBUG_PRINTF_APP
+					appContext.currentFile = FSEXP_getNext();
+					printf("[App] Pointing currently to: %s\n", appContext.currentFile);
+					#endif
+				}
+				if(SDWRAPPER_getJustOut()){												/* If SD is removed */
+					if(appContext.menuState == kAPP_MENU_FILESYSTEM){					/* and menu is exploring FS*/
+						appContext.menuState = kAPP_MENU_MAIN;							/* Go back to main menu */
+					}
+				}
+				if(ev.btn_evs.off_on_button){
+					switchAppState(appContext.appState, kAPP_STATE_OFF);
+				}
+				if(SDWRAPPER_GetMounted()&&SDWRAPPER_getSDInserted()){
+					if(ev.btn_evs.next_button){
+						if(FSEXP_getNext()){
+							appContext.currentFile = FSEXP_getFilename();
+						}
+						#ifdef DEBUG_PRINTF_APP
+						printf("[App] Pointing currently to: %s\n", appContext.currentFile);
+						#endif
+					}
+					if(ev.btn_evs.prev_button){
+						if(FSEXP_getPrev()){
+							appContext.currentFile = FSEXP_getFilename();
+						}
+						#ifdef DEBUG_PRINTF_APP
+						printf("[App] Pointing currently to: %s\n", appContext.currentFile);
+						#endif
+					}
+					if(ev.btn_evs.enter_button){
+						#ifdef DEBUG_PRINTF_APP
+						printf("[App] Opened %s\n", appContext.currentFile);
+						#endif
+						if(FSEXP_openSelected()){
+							appContext.currentFile = FSEXP_getFilename();
+						}
+						#ifdef DEBUG_PRINTF_APP
+						printf("[App] Pointing currently to: %s\n", appContext.currentFile);
+						#endif
+					}
+					if(ev.btn_evs.back_button){
+
+						if(FSEXP_goBackDir()){
+							appContext.currentFile = FSEXP_getFilename();
+						}
+						#ifdef DEBUG_PRINTF_APP
+						printf("[App] Went back a directory\n");
+						printf("[App] Pointing currently to: %s\n", appContext.currentFile);
+						#endif
 					}
 				}
 				runMenu(&ev, &appContext);										/* Run menu in background */
@@ -130,8 +179,9 @@ int main(void) {
 				/***************/
 
 			case kAPP_STATE_PLAYING:
-				if(SDWRAPPER_getJustOut()){												/* If SD is removed */
-					if(appContext.menuState == kAPP_MENU_FILESYSTEM){					/* and menu is exploring FS*/
+
+				if(SDWRAPPER_getJustOut()){											/* If SD is removed */
+					if(appContext.menuState == kAPP_MENU_FILESYSTEM){				/* and menu is exploring FS*/
 						appContext.menuState = kAPP_MENU_MAIN;						/* Go back to main menu */
 						//TODO stop music, stop spectogram
 						//...
@@ -139,7 +189,10 @@ int main(void) {
 						break;
 					}
 				}
-				runMenu(&ev, &appContext);										/* Run menu in background */
+				if(ev.btn_evs.off_on_button){
+					switchAppState(appContext.appState, kAPP_STATE_OFF);
+				}
+				runMenu(&ev, &appContext);											/* Run menu in background */
 				runPlayer(&ev, &appContext);										/* Run player in background */
 				break;
 
@@ -175,6 +228,15 @@ int initDevice(void){
 	SMC_SetPowerModeProtection(SMC, kSMC_AllowPowerModeAll);
 	NVIC_EnableIRQ(APP_WAKEUP_BUTTON_IRQ);	//NVIC del wakeup (SW2)
 	PORT_SetPinInterruptConfig(APP_WAKEUP_BUTTON_PORT, APP_WAKEUP_BUTTON_GPIO_PIN, APP_WAKEUP_BUTTON_IRQ_TYPE); //PCR del wakeup (SW2)
+
+	/* Botonera */
+	NVIC_EnableIRQ(PORTD_IRQn);	//NVIC botonera PORTD
+	NVIC_EnableIRQ(BOARD_SW3_IRQ);	//NVIC SW3 PORTA
+	PORT_SetPinInterruptConfig(PORTD, 0U, kPORT_InterruptRisingEdge); //PCR PORTD0
+	PORT_SetPinInterruptConfig(PORTD, 1U, kPORT_InterruptRisingEdge); //PCR PORTD1
+	PORT_SetPinInterruptConfig(PORTD, 2U, kPORT_InterruptRisingEdge); //PCR PORTD2
+	PORT_SetPinInterruptConfig(PORTD, 3U, kPORT_InterruptRisingEdge); //PCR PORTD3
+	PORT_SetPinInterruptConfig(BOARD_SW3_PORT, BOARD_SW3_GPIO_PIN, kPORT_InterruptFallingEdge); //PCR SW3
 
 	/* Init Helix MP3 Decoder */
 	MP3DecoderInit();
@@ -267,7 +329,7 @@ void switchOffKinetis(void){
 	LED_GREEN_OFF();
 	#endif
 
-	kinetisWakeupArmed = true;
+	//kinetisWakeupArmed = true; //TODO: volver a meter esto
 	SMC_PreEnterStopModes();						//Pre entro al stop mode
 	SMC_SetPowerModeStop(SMC, kSMC_PartialStop);	//Entro al stop mode
 	SMC_PostExitStopModes();						//Despues de apretar el SW2, se sigue en esta linea de codigo
@@ -288,12 +350,8 @@ void switchOffKinetis(void){
 void cbackin(void) {
 #ifdef DEBUG_PRINTF_APP
 	printf("[App] SD Card inserted.\r\n");
-	appContext.currentFile = FSEXP_exploreFS(FSEXP_ROOT_DIR);				/* Explore filesystem */
-	#ifdef DEBUG_PRINTF_APP
-	appContext.currentFile = FSEXP_getNext();
-	printf("[App] Pointing currently to: %s\n", appContext.currentFile);
-	#endif
 #endif
+
 }
 
 void cbackout(void) {

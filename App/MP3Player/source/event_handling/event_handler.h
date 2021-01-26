@@ -36,5 +36,13 @@ typedef struct{
  * @param evs pointer to the Evs to be filled by the event handler
  * @return --
 */
-void event_handler_get_event(event_t * evs);
+void EVHANDLER_GetEvents(event_t * evs);
+
+/**
+ * @brief  initializates all the event handlers
+ * @param --
+ * @return --
+*/
+void EVHANDLER_InitHandlers(void);
+
 #endif /* EVENT_HANDLING_EVENT_HANDLER_H_ */
