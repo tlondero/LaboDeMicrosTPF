@@ -236,15 +236,22 @@ char *  FSEXP_openSelected(){
 		printf("File selected: %s\r\n",
 				data.directoryNames[data.directory_index].name);
 #endif
-		if((data.directory_path[data.path_index-1]== '3') &&
-				(toupper(data.directory_path[data.path_index-2])== 'P')
+		/////////////////////////////////////////////////
+		/*aca el tema es verificar los mp3 usando e fileame nomas.
+		 * */
+		uint8_t i=0;
+		while(data.fileInformation.fname[i] != '\0'){i++;}
+
+		if((data.fileInformation.fname[i-1]== '3') &&
+				(toupper(data.fileInformation.fname[i-2])== 'P')
 			&&
-			(toupper(data.directory_path[data.path_index-3])== 'M'))//if its a mp3 file
+			(toupper(data.fileInformation.fname[i-3])== 'M'))//if its a mp3 file
 		{
 
 			if (data.mycb) {
 			data.mycb(); //calls the callback
 		}}
+		/////////////////////////////////////////////////
 		return NULL;
 	}
 }
