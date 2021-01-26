@@ -29,10 +29,6 @@
  *                                          DEFINES                                           *
  **********************************************************************************************/
 
-//#define MAX_DAC				4095
-//#define MP3_MAX_VALUE		100000//32767
-//#define MP3_MIN_VALUE		-100000//-32768
-//#define MP3_GAP				MP3_MAX_VALUE - MP3_MIN_VALUE
 /**********************************************************************************************
  *                                    TYPEDEFS AND ENUMS                                      *
  **********************************************************************************************/
@@ -53,6 +49,7 @@ typedef struct {
 	bool firstDacTransmition;
 	bool songPaused;
 	bool songResumed;
+	bool songEnded;
 	mp3_decoder_result_t res;
 	uint16_t sr_;	//Default config 4 mp3 stereo
 	uint8_t ch_;
@@ -456,7 +453,7 @@ int main(void) {
 #endif
 				}
 				if (ev.btn_evs.pause_play_button) {
-
+					appContext.playerContext.songResumed = true;
 					switchAppState(appContext.appState, kAPP_STATE_PLAYING);
 #ifdef DEBUG_PRINTF_APP
 					printf("[App] Resumed playing.\n");
@@ -531,7 +528,7 @@ int main(void) {
 #endif
 				}
 				if (ev.btn_evs.pause_play_button) {
-
+					appContext.playerContext.songPaused = true;
 					switchAppState(appContext.appState, kAPP_STATE_IDDLE);
 #ifdef DEBUG_PRINTF_APP
 					printf("[App] Stopped playing.\n");
@@ -643,40 +640,47 @@ void switchAppState(app_state_t current, app_state_t target) {
 		break;
 	case kAPP_STATE_PLAYING: /* Can only come from IDDLE */
 		if (current == kAPP_STATE_IDDLE) {
-			//TODO: Start player, spectrogram..
-			ev.dac_evs.dac_play_on = true;
-			char *songName = FSEXP_getMP3Path();
-			MP3LoadFile(&songName[1]);
+			//TODO: Spectrogram...
+
+			if (!appContext.playerContext.songResumed) {
+				char *songName = FSEXP_getMP3Path();
+				MP3LoadFile(&songName[1]);
 
 #ifdef DEBUG_PRINTF_APP
-			//TODO Calculo que vamos a tener que hacer algo con esta data
-			printf("[App] Playing music...");
-			ev.dac_evs.dac_find_id3 = true;
-			if (MP3GetTagData(&appContext.playerContext.ID3Data)) {
-				printf("\nSONG INFO\n");
-				printf("TITLE: %s\n", appContext.playerContext.ID3Data.title);
-				printf("ARTIST: %s\n", appContext.playerContext.ID3Data.artist);
-				printf("ALBUM: %s\n", appContext.playerContext.ID3Data.album);
-				printf("TRACK NUM: %s\n",
-						appContext.playerContext.ID3Data.trackNum);
-				printf("YEAR: %s\n", appContext.playerContext.ID3Data.year);
-			}
+				//TODO Calculo que vamos a tener que hacer algo con esta data
+				printf("[App] Playing music...");
+				if (MP3GetTagData(&appContext.playerContext.ID3Data)) {
+					printf("\nSONG INFO\n");
+					printf("TITLE: %s\n",
+							appContext.playerContext.ID3Data.title);
+					printf("ARTIST: %s\n",
+							appContext.playerContext.ID3Data.artist);
+					printf("ALBUM: %s\n",
+							appContext.playerContext.ID3Data.album);
+					printf("TRACK NUM: %s\n",
+							appContext.playerContext.ID3Data.trackNum);
+					printf("YEAR: %s\n", appContext.playerContext.ID3Data.year);
+				}
 #endif
-			//Empiezo por el buffer 1
-			appContext.playerContext.res = MP3GetDecodedFrame(
-					(int16_t*) u_buffer_1,
-					MP3_DECODED_BUFFER_SIZE,
-					&appContext.playerContext.sampleCount, 0);
 
-			uint16_t j;
-			for (j = 0; j < appContext.playerContext.frameData.sampleCount;
-					j++) {
-				u_buffer_1[j] = (uint16_t) ((u_buffer_1[j] + 32768) * 4095
-						/ 65535.0);
+				//Empiezo por el buffer 1
+				appContext.playerContext.res = MP3GetDecodedFrame(
+						(int16_t*) u_buffer_1,
+						MP3_DECODED_BUFFER_SIZE,
+						&appContext.playerContext.sampleCount, 0);
+
+				uint16_t j;
+				for (j = 0; j < appContext.playerContext.frameData.sampleCount;
+						j++) {
+					u_buffer_1[j] = (uint16_t) ((u_buffer_1[j] + 32768) * 4095
+							/ 65535.0);
+				}
+				MP3_Set_Sample_Rate(appContext.playerContext.sr_,
+						appContext.playerContext.ch_);
+
+			} else {
+				appContext.playerContext.songResumed = false;
 			}
-			MP3_Set_Sample_Rate(appContext.playerContext.sr_,
-					appContext.playerContext.ch_);
-
 			DAC_Wrapper_Wake_Up();
 			appContext.appState = target;
 		}
@@ -692,72 +696,82 @@ void runMenu(event_t *events, app_context_t *context) {
 }
 void runPlayer(event_t *events, app_context_t *context) {
 	//TODO: Implementar aca el reproductor y el espectrograma (ver si no van a funcar a interrupciones tho)
-	if (appContext.playerContext.res == MP3DECODER_NO_ERROR) {
 
-		if (DAC_Wrapper_Is_Transfer_Done()
-				|| appContext.playerContext.firstDacTransmition) { //Entro en la primera o cuando ya transmiti
+	if (appContext.playerContext.songPaused) {
+		DAC_Wrapper_Clear_Data_Array();
+		appContext.playerContext.songPaused = false;
+		DAC_Wrapper_Sleep();
+	} else {
 
-			appContext.playerContext.firstDacTransmition = false;
+		if (appContext.playerContext.res == MP3DECODER_NO_ERROR) {
 
-			MP3GetLastFrameData(&(appContext.playerContext.frameData));
+			if (DAC_Wrapper_Is_Transfer_Done()
+					|| appContext.playerContext.firstDacTransmition) { //Entro en la primera o cuando ya transmiti
 
-			//No debería cambiar el sample rate entre frame y frame
-			//Pero si lo hace...
-			if ((appContext.playerContext.sr_
-					!= appContext.playerContext.frameData.sampleRate)
-					|| (appContext.playerContext.ch_
-							!= appContext.playerContext.frameData.channelCount)) {
-				appContext.playerContext.sr_ =
-						appContext.playerContext.frameData.sampleRate;
-				appContext.playerContext.ch_ =
-						appContext.playerContext.frameData.channelCount;
-				MP3_Set_Sample_Rate(appContext.playerContext.sr_,
-						appContext.playerContext.ch_);
-			}
+				appContext.playerContext.firstDacTransmition = false;
 
-			DAC_Wrapper_Clear_Transfer_Done();
+				MP3GetLastFrameData(&(appContext.playerContext.frameData));
 
-			uint16_t j;
-			if (appContext.playerContext.using_buffer_1) {
-				//Envio el buffer 1 al dac
-				DAC_Wrapper_Set_Data_Array(&u_buffer_1,
-						appContext.playerContext.frameData.sampleCount);
-				DAC_Wrapper_Set_Next_Buffer(&u_buffer_2);
-
-				//Cargo el y normalizo el buffer 2
-				appContext.playerContext.res = MP3GetDecodedFrame(
-						(int16_t*) u_buffer_2,
-						MP3_DECODED_BUFFER_SIZE,
-						&(appContext.playerContext.sampleCount), 0);
-
-				for (j = 0; j < appContext.playerContext.frameData.sampleCount;
-						j++) {
-					u_buffer_2[j] = (uint16_t) ((u_buffer_2[j] + 32768) * 4095
-							/ 65535.0);
+				//No debería cambiar el sample rate entre frame y frame
+				//Pero si lo hace...
+				if ((appContext.playerContext.sr_
+						!= appContext.playerContext.frameData.sampleRate)
+						|| (appContext.playerContext.ch_
+								!= appContext.playerContext.frameData.channelCount)) {
+					appContext.playerContext.sr_ =
+							appContext.playerContext.frameData.sampleRate;
+					appContext.playerContext.ch_ =
+							appContext.playerContext.frameData.channelCount;
+					MP3_Set_Sample_Rate(appContext.playerContext.sr_,
+							appContext.playerContext.ch_);
 				}
-			} else {
-				//Envio el buffer 2 al dac
-				DAC_Wrapper_Set_Data_Array(&u_buffer_2,
-						appContext.playerContext.frameData.sampleCount);
-				DAC_Wrapper_Set_Next_Buffer(&u_buffer_1);
 
-				//Cargo el y normalizo el buffer 1
-				appContext.playerContext.res = MP3GetDecodedFrame(
-						(int16_t*) u_buffer_1,
-						MP3_DECODED_BUFFER_SIZE,
-						&(appContext.playerContext.sampleCount), 0);
-				for (j = 0; j < appContext.playerContext.frameData.sampleCount;
-						j++) {
-					u_buffer_1[j] = (uint16_t) ((u_buffer_1[j] + 32768) * 4095
-							/ 65535.0);
+				DAC_Wrapper_Clear_Transfer_Done();
+
+				uint16_t j;
+				if (appContext.playerContext.using_buffer_1) {
+					//Envio el buffer 1 al dac
+					DAC_Wrapper_Set_Data_Array(&u_buffer_1,
+							appContext.playerContext.frameData.sampleCount);
+					DAC_Wrapper_Set_Next_Buffer(&u_buffer_2);
+
+					//Cargo el y normalizo el buffer 2
+					appContext.playerContext.res = MP3GetDecodedFrame(
+							(int16_t*) u_buffer_2,
+							MP3_DECODED_BUFFER_SIZE,
+							&(appContext.playerContext.sampleCount), 0);
+
+					for (j = 0;
+							j < appContext.playerContext.frameData.sampleCount;
+							j++) {
+						u_buffer_2[j] = (uint16_t) ((u_buffer_2[j] + 32768)
+								* 4095 / 65535.0);
+					}
+				} else {
+					//Envio el buffer 2 al dac
+					DAC_Wrapper_Set_Data_Array(&u_buffer_2,
+							appContext.playerContext.frameData.sampleCount);
+					DAC_Wrapper_Set_Next_Buffer(&u_buffer_1);
+
+					//Cargo el y normalizo el buffer 1
+					appContext.playerContext.res = MP3GetDecodedFrame(
+							(int16_t*) u_buffer_1,
+							MP3_DECODED_BUFFER_SIZE,
+							&(appContext.playerContext.sampleCount), 0);
+					for (j = 0;
+							j < appContext.playerContext.frameData.sampleCount;
+							j++) {
+						u_buffer_1[j] = (uint16_t) ((u_buffer_1[j] + 32768)
+								* 4095 / 65535.0);
+					}
 				}
+
+				appContext.playerContext.using_buffer_1 =
+						!appContext.playerContext.using_buffer_1;//Cambio el buffer al siguiente
+
+			} else if (appContext.playerContext.res == MP3DECODER_FILE_END) {
+				appContext.playerContext.songEnded = true;
 			}
-
-			appContext.playerContext.using_buffer_1 =
-					!appContext.playerContext.using_buffer_1;//Cambio el buffer al siguiente
-
-		} else if (appContext.playerContext.res == MP3DECODER_FILE_END) {
-			ev.dac_evs.dac_end_playing = true;
 		}
 	}
 }
@@ -791,6 +805,7 @@ void resetAppContext(void) {
 	appContext.playerContext.firstDacTransmition = true;
 	appContext.playerContext.songPaused = false;
 	appContext.playerContext.songResumed = false;
+	appContext.playerContext.songEnded = false;
 	appContext.playerContext.res = MP3DECODER_FILE_END;
 	appContext.playerContext.sr_ = kMP3_44100Hz;
 	appContext.playerContext.ch_ = kMP3_Stereo;

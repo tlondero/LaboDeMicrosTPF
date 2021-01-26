@@ -78,6 +78,8 @@ bool nullArrayOn = true;
 
 bool onePeriodDone = false;		//Determina si se envio un peridodo del buffer
 
+bool sleepMode = false;
+
 uint32_t sizeOf = DAC_USED_BUFFER_SIZE;			//Cantidad de datos en el buffer
 
 /*******************************************************************************
@@ -144,23 +146,17 @@ void DAC_Wrapper_Loop(bool status) {
 }
 
 void DAC_Wrapper_Sleep(void) {
-	DAC_Wrapper_Clear_Data_Array();
-
-	PDB_DisableInterrupts(PDB_BASEADDR, kPDB_DelayInterruptEnable);
-
-	EDMA_StopTransfer(&g_EDMA_Handle);
-	EDMA_DisableChannelInterrupts(DMA_BASEADDR, DMA_CHANNEL,
-			kEDMA_MajorInterruptEnable);
-
-	DAC_DisableBufferInterrupts(DAC_BASEADDR,
-			kDAC_BufferReadPointerTopInterruptEnable);
+	sleepMode = true;
 }
 
 void DAC_Wrapper_Wake_Up(void) {
+	sleepMode = false;
 	PDB_EnableInterrupts(PDB_BASEADDR, kPDB_DelayInterruptEnable);
-	DAC_EnableBufferInterrupts(DAC_BASEADDR, kDAC_BufferReadPointerTopInterruptEnable);
+	DAC_EnableBufferInterrupts(DAC_BASEADDR,
+			kDAC_BufferReadPointerTopInterruptEnable);
 
-	EDMA_EnableChannelInterrupts(DMA_BASEADDR, DMA_CHANNEL, kEDMA_MajorInterruptEnable);
+	EDMA_EnableChannelInterrupts(DMA_BASEADDR, DMA_CHANNEL,
+			kEDMA_MajorInterruptEnable);
 	EDMA_StartTransfer(&g_EDMA_Handle);
 	DAC_Wrapper_Clear_Data_Array();
 }
@@ -402,6 +398,17 @@ bool transferDone, uint32_t tcds) {
 				g_dacDataArray = nextBuffer;
 			} else {
 				DAC_Wrapper_Clear_Data_Array();
+				if (sleepMode) {
+					PDB_DisableInterrupts(PDB_BASEADDR,
+							kPDB_DelayInterruptEnable);
+
+					EDMA_StopTransfer(&g_EDMA_Handle);
+					EDMA_DisableChannelInterrupts(DMA_BASEADDR, DMA_CHANNEL,
+							kEDMA_MajorInterruptEnable);
+
+					DAC_DisableBufferInterrupts(DAC_BASEADDR,
+							kDAC_BufferReadPointerTopInterruptEnable);
+				}
 			}
 			onePeriodDone = true;
 		}
