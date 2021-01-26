@@ -102,16 +102,13 @@ void MP3DecoderInit(void) {
 
 }
 
-bool MP3LoadFile(const char *file_name, const char *file_name_wav) {
+bool MP3LoadFile(const char *file_name) {
 	bool res = false;
 	if (context_data.file_opened == true) { //if there was a opened file, i must close it before opening a new one
 		resetContextData();
 		close_file();
 	}
 	if (open_file(_T(file_name))) {
-		if (file_name_wav != NULL) {
-			open_file_wav(_T(file_name_wav));
-		}
 		context_data.file_opened = true;
 		context_data.f_size = getFileSize();
 		context_data.bytes_remaining = context_data.f_size;
@@ -157,7 +154,7 @@ bool MP3GetNextFrameData(mp3_decoder_frame_data_t *data) {
 mp3_decoder_result_t MP3GetDecodedFrame(short *outBuffer, uint16_t bufferSize,
 		uint16_t *samples_decoded, uint8_t depth) {
 	mp3_decoder_result_t ret = MP3DECODER_NO_ERROR; // Return value of the function
-#ifdef DEBUG_PRINTF_APP
+#ifdef DEBUG_PRINTF_BYTES_LEFT
 	printf("[App] File has %d bytes left to decode\n",
 			context_data.bytes_remaining);
 #endif
