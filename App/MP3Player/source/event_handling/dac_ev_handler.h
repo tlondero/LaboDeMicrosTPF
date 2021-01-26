@@ -19,7 +19,9 @@
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
 typedef struct{
-	bool dac_start_playing;
+	bool dac_find_id3;
+	bool dac_pause_on;
+	bool dac_play_on;
 	bool dac_end_playing;
 } dac_event_t;
 

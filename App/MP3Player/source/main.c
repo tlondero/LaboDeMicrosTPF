@@ -627,13 +627,14 @@ void switchAppState(app_state_t current, app_state_t target) {
 	case kAPP_STATE_PLAYING: /* Can only come from IDDLE */
 		if (current == kAPP_STATE_IDDLE) {
 			//TODO: Start player, spectrogram..
-
+			ev.dac_evs.dac_play_on = true;
 			char *songName = FSEXP_getMP3Path();
 			MP3LoadFile(&songName[1]);
 
 #ifdef DEBUG_PRINTF_APP
 			//TODO Calculo que vamos a tener que hacer algo con esta data
 			printf("[App] Playing music...");
+			ev.dac_evs.dac_find_id3 = true;
 			if (MP3GetTagData(&appContext.playerContext.ID3Data)) {
 				printf("\nSONG INFO\n");
 				printf("TITLE: %s\n", appContext.playerContext.ID3Data.title);
@@ -739,9 +740,7 @@ void runPlayer(event_t *events, app_context_t *context) {
 					!appContext.playerContext.using_buffer_1;//Cambio el buffer al siguiente
 
 		} else if (appContext.playerContext.res == MP3DECODER_FILE_END) {
-			//TODO ACA TERMINA LA SONG
-
-			//break;
+			ev.dac_evs.dac_end_playing = true;
 		}
 	}
 }
