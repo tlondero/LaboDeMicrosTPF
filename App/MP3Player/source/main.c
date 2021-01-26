@@ -455,8 +455,16 @@ int main(void) {
 							appContext.currentFile);
 #endif
 				}
+				if (ev.btn_evs.pause_play_button) {
+
+					switchAppState(appContext.appState, kAPP_STATE_PLAYING);
+#ifdef DEBUG_PRINTF_APP
+					printf("[App] Resumed playing.\n");
+#endif
+				}
 				if (ev.fsexp_evs.play_music) {
 					switchAppState(appContext.appState, kAPP_STATE_PLAYING);
+					//TODO: Reiniciar las cosas porque es cancion nueva.
 				}
 			}
 			runMenu(&ev, &appContext); /* Run menu in background */
@@ -520,6 +528,13 @@ int main(void) {
 					printf("[App] Went back a directory\n");
 					printf("[App] Pointing currently to: %s\n",
 							appContext.currentFile);
+#endif
+				}
+				if (ev.btn_evs.pause_play_button) {
+
+					switchAppState(appContext.appState, kAPP_STATE_IDDLE);
+#ifdef DEBUG_PRINTF_APP
+					printf("[App] Stopped playing.\n");
 #endif
 				}
 				if (ev.fsexp_evs.play_music) {
