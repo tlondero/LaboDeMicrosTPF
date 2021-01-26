@@ -33,8 +33,10 @@ static sd_event_t sd_event;
 void SD_EVHANDLER_GetEvents(sd_event_t * _sd_event){
 	//sd_event->sd_just_out = SDWRAPPER_getJustOut();
 	//sd_event->sd_just_in =  SDWRAPPER_getJustIn();
-	//sd_event->
-	//
+}
+
+void SD_EVHANDLER_Init(void){
+
 }
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH FILE SCOPE

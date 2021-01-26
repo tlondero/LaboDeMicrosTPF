@@ -23,14 +23,22 @@ typedef struct{
 /*******************************************************************************
  * VARIABLE PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
+
+/*******************************************************************************
+ * FUNCTION PROTOTYPES WITH GLOBAL SCOPE
+ ******************************************************************************/
 /**
  * @brief  Get events of the file explorer
  * @param  fsexplorer_event -- the events of the file explorer
  * @return --
 */
-void SD_EVHANDLER_GetEvents(fsexplorer_event_t * fsexplorer_event);
-/*******************************************************************************
- * FUNCTION PROTOTYPES WITH GLOBAL SCOPE
- ******************************************************************************/
+void FSEXP_EVHANDLER_GetEvents(fsexplorer_event_t * fsexplorer_event);
+
+/**
+ * @brief  Initiates the file explorer event handler
+ * @param  --
+ * @return --
+*/
+void FSEXP_EVHANDLER_Init(void);
 
 #endif /* EVENT_HANDLING_FSEXPLORER_EV_HANDLER_H_ */

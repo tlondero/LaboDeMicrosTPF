@@ -256,7 +256,7 @@ char * FSEXP_getFilename(void){
 	return data.directoryNames[data.directory_index].name;
 }
 void FSEXP_addCallbackForFile(cback cb){
-	if (!cb) {
+	if (cb) {
 		data.mycb = cb;
 	}
 }

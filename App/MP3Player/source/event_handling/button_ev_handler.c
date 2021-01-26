@@ -54,6 +54,10 @@ void BUTTONS_EVHANDLER_GetEvents(button_event_t *button_event) {
 	off_on_button = false;
 	pause_play_button = false;
 }
+
+void BUTTONS_EVHANDLER_Init(void){
+
+}
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH FILE SCOPE
  ******************************************************************************/
