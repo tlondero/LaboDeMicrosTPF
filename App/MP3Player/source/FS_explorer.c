@@ -2,7 +2,7 @@
 /***************************************************************************/ /**
   @file     FS_explorer.c
   @brief
-  @author   Guido Lambertucci
+  @author   MAGT
  ******************************************************************************/
 
 /*******************************************************************************
@@ -50,7 +50,9 @@ typedef struct {
 	//data structures
 
 	directory_name_att directoryNames[NAME_LIST_SIZE];
-	char directory_path[1000];
+	char directory_path[MAX_PATH_LENGHT];
+	char mp3path[MAX_PATH_LENGHT];
+
 
 	//callback
 	cback mycb;
@@ -65,7 +67,6 @@ void copyFname(char *destiny, char *source);
 void addToPath(char *s);
 void removeDirFromPath();
 
-
 /*******************************************************************************
  * VARIABLE DECLARATION WITH FILE SCOPE
  ******************************************************************************/
@@ -74,6 +75,14 @@ static explorer_data_t data;
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH GLOBAL SCOPE
  ******************************************************************************/
+
+char* FSEXP_getMP3Path(void){
+	copyFname(data.mp3path, FSEXP_getPath());
+	data.mp3path[data.path_index] = '/';
+	copyFname(&(data.mp3path[data.path_index+1]), data.directoryNames[data.directory_index].name);
+	return data.mp3path;
+
+}
 
 char * FSEXP_exploreFS(char * path){
 	FRESULT error;
@@ -85,7 +94,7 @@ char * FSEXP_exploreFS(char * path){
 #ifdef DEBUG_PRINTF_FS_EXPLORER
 		printf("Open directory failed.\r\n");
 #endif
-		return -1;
+		return NULL;
 
 	}
 	data.directory_opened = true;
@@ -123,6 +132,9 @@ char * FSEXP_exploreFS(char * path){
 
 
 }
+
+
+
 char* FSEXP_getNext(){
 	FRESULT error;
 	if (data.directory_index < NAME_LIST_SIZE - 1) {
@@ -224,7 +236,6 @@ char *  FSEXP_openSelected(){
 		printf("File selected: %s\r\n",
 				data.directoryNames[data.directory_index].name);
 #endif
-		addToPath(data.directoryNames[data.directory_index].name);
 		if((data.directory_path[data.path_index-1]== '3') &&
 				(toupper(data.directory_path[data.path_index-2])== 'P')
 			&&

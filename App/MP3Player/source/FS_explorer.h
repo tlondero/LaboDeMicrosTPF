@@ -44,6 +44,13 @@ typedef void (*cback)(void);
 */
 char * FSEXP_exploreFS(char * path);
 
+/**
+ * @brief  returns the mp3 path for the decoder
+ * @param
+ * 	@path:
+ * @return  returns a char * to the mp3path.
+*/
+char * FSEXP_getMP3Path(void);
 
 /**
  * @brief  getNext: gives the next name in the directory, if the directory is finished will return a NULL ptr.

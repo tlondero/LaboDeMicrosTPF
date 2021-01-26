@@ -15,7 +15,7 @@
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
-
+//#define DEBOUNCE_SDKDELAY
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
@@ -94,31 +94,47 @@ void PORTA_IRQHandler(void)   //SW2
 void PORTD_IRQHandler(void)	//BOTONERA
 {
 	if (((1U << 0U) & PORT_GetPinsInterruptFlags(PORTD))){ //PTD0
-		SDK_DelayAtLeastUs(50 * 1000U, SDK_DEVICE_MAXIMUM_CPU_CLOCK_FREQUENCY);
+#ifdef DEBOUNCE_SDKDELAY
+		SDK_DelayAtLeastUs(25 * 1000U, SDK_DEVICE_MAXIMUM_CPU_CLOCK_FREQUENCY);
 		if(GPIO_PinRead(GPIOD, 0U)){
+#endif
 			PORT_ClearPinsInterruptFlags(PORTD, (1U << 0U));
 			next_button = true;
+#ifdef DEBOUNCE_SDKDELAY
 		}
+#endif
 	}
 	else if (((1U << 1U) & PORT_GetPinsInterruptFlags(PORTD))){ //PTD1
-		SDK_DelayAtLeastUs(50 * 1000U, SDK_DEVICE_MAXIMUM_CPU_CLOCK_FREQUENCY);
+#ifdef DEBOUNCE_SDKDELAY
+		SDK_DelayAtLeastUs(25 * 1000U, SDK_DEVICE_MAXIMUM_CPU_CLOCK_FREQUENCY);
 		if(GPIO_PinRead(GPIOD, 1U)){
+#endif
 			PORT_ClearPinsInterruptFlags(PORTD, (1U << 1U));
 			enter_button = true;
+#ifdef DEBOUNCE_SDKDELAY
 		}
+#endif
 	}
 	else if (((1U << 2U) & PORT_GetPinsInterruptFlags(PORTD))){ //PTD2
-		SDK_DelayAtLeastUs(50 * 1000U, SDK_DEVICE_MAXIMUM_CPU_CLOCK_FREQUENCY);
+#ifdef DEBOUNCE_SDKDELAY
+		SDK_DelayAtLeastUs(25 * 1000U, SDK_DEVICE_MAXIMUM_CPU_CLOCK_FREQUENCY);
 		if(GPIO_PinRead(GPIOD, 2U)){
+#endif
 			PORT_ClearPinsInterruptFlags(PORTD, (1U << 2U));
 			prev_button = true;
+#ifdef DEBOUNCE_SDKDELAY
 		}
+#endif
 	}
 	else if (((1U << 3U) & PORT_GetPinsInterruptFlags(PORTD))){ //PTD3
-		SDK_DelayAtLeastUs(50 * 1000U, SDK_DEVICE_MAXIMUM_CPU_CLOCK_FREQUENCY);
+#ifdef DEBOUNCE_SDKDELAY
+		SDK_DelayAtLeastUs(25 * 1000U, SDK_DEVICE_MAXIMUM_CPU_CLOCK_FREQUENCY);
 		if(GPIO_PinRead(GPIOD, 3U)){
+#endif
 			PORT_ClearPinsInterruptFlags(PORTD, (1U << 3U));
 			back_button = true;
+#ifdef DEBOUNCE_SDKDELAY
 		}
+#endif
 	}
 }
