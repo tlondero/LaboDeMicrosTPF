@@ -329,6 +329,7 @@ int initDevice(void) {
 	PORT_SetPinInterruptConfig(BOARD_SW3_PORT, BOARD_SW3_GPIO_PIN,
 			kPORT_InterruptFallingEdge); //PCR SW3
 
+
 	/* Init Helix MP3 Decoder */
 	MP3DecoderInit();
 
