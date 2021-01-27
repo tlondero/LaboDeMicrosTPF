@@ -240,12 +240,12 @@ char *  FSEXP_openSelected(){
 		/*aca el tema es verificar los mp3 usando e fileame nomas.
 		 * */
 		uint8_t i=0;
-		while(data.fileInformation.fname[i] != '\0'){i++;}
+		while(data.directoryNames[data.directory_index].name[i] != '\0'){i++;}
 
-		if((data.fileInformation.fname[i-1]== '3') &&
-				(toupper(data.fileInformation.fname[i-2])== 'P')
+		if((data.directoryNames[data.directory_index].name[i-1]== '3') &&
+				(toupper(data.directoryNames[data.directory_index].name[i-2])== 'P')
 			&&
-			(toupper(data.fileInformation.fname[i-3])== 'M'))//if its a mp3 file
+			(toupper(data.directoryNames[data.directory_index].name[i-3])== 'M'))//if its a mp3 file
 		{
 
 			if (data.mycb) {
