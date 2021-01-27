@@ -58,6 +58,7 @@ typedef struct {
 	mp3_decoder_frame_data_t frameData;
 	mp3_decoder_tag_data_t ID3Data;
 	uint16_t sampleCount;
+	uint8_t volume;
 } player_context_t;
 
 typedef struct {
@@ -317,7 +318,6 @@ int initDevice(void) {
 	/* Init Botonera */
 	BUTTON_Init();
 
-
 	/* Init Helix MP3 Decoder */
 	MP3DecoderInit();
 
@@ -399,12 +399,9 @@ void switchAppState(app_state_t current, app_state_t target) {
 						MP3_DECODED_BUFFER_SIZE,
 						&appContext.playerContext.sampleCount, 0);
 
-				uint16_t j;
-				for (j = 0; j < appContext.playerContext.frameData.sampleCount;
-						j++) {
-					u_buffer_1[j] = (uint16_t) ((u_buffer_1[j] + 32768) * 4095
-							/ 65535.0);
-				}
+				MP3_Adapt_Signal(u_buffer_1, u_buffer_1,
+						appContext.playerContext.sampleCount,
+						appContext.playerContext.volume);
 				MP3_Set_Sample_Rate(appContext.playerContext.sr_,
 						appContext.playerContext.ch_);
 
@@ -457,7 +454,6 @@ void runPlayer(event_t *events, app_context_t *context) {
 
 			DAC_Wrapper_Clear_Transfer_Done();
 
-			uint16_t j;
 			if (appContext.playerContext.using_buffer_1) {
 				//Envio el buffer 1 al dac
 				DAC_Wrapper_Set_Data_Array(&u_buffer_1,
@@ -470,11 +466,9 @@ void runPlayer(event_t *events, app_context_t *context) {
 						MP3_DECODED_BUFFER_SIZE,
 						&(appContext.playerContext.sampleCount), 0);
 
-				for (j = 0; j < appContext.playerContext.frameData.sampleCount;
-						j++) {
-					u_buffer_2[j] = (uint16_t) ((u_buffer_2[j] + 32768) * 4095
-							/ 65535.0);
-				}
+				MP3_Adapt_Signal(u_buffer_2, u_buffer_2,
+						appContext.playerContext.sampleCount,
+						appContext.playerContext.volume);
 			} else {
 				//Envio el buffer 2 al dac
 				DAC_Wrapper_Set_Data_Array(&u_buffer_2,
@@ -486,11 +480,9 @@ void runPlayer(event_t *events, app_context_t *context) {
 						(int16_t*) u_buffer_1,
 						MP3_DECODED_BUFFER_SIZE,
 						&(appContext.playerContext.sampleCount), 0);
-				for (j = 0; j < appContext.playerContext.frameData.sampleCount;
-						j++) {
-					u_buffer_1[j] = (uint16_t) ((u_buffer_1[j] + 32768) * 4095
-							/ 65535.0);
-				}
+				MP3_Adapt_Signal(u_buffer_1, u_buffer_1,
+						appContext.playerContext.sampleCount,
+						appContext.playerContext.volume);
 			}
 
 			appContext.playerContext.using_buffer_1 =
@@ -539,6 +531,7 @@ void resetPlayerContext(void) {
 	appContext.playerContext.sr_ = kMP3_44100Hz;
 	appContext.playerContext.ch_ = kMP3_Stereo;
 	appContext.playerContext.using_buffer_1 = true;
+	appContext.playerContext.volume = 30;
 }
 
 void switchOffKinetis(void) {
@@ -551,7 +544,7 @@ void switchOffKinetis(void) {
 	LED_GREEN_OFF();
 #endif
 
-	//kinetisWakeupArmed = true; //TODO: volver a meter esto
+//kinetisWakeupArmed = true; //TODO: volver a meter esto
 	SMC_PreEnterStopModes();						//Pre entro al stop mode
 	SMC_SetPowerModeStop(SMC, kSMC_PartialStop);	//Entro al stop mode
 	SMC_PostExitStopModes();//Despues de apretar el SW2, se sigue en esta linea de codigo
