@@ -45,9 +45,6 @@ bool nextFrameFlag = false;
 static uint16_t u_buffer_1[MP3_DECODED_BUFFER_SIZE];
 static uint16_t u_buffer_2[MP3_DECODED_BUFFER_SIZE];
 
-float volume[VOLUME_STEPS] = { 0.00f, 0.05f, 0.10f, 0.15f, 0.20f, 0.25f, 0.30f, 0.35f, 0.40f, 0.45f, 0.50f, 0.55f, 0.60f, 0.65f, 0.70f, 0.75f, 0.80f, 0.85f,
-			0.90f, 0.95f, 1.00f, 1.05f, 1.10f, 1.15f, 1.20f, 1.25f, 1.30f, 1.35f, 1.40f, 1.45f};
-
 mp3_decoder_frame_data_t frameData;
 mp3_decoder_tag_data_t ID3Data;
 
@@ -72,19 +69,17 @@ int main(void) {
 	SDWraperInit(cbackin, cbackout);
 /////////////////////////////////////////////////////////////
 
-	uint16_t count;
-	for (count = 0; count < VOLUME_STEPS; count++) {
-		printf("Prueba %d\n", count);
-		float vol = volume[count]*100;
-		uint16_t vol_ = (uint16_t) (vol);
-		printf("VOLUME = %d\n\n", vol_);
-		bool finished = false;
-		while (!finished) {
+	DAC_Wrapper_Wake_Up();
+	while (true) {
+		uint16_t count;
+		for (count = 1; count < VOLUME_STEPS+1; count++) {
+			printf("Prueba %d\n", count);
+			bool finished = false;
+			while (!finished) {
 
-
-			if (MP3LoadFile("GTA V Wasted.mp3")) {
-			//if (MP3LoadFile("Leeroy Jenkins.mp3")) {
-				int i = 0;
+				//if(MP3LoadFile("GTA V Wasted.mp3")){
+				if (MP3LoadFile("test_500_2.mp3")) {
+					int i = 0;
 
 #ifdef DEBUG_ID3
 				if (MP3GetTagData(&ID3Data)) {
@@ -97,85 +92,89 @@ int main(void) {
 				}
 #endif
 
-				DAC_Wrapper_Wake_Up();
+					//Empiezo por el buffer 1
+					mp3_decoder_result_t res = MP3GetDecodedFrame(
+							(int16_t*) u_buffer_1, MP3_DECODED_BUFFER_SIZE,
+							&sampleCount, 0);
 
-				//Empiezo por el buffer 1
-				mp3_decoder_result_t res = MP3GetDecodedFrame(
-						(int16_t*) u_buffer_1, MP3_DECODED_BUFFER_SIZE,
-						&sampleCount, 0);
+					uint16_t j;
+					for (j = 0; j < frameData.sampleCount; j++) {
+						u_buffer_1[j] = (uint16_t) ((u_buffer_1[j] + 32768)
+								* 4095 / (65535*count)) ;
+					}
 
-				uint16_t j;
-				for (j = 0; j < frameData.sampleCount; j++) {
-					u_buffer_1[j] = (uint16_t) ((u_buffer_1[j] + 32768) * 4095
-							* volume[count] / 65535.0);
-				}
+					bool using_buffer_1 = true;
 
-				bool using_buffer_1 = true;
+					uint16_t sr_ = kMP3_44100Hz; //Default config 4 mp3 stereo
+					uint8_t ch_ = kMP3_Stereo;
+					MP3_Set_Sample_Rate(sr_, ch_);
+					//Por defecto ya está configurado así, solo lo explicito y ayuda
+					//si hay que cambiarlo mientras corre el codigo
 
-				uint16_t sr_ = kMP3_44100Hz; //Default config 4 mp3 stereo
-				uint8_t ch_ = kMP3_Stereo;
-				MP3_Set_Sample_Rate(sr_, ch_);
-				//Por defecto ya está configurado así, solo lo explicito y ayuda
-				//si hay que cambiarlo mientras corre el codigo
-
-				while (true) {
+					while (true) {
 
 #ifdef DEBUG_PRINTF_INFO
 					printf("\n[APP] Frame %d decoding started.\n", i);
 #endif
 
-					if (res == MP3DECODER_NO_ERROR) {
+						if (res == MP3DECODER_NO_ERROR) {
 
-						if (DAC_Wrapper_Is_Transfer_Done() || i == 0) {	//Entro en la primera o cuando ya transmiti
+							if (DAC_Wrapper_Is_Transfer_Done() || i == 0) {	//Entro en la primera o cuando ya transmiti
 
-							MP3GetLastFrameData(&frameData);
+								MP3GetLastFrameData(&frameData);
 
-							//No debería cambiar el sample rate entre frame y frame
-							//Pero si lo hace...
-							if ((sr_ != frameData.sampleRate)
-									|| (ch_ != frameData.channelCount)) {
-								sr_ = frameData.sampleRate;
-								ch_ = frameData.channelCount;
-								MP3_Set_Sample_Rate(sr_, ch_);
-							}
-
-							DAC_Wrapper_Clear_Transfer_Done();
-
-							if (using_buffer_1) {
-								//Envio el buffer 1 al dac
-								DAC_Wrapper_Set_Data_Array(&u_buffer_1,
-										frameData.sampleCount);
-								DAC_Wrapper_Set_Next_Buffer(&u_buffer_2);
-
-								//Cargo el y normalizo el buffer 2
-								res = MP3GetDecodedFrame((int16_t*) u_buffer_2,
-								MP3_DECODED_BUFFER_SIZE, &sampleCount, 0);
-
-								for (j = 0; j < frameData.sampleCount; j++) {
-									u_buffer_2[j] = (uint16_t) ((u_buffer_2[j]
-											+ 32768) * 4095 * volume[count]
-											/ 65535.0);
+								//No debería cambiar el sample rate entre frame y frame
+								//Pero si lo hace...
+								if ((sr_ != frameData.sampleRate)
+										|| (ch_ != frameData.channelCount)) {
+									sr_ = frameData.sampleRate;
+									ch_ = frameData.channelCount;
+									MP3_Set_Sample_Rate(sr_, ch_);
 								}
-							} else {
-								//Envio el buffer 2 al dac
-								DAC_Wrapper_Set_Data_Array(&u_buffer_2,
-										frameData.sampleCount);
-								DAC_Wrapper_Set_Next_Buffer(&u_buffer_1);
 
-								//Cargo el y normalizo el buffer 1
-								res = MP3GetDecodedFrame((int16_t*) u_buffer_1,
-								MP3_DECODED_BUFFER_SIZE, &sampleCount, 0);
-								for (j = 0; j < frameData.sampleCount; j++) {
-									u_buffer_1[j] = (uint16_t) ((u_buffer_1[j]
-											+ 32768) * 4095 * volume[count]
-											/ 65535.0);
+								DAC_Wrapper_Clear_Transfer_Done();
+
+								if (using_buffer_1) {
+									//Envio el buffer 1 al dac
+									DAC_Wrapper_Set_Data_Array(&u_buffer_1,
+											frameData.sampleCount);
+									DAC_Wrapper_Set_Next_Buffer(&u_buffer_2);
+
+									//Cargo el y normalizo el buffer 2
+									res = MP3GetDecodedFrame(
+											(int16_t*) u_buffer_2,
+											MP3_DECODED_BUFFER_SIZE,
+											&sampleCount, 0);
+
+									for (j = 0; j < frameData.sampleCount;
+											j++) {
+										u_buffer_2[j] =
+												(uint16_t) ((u_buffer_2[j]
+														+ 32768) * 4095 / (65535*count));
+									}
+								} else {
+									//Envio el buffer 2 al dac
+									DAC_Wrapper_Set_Data_Array(&u_buffer_2,
+											frameData.sampleCount);
+									DAC_Wrapper_Set_Next_Buffer(&u_buffer_1);
+
+									//Cargo el y normalizo el buffer 1
+									res = MP3GetDecodedFrame(
+											(int16_t*) u_buffer_1,
+											MP3_DECODED_BUFFER_SIZE,
+											&sampleCount, 0);
+									for (j = 0; j < frameData.sampleCount;
+											j++) {
+										u_buffer_1[j] =
+												(uint16_t) ((u_buffer_1[j]
+														+ 32768) * 4095 / (65535*count));
+									}
 								}
+
+								using_buffer_1 = !using_buffer_1;//Cambio el buffer al siguiente
+
+								i++;
 							}
-
-							using_buffer_1 = !using_buffer_1;//Cambio el buffer al siguiente
-
-							i++;
-						}
 
 #ifdef DEBUG_PRINTF_INFO
 						printf("[APP] Wrote %d bytes to wav.\n", wrote);
@@ -197,21 +196,21 @@ int main(void) {
 						nextFrameFlag = false;
 #endif
 
-					} else if (res == MP3DECODER_FILE_END) {
+						} else if (res == MP3DECODER_FILE_END) {
 #ifdef DEBUG_PRINTF_APP
 							printf("[APP] FILE ENDED. Decoded %d frames.\n", i - 1);
 #endif
-						finished = true;
-						break;
+							DAC_Wrapper_Clear_Data_Array();
+							finished = true;
+							break;
+						}
 					}
 				}
 			}
-		}
 
-		DAC_Wrapper_Sleep();
-		//printf("Hasta la proxima\n");
+		}
+		return 0;
 	}
-	return 0;
 }
 
 char* concat(const char *s1, const char *s2) {
