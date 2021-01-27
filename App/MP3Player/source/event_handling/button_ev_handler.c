@@ -96,13 +96,12 @@ void PORTD_IRQHandler(void)	//BOTONERA
 	if (((1U << 0U) & PORT_GetPinsInterruptFlags(PORTD))){ //PTD0
 #ifdef DEBOUNCE_SDKDELAY
 		SDK_DelayAtLeastUs(25 * 1000U, SDK_DEVICE_MAXIMUM_CPU_CLOCK_FREQUENCY);
-		if(GPIO_PinRead(GPIOD, 0U)){
+		if(GPIO_PinRead(GPIOD, 0U))
 #endif
+		{
 			PORT_ClearPinsInterruptFlags(PORTD, (1U << 0U));
 			next_button = true;
-#ifdef DEBOUNCE_SDKDELAY
 		}
-#endif
 	}
 	else if (((1U << 1U) & PORT_GetPinsInterruptFlags(PORTD))){ //PTD1
 #ifdef DEBOUNCE_SDKDELAY
