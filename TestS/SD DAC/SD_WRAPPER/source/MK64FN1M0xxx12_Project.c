@@ -24,7 +24,7 @@
 
 #define VOLUME_STEPS		30
 
-void adaptSignal(int16_t * src, uint16_t *  dst,uint16_t cnt,uint8_t volumen);
+void adaptSignal(int16_t *src, uint16_t *dst, uint16_t cnt, uint8_t volumen);
 char* concat(const char *s1, const char *s2);
 
 void cbackin(void) {
@@ -98,7 +98,8 @@ int main(void) {
 							(int16_t*) u_buffer_1, MP3_DECODED_BUFFER_SIZE,
 							&sampleCount, 0);
 
-					adaptSignal(u_buffer_1, u_buffer_1, frameData.sampleCount,count);
+					adaptSignal(u_buffer_1, u_buffer_1, frameData.sampleCount,
+							count);
 //					uint16_t j;
 //					for (j = 0; j < frameData.sampleCount; j++) { //TODO
 //						u_buffer_1[j] = (uint16_t) ((u_buffer_1[j] + 32768)
@@ -147,7 +148,8 @@ int main(void) {
 											(int16_t*) u_buffer_2,
 											MP3_DECODED_BUFFER_SIZE,
 											&sampleCount, 0);
-									adaptSignal(u_buffer_2, u_buffer_2, frameData.sampleCount,count);
+									adaptSignal(u_buffer_2, u_buffer_2,
+											frameData.sampleCount, count);
 //									for (j = 0; j < frameData.sampleCount;
 //											j++) {
 //										u_buffer_2[j] = //TODO
@@ -166,7 +168,8 @@ int main(void) {
 											(int16_t*) u_buffer_1,
 											MP3_DECODED_BUFFER_SIZE,
 											&sampleCount, 0);
-									adaptSignal(u_buffer_1, u_buffer_1, frameData.sampleCount,count);
+									adaptSignal(u_buffer_1, u_buffer_1,
+											frameData.sampleCount, count);
 //									for (j = 0; j < frameData.sampleCount;
 //											j++) {
 //										u_buffer_1[j] = //TODO
@@ -226,16 +229,17 @@ char* concat(const char *s1, const char *s2) {
 	return result;
 }
 
-void adaptSignal(int16_t * src, uint16_t * dst,uint16_t  cnt,uint8_t volumen) {
-	uint16_t j=0;
+void adaptSignal(int16_t *src, uint16_t *dst, uint16_t cnt, uint8_t volumen) {
+	uint16_t j = 0;
 	for (j = 0; j < cnt; j++) {
-		if(volumen){
-		uint16_t aux=(uint16_t)  (((src[j])  /(VOLUME_STEPS+1))*((volumen))   );//maximo es 30
+		if (volumen) {
+			uint16_t aux = (uint16_t) (((src[j]) / (VOLUME_STEPS + 1))
+					* ((volumen)));	//maximo es 30
 
-		dst[j] = ((aux + 32768) /16);}
-		else{
-			dst[j] =0;
+			dst[j] = ((aux + 32768) / 16);
+		} else {
+			dst[j] = 0;
 		}
-}
+	}
 
 }

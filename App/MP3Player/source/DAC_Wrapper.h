@@ -23,6 +23,7 @@
  ******************************************************************************/
 
 #define DAC_USED_BUFFER_SIZE 		10240U
+#define VOLUME_STEPS				30
 
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
@@ -70,6 +71,8 @@ void DAC_Wrapper_PDB_Config(uint32_t mod_val,
 		pdb_prescaler_divider_t prescaler);
 
 bool MP3_Set_Sample_Rate(uint16_t sr, uint8_t ch);
+
+bool MP3_Adapt_Signal(int16_t *src, uint16_t *dst, uint16_t cnt, uint8_t volumen);
 
 bool DAC_Wrapper_Is_Transfer_Done(void);
 
