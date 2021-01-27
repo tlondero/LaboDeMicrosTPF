@@ -137,6 +137,10 @@ void DAC_Wrapper_Clear_Data_Array(void) {
 	sizeOf = DAC_USED_BUFFER_SIZE;
 }
 
+void DAC_Wrapper_Clear_Next_Buffer(void){
+	nextBuffer = (uint16_t*) nullData;
+}
+
 void DAC_Wrapper_Start_Trigger(void) {
 	PDB_DoSoftwareTrigger(PDB_BASEADDR);
 }

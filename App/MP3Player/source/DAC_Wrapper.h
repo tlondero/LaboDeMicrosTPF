@@ -78,6 +78,8 @@ bool DAC_Wrapper_Is_Transfer_Done(void);
 
 void DAC_Wrapper_Clear_Transfer_Done(void);
 
+void DAC_Wrapper_Clear_Next_Buffer(void);
+
 void DAC_Wrapper_Sleep(void);
 
 void DAC_Wrapper_Wake_Up(void);

@@ -163,7 +163,7 @@ void runPlayer(event_t *events, app_context_t *appContext) {
 
 	if (appContext->playerContext.songPaused) {
 		DAC_Wrapper_Clear_Data_Array();
-		appContext->playerContext.songPaused = false;
+		DAC_Wrapper_Clear_Next_Buffer();
 		DAC_Wrapper_Sleep();
 	} else if (appContext->playerContext.res == MP3DECODER_NO_ERROR) {
 

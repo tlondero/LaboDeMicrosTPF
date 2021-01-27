@@ -262,6 +262,7 @@ void switchAppState(app_state_t current, app_state_t target) {
 
 			} else {
 				appContext.playerContext.songResumed = false;
+				appContext.playerContext.songPaused = false;
 				DAC_Wrapper_Clear_Data_Array();
 			}
 			DAC_Wrapper_Wake_Up();
