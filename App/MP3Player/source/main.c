@@ -24,6 +24,7 @@
 #include "event_handling/event_handler.h"
 #include <fft.h>
 #include "math_helper.h"
+#include "button.h"
 
 /**********************************************************************************************
  *                                          DEFINES                                           *
@@ -313,21 +314,8 @@ int initDevice(void) {
 	LED_GREEN_INIT(LOGIC_LED_OFF);
 #endif
 
-	/* Init wakeup interruption */
-	SMC_SetPowerModeProtection(SMC, kSMC_AllowPowerModeAll);
-	NVIC_EnableIRQ(APP_WAKEUP_BUTTON_IRQ);	//NVIC del wakeup (SW2)
-	PORT_SetPinInterruptConfig(APP_WAKEUP_BUTTON_PORT,
-	APP_WAKEUP_BUTTON_GPIO_PIN, APP_WAKEUP_BUTTON_IRQ_TYPE); //PCR del wakeup (SW2)
-
-	/* Botonera */
-	NVIC_EnableIRQ(PORTD_IRQn);	//NVIC botonera PORTD
-	NVIC_EnableIRQ(BOARD_SW3_IRQ);	//NVIC SW3 PORTA
-	PORT_SetPinInterruptConfig(PORTD, 0U, kPORT_InterruptRisingEdge); //PCR PORTD0
-	PORT_SetPinInterruptConfig(PORTD, 1U, kPORT_InterruptRisingEdge); //PCR PORTD1
-	PORT_SetPinInterruptConfig(PORTD, 2U, kPORT_InterruptRisingEdge); //PCR PORTD2
-	PORT_SetPinInterruptConfig(PORTD, 3U, kPORT_InterruptRisingEdge); //PCR PORTD3
-	PORT_SetPinInterruptConfig(BOARD_SW3_PORT, BOARD_SW3_GPIO_PIN,
-			kPORT_InterruptFallingEdge); //PCR SW3
+	/* Init Botonera */
+	BUTTON_Init();
 
 
 	/* Init Helix MP3 Decoder */
