@@ -8,7 +8,8 @@
 #ifndef DEBUG_IFDEFS_H_
 #define DEBUG_IFDEFS_H_
 
-#define DEBUG_PRINTF_ERROR
+//#define DEBUG_ID3
+//#define DEBUG_PRINTF_ERROR
 //#define DEBUG_PRINTF_APP
 //#define DEBUG_PRINTF_INFO
 //#define DEBUG_ALAN

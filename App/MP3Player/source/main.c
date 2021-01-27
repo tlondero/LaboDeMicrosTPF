@@ -317,6 +317,7 @@ int initDevice(void) {
 	/* Init Botonera */
 	BUTTON_Init();
 
+
 	/* Init Helix MP3 Decoder */
 	MP3DecoderInit();
 
