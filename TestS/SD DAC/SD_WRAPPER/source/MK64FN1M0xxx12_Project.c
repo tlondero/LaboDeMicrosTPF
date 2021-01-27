@@ -22,9 +22,7 @@
 #include "DAC_Wrapper.h"
 #include "Equaliser.h"
 
-#define MAX_DAC_VALUE		4095.0
-#define MP3_MIN_VALUE		32768
-#define MP3_GAP_VALUE		65535.0
+#define VOLUME_STEPS		30
 
 char* concat(const char *s1, const char *s2);
 
@@ -46,6 +44,9 @@ bool nextFrameFlag = false;
 
 static uint16_t u_buffer_1[MP3_DECODED_BUFFER_SIZE];
 static uint16_t u_buffer_2[MP3_DECODED_BUFFER_SIZE];
+
+float volume[VOLUME_STEPS] = { 0.00f, 0.05f, 0.10f, 0.15f, 0.20f, 0.25f, 0.30f, 0.35f, 0.40f, 0.45f, 0.50f, 0.55f, 0.60f, 0.65f, 0.70f, 0.75f, 0.80f, 0.85f,
+			0.90f, 0.95f, 1.00f, 1.05f, 1.10f, 1.15f, 1.20f, 1.25f, 1.30f, 1.35f, 1.40f, 1.45f};
 
 mp3_decoder_frame_data_t frameData;
 mp3_decoder_tag_data_t ID3Data;
@@ -70,14 +71,22 @@ int main(void) {
 #endif
 	SDWraperInit(cbackin, cbackout);
 /////////////////////////////////////////////////////////////
-	bool finished = false;
-	while (!finished) {
-		if (getJustIn()) {
 
-			if (MP3LoadFile("test_500.mp3", "test_500.wav")) {
-			//if (MP3LoadFile("dakiti.mp3", "dakiti.wav")) {
+	uint16_t count;
+	for (count = 0; count < VOLUME_STEPS; count++) {
+		printf("Prueba %d\n", count);
+		float vol = volume[count]*100;
+		uint16_t vol_ = (uint16_t) (vol);
+		printf("VOLUME = %d\n\n", vol_);
+		bool finished = false;
+		while (!finished) {
+
+
+			if (MP3LoadFile("GTA V Wasted.mp3")) {
+			//if (MP3LoadFile("Leeroy Jenkins.mp3")) {
 				int i = 0;
 
+#ifdef DEBUG_ID3
 				if (MP3GetTagData(&ID3Data)) {
 					printf("\nSONG INFO\n");
 					printf("TITLE: %s\n", ID3Data.title);
@@ -86,6 +95,7 @@ int main(void) {
 					printf("TRACK NUM: %s\n", ID3Data.trackNum);
 					printf("YEAR: %s\n", ID3Data.year);
 				}
+#endif
 
 				DAC_Wrapper_Wake_Up();
 
@@ -97,12 +107,12 @@ int main(void) {
 				uint16_t j;
 				for (j = 0; j < frameData.sampleCount; j++) {
 					u_buffer_1[j] = (uint16_t) ((u_buffer_1[j] + 32768) * 4095
-							/ 65535.0);
+							* volume[count] / 65535.0);
 				}
 
 				bool using_buffer_1 = true;
 
-				uint16_t sr_ = kMP3_44100Hz;	//Default config 4 mp3 stereo
+				uint16_t sr_ = kMP3_44100Hz; //Default config 4 mp3 stereo
 				uint8_t ch_ = kMP3_Stereo;
 				MP3_Set_Sample_Rate(sr_, ch_);
 				//Por defecto ya está configurado así, solo lo explicito y ayuda
@@ -143,7 +153,8 @@ int main(void) {
 
 								for (j = 0; j < frameData.sampleCount; j++) {
 									u_buffer_2[j] = (uint16_t) ((u_buffer_2[j]
-											+ 32768) * 4095 / 65535.0);
+											+ 32768) * 4095 * volume[count]
+											/ 65535.0);
 								}
 							} else {
 								//Envio el buffer 2 al dac
@@ -156,7 +167,8 @@ int main(void) {
 								MP3_DECODED_BUFFER_SIZE, &sampleCount, 0);
 								for (j = 0; j < frameData.sampleCount; j++) {
 									u_buffer_1[j] = (uint16_t) ((u_buffer_1[j]
-											+ 32768) * 4095 / 65535.0);
+											+ 32768) * 4095 * volume[count]
+											/ 65535.0);
 								}
 							}
 
@@ -195,11 +207,10 @@ int main(void) {
 				}
 			}
 		}
+
+		DAC_Wrapper_Sleep();
+		//printf("Hasta la proxima\n");
 	}
-	DAC_Wrapper_Sleep();
-	close_file_wav();
-//REMEMBER TO CLOSE FILES
-	printf("\nHasta la proxima\n");
 	return 0;
 }
 

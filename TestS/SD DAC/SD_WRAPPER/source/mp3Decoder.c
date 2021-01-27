@@ -108,14 +108,13 @@ void  MP3DecoderInit(void) {
 
 }
 
-bool  MP3LoadFile(const char* file_name, const char* file_name_wav) {
+bool  MP3LoadFile(const char* file_name) {
     bool res=false;
     if (context_data.file_opened == true) {//if there was a opened file, i must close it before opening a new one
         resetContextData();
         close_file();
     }
     if (open_file(_T(file_name))) {
-    	open_file_wav(_T(file_name_wav));
         context_data.file_opened = true;
         context_data.f_size = getFileSize();
         context_data.bytes_remaining = context_data.f_size;
@@ -470,7 +469,7 @@ void readID3Tag(void)
 
         unsigned int tagSize = get_ID3_size(mp3File);
 
-#ifdef DEBUG
+#ifdef DEBUG_ID3
         printf("ID3 Track found.\n");
         printf("ID3 Tag is %d bytes long\n", tagSize);
 #endif
