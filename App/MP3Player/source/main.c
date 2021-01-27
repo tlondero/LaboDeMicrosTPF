@@ -93,8 +93,8 @@ void cbackout(void);
 
 static app_context_t appContext;
 
-static short u_buffer_1[MP3_DECODED_BUFFER_SIZE];
-static short u_buffer_2[MP3_DECODED_BUFFER_SIZE];
+static uint16_t u_buffer_1[MP3_DECODED_BUFFER_SIZE];
+static uint16_t u_buffer_2[MP3_DECODED_BUFFER_SIZE];
 
 /**********************************************************************************************
  *                                         MAIN                                               *
@@ -399,7 +399,7 @@ void switchAppState(app_state_t current, app_state_t target) {
 						MP3_DECODED_BUFFER_SIZE,
 						&appContext.playerContext.sampleCount, 0);
 
-				MP3_Adapt_Signal(u_buffer_1, u_buffer_1,
+				MP3_Adapt_Signal((int16_t*) u_buffer_1, u_buffer_1,
 						appContext.playerContext.sampleCount,
 						appContext.playerContext.volume);
 				MP3_Set_Sample_Rate(appContext.playerContext.sr_,
@@ -466,7 +466,7 @@ void runPlayer(event_t *events, app_context_t *context) {
 						MP3_DECODED_BUFFER_SIZE,
 						&(appContext.playerContext.sampleCount), 0);
 
-				MP3_Adapt_Signal(u_buffer_2, u_buffer_2,
+				MP3_Adapt_Signal((int16_t*) u_buffer_2, u_buffer_2,
 						appContext.playerContext.sampleCount,
 						appContext.playerContext.volume);
 			} else {
@@ -480,7 +480,7 @@ void runPlayer(event_t *events, app_context_t *context) {
 						(int16_t*) u_buffer_1,
 						MP3_DECODED_BUFFER_SIZE,
 						&(appContext.playerContext.sampleCount), 0);
-				MP3_Adapt_Signal(u_buffer_1, u_buffer_1,
+				MP3_Adapt_Signal((int16_t*) u_buffer_1, u_buffer_1,
 						appContext.playerContext.sampleCount,
 						appContext.playerContext.volume);
 			}
