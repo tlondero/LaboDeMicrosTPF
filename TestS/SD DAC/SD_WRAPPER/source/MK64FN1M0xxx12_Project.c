@@ -24,6 +24,7 @@
 
 #define VOLUME_STEPS		30
 
+void adaptSignal(int16_t * src, uint16_t *  dst,uint16_t cnt);
 char* concat(const char *s1, const char *s2);
 
 void cbackin(void) {
@@ -47,7 +48,7 @@ static uint16_t u_buffer_2[MP3_DECODED_BUFFER_SIZE];
 
 mp3_decoder_frame_data_t frameData;
 mp3_decoder_tag_data_t ID3Data;
-
+uint16_t count;
 int main(void) {
 	uint16_t sampleCount;
 #ifdef DEBUG_PRINTF_INFO
@@ -71,8 +72,8 @@ int main(void) {
 
 	DAC_Wrapper_Wake_Up();
 	while (true) {
-		uint16_t count;
-		for (count = 1; count < VOLUME_STEPS+1; count++) {
+
+		for (count = 1; count < VOLUME_STEPS + 1; count++) {
 			printf("Prueba %d\n", count);
 			bool finished = false;
 			while (!finished) {
@@ -97,12 +98,13 @@ int main(void) {
 							(int16_t*) u_buffer_1, MP3_DECODED_BUFFER_SIZE,
 							&sampleCount, 0);
 
-					uint16_t j;
-					for (j = 0; j < frameData.sampleCount; j++) {
-						u_buffer_1[j] = (uint16_t) ((u_buffer_1[j] + 32768)
-								* 4095 / (65535*count)) ;
-					}
-
+					adaptSignal(u_buffer_1, u_buffer_1, frameData.sampleCount);
+//					uint16_t j;
+//					for (j = 0; j < frameData.sampleCount; j++) { //TODO
+//						u_buffer_1[j] = (uint16_t) ((u_buffer_1[j] + 32768)
+//								* 4095 / (65535 * count));
+//					}
+//
 					bool using_buffer_1 = true;
 
 					uint16_t sr_ = kMP3_44100Hz; //Default config 4 mp3 stereo
@@ -145,13 +147,14 @@ int main(void) {
 											(int16_t*) u_buffer_2,
 											MP3_DECODED_BUFFER_SIZE,
 											&sampleCount, 0);
-
-									for (j = 0; j < frameData.sampleCount;
-											j++) {
-										u_buffer_2[j] =
-												(uint16_t) ((u_buffer_2[j]
-														+ 32768) * 4095 / (65535*count));
-									}
+									adaptSignal(u_buffer_2, u_buffer_2, frameData.sampleCount);
+//									for (j = 0; j < frameData.sampleCount;
+//											j++) {
+//										u_buffer_2[j] = //TODO
+//												(uint16_t) ((u_buffer_2[j]
+//														+ 32768) * 4095
+//														/ (65535 * count));
+//									}
 								} else {
 									//Envio el buffer 2 al dac
 									DAC_Wrapper_Set_Data_Array(&u_buffer_2,
@@ -163,15 +166,17 @@ int main(void) {
 											(int16_t*) u_buffer_1,
 											MP3_DECODED_BUFFER_SIZE,
 											&sampleCount, 0);
-									for (j = 0; j < frameData.sampleCount;
-											j++) {
-										u_buffer_1[j] =
-												(uint16_t) ((u_buffer_1[j]
-														+ 32768) * 4095 / (65535*count));
-									}
+									adaptSignal(u_buffer_1, u_buffer_1, frameData.sampleCount);
+//									for (j = 0; j < frameData.sampleCount;
+//											j++) {
+//										u_buffer_1[j] = //TODO
+//												(uint16_t) ((u_buffer_1[j]
+//														+ 32768) * 4095
+//														/ (65535 * count));
+//									}
 								}
 
-								using_buffer_1 = !using_buffer_1;//Cambio el buffer al siguiente
+								using_buffer_1 = !using_buffer_1; //Cambio el buffer al siguiente
 
 								i++;
 							}
@@ -219,4 +224,23 @@ char* concat(const char *s1, const char *s2) {
 	strcpy(result, s1);
 	strcat(result, s2);
 	return result;
+}
+
+void adaptSignal(int16_t * src, uint16_t * dst,uint16_t  cnt) {
+	uint16_t j=0;
+	static bool toggle=false;
+	static float auxf=0.00f;
+	static uint16_t currCount=0;
+	if(currCount != count){
+		toggle=!toggle;
+		currCount=count;
+
+	auxf +=0.05f;}
+
+	for (j = 0; j < cnt; j++) {
+		uint16_t aux=(uint16_t)  ((src[j])/(VOLUME_STEPS-count));
+
+		dst[j] = ((aux + 32768) /16);
+}
+
 }
