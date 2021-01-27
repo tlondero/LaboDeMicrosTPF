@@ -42,7 +42,7 @@
  **********************************************************************************************/
 
 void runMenu(event_t *events, app_context_t *context);
-void runPlayer(event_t *events, app_context_t *context);
+
 void switchAppState(app_state_t current, app_state_t target);
 void resetAppContext(void);
 void resetPlayerContext(void);
@@ -60,8 +60,7 @@ void cbackout(void);
 
 static app_context_t appContext;
 
-static uint16_t u_buffer_1[MP3_DECODED_BUFFER_SIZE];
-static uint16_t u_buffer_2[MP3_DECODED_BUFFER_SIZE];
+
 
 /**********************************************************************************************
  *                                         MAIN                                               *
@@ -283,11 +282,11 @@ void switchAppState(app_state_t current, app_state_t target) {
 
 				//Empiezo por el buffer 1
 				appContext.playerContext.res = MP3GetDecodedFrame(
-						(int16_t*) u_buffer_1,
+						(int16_t*) getbuffer1(),
 						MP3_DECODED_BUFFER_SIZE,
 						&appContext.playerContext.sampleCount, 0);
 
-				MP3_Adapt_Signal((int16_t*) u_buffer_1, u_buffer_1,
+				MP3_Adapt_Signal((int16_t*) getbuffer1(), getbuffer1(),
 						appContext.playerContext.sampleCount,
 						appContext.playerContext.volume);
 				MP3_Set_Sample_Rate(appContext.playerContext.sr_,
@@ -310,76 +309,7 @@ void switchAppState(app_state_t current, app_state_t target) {
 void runMenu(event_t *events, app_context_t *context) {
 	FSM_menu(events,context);//TODO: La fsm del menu
 }
-void runPlayer(event_t *events, app_context_t *context) {
-	//TODO: Implementar aca el reproductor y el espectrograma (ver si no van a funcar a interrupciones tho)
 
-	if (appContext.playerContext.songPaused) {
-		DAC_Wrapper_Clear_Data_Array();
-		appContext.playerContext.songPaused = false;
-		DAC_Wrapper_Sleep();
-	} else if (appContext.playerContext.res == MP3DECODER_NO_ERROR) {
-
-		if (DAC_Wrapper_Is_Transfer_Done()
-				|| appContext.playerContext.firstDacTransmition) { //Entro en la primera o cuando ya transmiti
-
-			appContext.playerContext.firstDacTransmition = false;
-
-			MP3GetLastFrameData(&(appContext.playerContext.frameData));
-
-			//No debería cambiar el sample rate entre frame y frame
-			//Pero si lo hace...
-			if ((appContext.playerContext.sr_
-					!= appContext.playerContext.frameData.sampleRate)
-					|| (appContext.playerContext.ch_
-							!= appContext.playerContext.frameData.channelCount)) {
-				appContext.playerContext.sr_ =
-						appContext.playerContext.frameData.sampleRate;
-				appContext.playerContext.ch_ =
-						appContext.playerContext.frameData.channelCount;
-				MP3_Set_Sample_Rate(appContext.playerContext.sr_,
-						appContext.playerContext.ch_);
-			}
-
-			DAC_Wrapper_Clear_Transfer_Done();
-
-			if (appContext.playerContext.using_buffer_1) {
-				//Envio el buffer 1 al dac
-				DAC_Wrapper_Set_Data_Array(&u_buffer_1,
-						appContext.playerContext.frameData.sampleCount);
-				DAC_Wrapper_Set_Next_Buffer(&u_buffer_2);
-
-				//Cargo el y normalizo el buffer 2
-				appContext.playerContext.res = MP3GetDecodedFrame(
-						(int16_t*) u_buffer_2,
-						MP3_DECODED_BUFFER_SIZE,
-						&(appContext.playerContext.sampleCount), 0);
-
-				MP3_Adapt_Signal((int16_t*) u_buffer_2, u_buffer_2,
-						appContext.playerContext.sampleCount,
-						appContext.playerContext.volume);
-			} else {
-				//Envio el buffer 2 al dac
-				DAC_Wrapper_Set_Data_Array(&u_buffer_2,
-						appContext.playerContext.frameData.sampleCount);
-				DAC_Wrapper_Set_Next_Buffer(&u_buffer_1);
-
-				//Cargo el y normalizo el buffer 1
-				appContext.playerContext.res = MP3GetDecodedFrame(
-						(int16_t*) u_buffer_1,
-						MP3_DECODED_BUFFER_SIZE,
-						&(appContext.playerContext.sampleCount), 0);
-				MP3_Adapt_Signal((int16_t*) u_buffer_1, u_buffer_1,
-						appContext.playerContext.sampleCount,
-						appContext.playerContext.volume);
-			}
-
-			appContext.playerContext.using_buffer_1 =
-					!appContext.playerContext.using_buffer_1;//Cambio el buffer al siguiente
-		}
-	} else if (appContext.playerContext.res == MP3DECODER_FILE_END) {
-		appContext.playerContext.songEnded = true;
-	}
-}
 
 char* concat(const char *s1, const char *s2) {
 	char *result = malloc(strlen(s1) + strlen(s2) + 1); // +1 for the null-terminator
