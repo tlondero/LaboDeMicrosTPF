@@ -36,7 +36,6 @@
  *                                    TYPEDEFS AND ENUMS                                      *
  **********************************************************************************************/
 
-
 /**********************************************************************************************
  *                        FUNCTION DECLARATION WITH LOCAL SCOPE                               *
  **********************************************************************************************/
@@ -59,8 +58,6 @@ void cbackout(void);
  **********************************************************************************************/
 
 static app_context_t appContext;
-
-
 
 /**********************************************************************************************
  *                                         MAIN                                               *
@@ -92,64 +89,14 @@ int main(void) {
 			/***************/
 
 		case kAPP_STATE_IDDLE:
-			if (SDWRAPPER_GetMounted() && SDWRAPPER_getJustIn()) {
-				appContext.currentFile = FSEXP_exploreFS(FSEXP_ROOT_DIR); /* Explore filesystem */
-#ifdef DEBUG_PRINTF_APP
-				appContext.currentFile = FSEXP_getNext();
-				printf("[App] Pointing currently to: %s\n",
-						appContext.currentFile);
-#endif
-			}
-			if (SDWRAPPER_getJustOut()) { /* If SD is removed */
-				if (appContext.menuState == kAPP_MENU_FILESYSTEM) { /* and menu is exploring FS*/
-					appContext.menuState = kAPP_MENU_MAIN; /* Go back to main menu */
-				}
-			}
-			if (ev.btn_evs.off_on_button) {
-				switchAppState(appContext.appState, kAPP_STATE_OFF);
-			}
-			if (SDWRAPPER_GetMounted() && SDWRAPPER_getSDInserted()) {
-				if (ev.btn_evs.next_button) {
-					if (FSEXP_getNext()) {
-						appContext.currentFile = FSEXP_getFilename();
-					}
-#ifdef DEBUG_PRINTF_APP
-					printf("[App] Pointing currently to: %s\n",
-							appContext.currentFile);
-#endif
-				}
-				if (ev.btn_evs.prev_button) {
-					if (FSEXP_getPrev()) {
-						appContext.currentFile = FSEXP_getFilename();
-					}
-#ifdef DEBUG_PRINTF_APP
-					printf("[App] Pointing currently to: %s\n",
-							appContext.currentFile);
-#endif
-				}
-				if (ev.btn_evs.enter_button) {
-#ifdef DEBUG_PRINTF_APP
-					printf("[App] Opened %s\n", appContext.currentFile);
-#endif
-					if (FSEXP_openSelected()) {
-						appContext.currentFile = FSEXP_getFilename();
-					}
-#ifdef DEBUG_PRINTF_APP
-					printf("[App] Pointing currently to: %s\n",
-							FSEXP_getMP3Path());
-#endif
-				}
-				if (ev.btn_evs.back_button) {
 
-					if (FSEXP_goBackDir()) {
-						appContext.currentFile = FSEXP_getFilename();
+			if (SDWRAPPER_getJustOut()) { /* If SD is removed */
+					if (appContext.menuState == kAPP_MENU_FILESYSTEM) { /* and menu is exploring FS*/
+						appContext.menuState = kAPP_MENU_MAIN; /* Go back to main menu */
+
 					}
-#ifdef DEBUG_PRINTF_APP
-					printf("[App] Went back a directory\n");
-					printf("[App] Pointing currently to: %s\n",
-							appContext.currentFile);
-#endif
 				}
+
 				if (ev.btn_evs.pause_play_button) {
 					appContext.playerContext.songResumed = true;
 					switchAppState(appContext.appState, kAPP_STATE_PLAYING);
@@ -157,11 +104,7 @@ int main(void) {
 					printf("[App] Resumed playing.\n");
 #endif
 				}
-				if (ev.fsexp_evs.play_music) {
-					switchAppState(appContext.appState, kAPP_STATE_PLAYING);
-					//TODO: Reiniciar las cosas porque es cancion nueva.
-				}
-			}
+
 			runMenu(&ev, &appContext); /* Run menu in background */
 			break;
 
@@ -171,7 +114,32 @@ int main(void) {
 
 		case kAPP_STATE_PLAYING:
 
+			if (SDWRAPPER_getJustOut()) { /* If SD is removed */
+					if (appContext.menuState == kAPP_MENU_FILESYSTEM) { /* and menu is exploring FS*/
+						appContext.menuState = kAPP_MENU_MAIN; /* Go back to main menu */
+						//TODO stop music, stop spectogram
+						//...
+						switchAppState(appContext.appState, kAPP_STATE_IDDLE); /* Return to iddle state */
+
+					}
+				}
+
+			if (ev.btn_evs.pause_play_button) {
+				appContext.playerContext.songPaused = true;
+				switchAppState(appContext.appState, kAPP_STATE_IDDLE);
+#ifdef DEBUG_PRINTF_APP
+				printf("[App] Stopped playing.\n");
+#endif
+			}
 			runMenu(&ev, &appContext); /* Run menu in background */
+
+			if (appContext.playerContext.songEnded) {
+				appContext.playerContext.songEnded = false;
+				switchAppState(appContext.appState, kAPP_STATE_IDDLE);
+			} else {
+				runPlayer(&ev, &appContext); /* Run player in background */
+			}
+
 			break;
 
 		default:
@@ -307,9 +275,8 @@ void switchAppState(app_state_t current, app_state_t target) {
 }
 
 void runMenu(event_t *events, app_context_t *context) {
-	FSM_menu(events,context);//TODO: La fsm del menu
+	FSM_menu(events, context); //TODO: La fsm del menu
 }
-
 
 char* concat(const char *s1, const char *s2) {
 	char *result = malloc(strlen(s1) + strlen(s2) + 1); // +1 for the null-terminator

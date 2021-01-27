@@ -1,8 +1,7 @@
-
-/***************************************************************************/ /**
-  @file     FileName.c
-  @brief
-  @author   Guido Lambertucci
+/***************************************************************************//**
+ @file     FileName.c
+ @brief
+ @author   Guido Lambertucci
  ******************************************************************************/
 
 /*******************************************************************************
@@ -12,15 +11,19 @@
 #include "SD_Detect_Wraper.h"
 #include "fsl_debug_console.h"
 #include "FSM.h"
+#include "FS_explorer.h"
 #include "mp3Decoder.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 #define DEBUG_PRINTF_APP
+
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
-
+enum {
+	FS, VOL, EQ, NOCH
+};
 /*******************************************************************************
  * FUNCTION PROTOTYPES WITH FILE SCOPE
  ******************************************************************************/
@@ -31,104 +34,132 @@ void runPlayer(event_t *events, app_context_t *context);
 static uint16_t u_buffer_1[MP3_DECODED_BUFFER_SIZE];
 static uint16_t u_buffer_2[MP3_DECODED_BUFFER_SIZE];
 
-
-
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH GLOBAL SCOPE
  ******************************************************************************/
-void FSM_menu(event_t *ev, app_context_t *appContext){
+void FSM_menu(event_t *ev, app_context_t *appContext) {
 
-	if (SDWRAPPER_getJustOut()) { /* If SD is removed */
-		if (appContext->menuState == kAPP_MENU_FILESYSTEM) { /* and menu is exploring FS*/
-			appContext->menuState = kAPP_MENU_MAIN; /* Go back to main menu */
-			//TODO stop music, stop spectogram
-			//...
-			switchAppState(appContext->appState, kAPP_STATE_IDDLE); /* Return to iddle state */
+	if (appContext->menuState == kAPP_MENU_MAIN) {
+		static uint8_t index = FS;
 
-		}
-	}
-	if (ev->btn_evs.off_on_button) {
-		switchAppState(appContext->appState, kAPP_STATE_OFF);
-	}
-	if (SDWRAPPER_GetMounted() && SDWRAPPER_getSDInserted()) {
 		if (ev->btn_evs.next_button) {
-			if (FSEXP_getNext()) {
-				appContext->currentFile = FSEXP_getFilename();
+			index++;
+			switch (index % 3) {
+			case FS:
+				printf("File System Explorer Menu\r\n");
+				break;
+			case VOL:
+				printf("Volume Menu\r\n");
+				break;
+			case EQ:
+				printf("Equalizer Menu\r\n");
+				break;
+			default:
+				break;
 			}
-#ifdef DEBUG_PRINTF_APP
-			printf("[App] Pointing currently to: %s\n",
-					appContext->currentFile);
-#endif
-		}
-		if (ev->btn_evs.prev_button) {
-			if (FSEXP_getPrev()) {
-				appContext->currentFile = FSEXP_getFilename();
+		} else if (ev->btn_evs.prev_button) {
+			index--;
+			switch (index % 3) {
+			case FS:
+				printf("File System Explorer Menu\r\n");
+				break;
+			case VOL:
+				printf("Volume Menu\r\n");
+				break;
+			case EQ:
+				printf("Equalizer Menu\r\n");
+				break;
+			default:
+				break;
 			}
-#ifdef DEBUG_PRINTF_APP
-			printf("[App] Pointing currently to: %s\n",
-					appContext->currentFile);
-#endif
-		}
-		if (ev->btn_evs.enter_button) {
-#ifdef DEBUG_PRINTF_APP
-			printf("[App] Opened %s\n", appContext->currentFile);
-#endif
-			if (FSEXP_openSelected()) {
-				appContext->currentFile = FSEXP_getFilename();
+		} else if (ev->btn_evs.enter_button) {
+			switch (index % 3) {
+			case FS:
+				printf("File System Explorer Menu opened\r\n");
+				appContext->currentFile= FSEXP_exploreFS(FSEXP_ROOT_DIR);
+				appContext->menuState = kAPP_MENU_FILESYSTEM;
+				break;
+			case VOL:
+				printf("Volume Menu opened\r\n");
+				appContext->menuState = kAPP_MENU_VOLUME;
+				break;
+			case EQ:
+				printf("Equalizer Menu opened\r\n");
+				appContext->menuState = kAPP_MENU_EQUALIZER;
+				break;
+			default:
+				break;
 			}
-#ifdef DEBUG_PRINTF_APP
-			printf("[App] Pointing currently to: %s\n",
-					appContext->currentFile);
-#endif
 		}
-		if (ev->btn_evs.back_button) {
 
-			if (FSEXP_goBackDir()) {
-				appContext->currentFile = FSEXP_getFilename();
+	} else if (appContext->menuState == kAPP_MENU_FILESYSTEM) {
+		if (ev->btn_evs.off_on_button) {
+			switchAppState(appContext->appState, kAPP_STATE_OFF);
+		}
+		if (SDWRAPPER_GetMounted() && SDWRAPPER_getSDInserted()) {
+			if (ev->btn_evs.next_button) {
+				if (FSEXP_getNext()) {
+					appContext->currentFile = FSEXP_getFilename();
+				}
+#ifdef DEBUG_PRINTF_APP
+				printf("[App] Pointing currently to: %s\n",
+						appContext->currentFile);
+#endif
 			}
+			if (ev->btn_evs.prev_button) {
+				if (FSEXP_getPrev()) {
+					appContext->currentFile = FSEXP_getFilename();
+				}
 #ifdef DEBUG_PRINTF_APP
-			printf("[App] Went back a directory\n");
-			printf("[App] Pointing currently to: %s\n",
-					appContext->currentFile);
+				printf("[App] Pointing currently to: %s\n",
+						appContext->currentFile);
 #endif
-		}
-		if (ev->btn_evs.pause_play_button) {
-			appContext->playerContext.songPaused = true;
-			switchAppState(appContext->appState, kAPP_STATE_IDDLE);
+			}
+			if (ev->btn_evs.enter_button) {
 #ifdef DEBUG_PRINTF_APP
-			printf("[App] Stopped playing.\n");
+				printf("[App] Opened %s\n", appContext->currentFile);
 #endif
-		}
-		if (ev->fsexp_evs.play_music) {
+				if (FSEXP_openSelected()) {
+					appContext->currentFile = FSEXP_getFilename();
+				}
 #ifdef DEBUG_PRINTF_APP
-			printf("[App] Switched to playing: %s\n",
-					FSEXP_getMP3Path());
+				printf("[App] Pointing currently to: %s\n",
+						appContext->currentFile);
 #endif
-			//TODO: Reiniciar todo para reproducir la proxima cancion.
+			}
+			if (ev->btn_evs.back_button) {
+
+				if (FSEXP_goBackDir()) {
+					appContext->currentFile = FSEXP_getFilename();
+				}
+#ifdef DEBUG_PRINTF_APP
+				printf("[App] Went back a directory\n");
+				printf("[App] Pointing currently to: %s\n",
+						appContext->currentFile);
+#endif
+			}
+
+			if (ev->fsexp_evs.play_music) {
+#ifdef DEBUG_PRINTF_APP
+				printf("[App] Switched to playing: %s\n", FSEXP_getMP3Path());
+#endif
+				//TODO: Reiniciar todo para reproducir la proxima cancion.
+				switchAppState(appContext->appState, kAPP_STATE_PLAYING);
+			}
+
 		}
-		if (appContext->playerContext.songEnded) {
-			switchAppState(appContext->appState, kAPP_STATE_IDDLE);
-		}
+
 	}
-
-
-
-	if (appContext->playerContext.songEnded) {
-		appContext->playerContext.songEnded = false;
-	} else {
-		runPlayer(ev, appContext); /* Run player in background */
-	}
-
 }
 
-uint16_t * getbuffer1(void){
+uint16_t* getbuffer1(void) {
 	return u_buffer_1;
 }
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH FILE SCOPE
  ******************************************************************************/
 void runPlayer(event_t *events, app_context_t *appContext) {
-	//TODO: Implementar aca el reproductor y el espectrograma (ver si no van a funcar a interrupciones tho)
+//TODO: Implementar aca el reproductor y el espectrograma (ver si no van a funcar a interrupciones tho)
 
 	if (appContext->playerContext.songPaused) {
 		DAC_Wrapper_Clear_Data_Array();
@@ -200,5 +231,4 @@ void runPlayer(event_t *events, app_context_t *appContext) {
 /*******************************************************************************
  *						 INTERRUPTION ROUTINES
  ******************************************************************************/
-
 
