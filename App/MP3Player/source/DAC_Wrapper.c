@@ -137,7 +137,7 @@ void DAC_Wrapper_Clear_Data_Array(void) {
 	sizeOf = DAC_USED_BUFFER_SIZE;
 }
 
-void DAC_Wrapper_Clear_Next_Buffer(void){
+void DAC_Wrapper_Clear_Next_Buffer(void) {
 	nextBuffer = (uint16_t*) nullData;
 }
 
@@ -291,27 +291,20 @@ bool MP3_Set_Sample_Rate(uint16_t sr, uint8_t ch) {
 	return ret;
 }
 
-bool MP3_Adapt_Signal(int16_t *src, uint16_t *dst, uint16_t cnt,
+void MP3_Adapt_Signal(int16_t *src, uint16_t *dst, uint16_t cnt,
 		uint8_t volumen) {
 
-	if ((volumen >= 0) && (volumen <= VOLUME_STEPS)) {
+	uint16_t j = 0;
+	for (j = 0; j < cnt; j++) {
+		if (volumen) {
+			uint16_t aux = (uint16_t) (((src[j]) / (VOLUME_STEPS + 1))
+					* ((volumen)));	//maximo es 30
 
-		uint16_t j = 0;
-		for (j = 0; j < cnt; j++) {
-			if (volumen) {
-				uint16_t aux = (uint16_t) (((src[j]) / (VOLUME_STEPS + 1))
-						* ((volumen)));	//maximo es 30
-
-				dst[j] = ((aux + 32768) / 16);
-			} else {
-				dst[j] = 0;
-			}
+			dst[j] = ((aux + 32768) / 16);
+		} else {
+			dst[j] = 0;
 		}
-		return true;
-	} else {
-		return false;
 	}
-
 }
 
 bool DAC_Wrapper_Is_Transfer_Done(void) {
