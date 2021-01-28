@@ -39,7 +39,7 @@
 /**********************************************************************************************
  *                        FUNCTION DECLARATION WITH LOCAL SCOPE                               *
  **********************************************************************************************/
-
+void adaptFFT(float32_t * src,float32_t * dst,uint16_t cnt);
 void runMenu(event_t *events, app_context_t *context);
 
 void switchAppState(app_state_t current, app_state_t target);
@@ -97,7 +97,7 @@ int main(void) {
 					}
 				}
 
-				if (ev.btn_evs.pause_play_button) {
+			else if (ev.btn_evs.pause_play_button) {
 					appContext.playerContext.songResumed = true;
 					switchAppState(appContext.appState, kAPP_STATE_PLAYING);
 #ifdef DEBUG_PRINTF_APP
@@ -138,6 +138,14 @@ int main(void) {
 				switchAppState(appContext.appState, kAPP_STATE_IDDLE);
 			} else {
 				runPlayer(&ev, &appContext); /* Run player in background */
+				/*ACA pongo lo que se hace para hacer la fft
+				 * despues me imagino irá en un PIT
+				 * para actualizar los valores cada 250ms capaz
+				 * */
+//				adaptFFT(src, dst, 1024);
+//				fft(inputF32, outputF32, 1);
+//				fftGetMag(inputF32, outputF32);
+//				fftMakeBines8(src, dst);
 			}
 
 			break;
@@ -189,8 +197,13 @@ int initDevice(void) {
 	/* Init event handlers */
 	EVHANDLER_InitHandlers();
 
+
+	/* Init FFT */
+	fftInit(CFFT_1024);
+
 	/* Reset app context */
 	resetAppContext();
+
 
 	return true; //TODO agregar verificaciones al resto de los inits
 
@@ -203,10 +216,13 @@ void switchAppState(app_state_t current, app_state_t target) {
 			prepareForSwitchOff();
 			appContext.appState = target;
 		} else if (current == kAPP_STATE_PLAYING) {
+			DAC_Wrapper_Clear_Data_Array();
+			DAC_Wrapper_Clear_Next_Buffer();
 			DAC_Wrapper_Sleep();
 			appContext.playerContext.firstDacTransmition = true;
 			prepareForSwitchOff();
 			appContext.appState = target;
+
 		}
 		break;
 	case kAPP_STATE_IDDLE: /* Can come from OFF or PLAYING */
@@ -220,8 +236,8 @@ void switchAppState(app_state_t current, app_state_t target) {
 			appContext.appState = target;
 		}
 		break;
-	case kAPP_STATE_PLAYING: /* Can only come from IDDLE */
-		if (current == kAPP_STATE_IDDLE) {
+	case kAPP_STATE_PLAYING:
+		if ((current == kAPP_STATE_IDDLE) || (current == kAPP_STATE_PLAYING)) {
 			//TODO: Spectrogram...
 
 			if (!appContext.playerContext.songResumed) {
@@ -358,4 +374,10 @@ void cbackout(void) {
 #ifdef DEBUG_PRINTF_APP
 	printf("[App] SD Card removed.\r\n");
 #endif
+}
+void adaptFFT(float32_t * src,float32_t * dst,uint16_t cnt){
+uint16_t i=0;
+	for(i=0;i<cnt;i++){
+		dst[i*2]=src[i];
+	}
 }

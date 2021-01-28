@@ -24,6 +24,7 @@
 enum {
 	FS, VOL, EQ, NOCH
 };
+enum{JAZZ,ROCK,CLASSIC};
 /*******************************************************************************
  * FUNCTION PROTOTYPES WITH FILE SCOPE
  ******************************************************************************/
@@ -41,8 +42,10 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 
 	if (appContext->menuState == kAPP_MENU_MAIN) {
 		static uint8_t index = FS;
-
-		if (ev->btn_evs.next_button) {
+		if (ev->btn_evs.off_on_button) {
+					switchAppState(appContext->appState, kAPP_STATE_OFF);
+				}
+		else if (ev->btn_evs.next_button) {
 			index++;
 			switch (index % 3) {
 			case FS:
@@ -96,7 +99,7 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 		if (ev->btn_evs.off_on_button) {
 			switchAppState(appContext->appState, kAPP_STATE_OFF);
 		}
-		if (SDWRAPPER_GetMounted() && SDWRAPPER_getSDInserted()) {
+		else if (SDWRAPPER_GetMounted() && SDWRAPPER_getSDInserted()) {
 			if (ev->btn_evs.next_button) {
 				if (FSEXP_getNext()) {
 					appContext->currentFile = FSEXP_getFilename();
@@ -106,7 +109,7 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 						appContext->currentFile);
 #endif
 			}
-			if (ev->btn_evs.prev_button) {
+			else if (ev->btn_evs.prev_button) {
 				if (FSEXP_getPrev()) {
 					appContext->currentFile = FSEXP_getFilename();
 				}
@@ -115,7 +118,7 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 						appContext->currentFile);
 #endif
 			}
-			if (ev->btn_evs.enter_button) {
+			else if (ev->btn_evs.enter_button) {
 #ifdef DEBUG_PRINTF_APP
 				printf("[App] Opened %s\n", appContext->currentFile);
 #endif
@@ -127,7 +130,7 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 						appContext->currentFile);
 #endif
 			}
-			if (ev->btn_evs.back_button) {
+			else  if (ev->btn_evs.back_button) {
 
 				if (FSEXP_goBackDir()) {
 					appContext->currentFile = FSEXP_getFilename();
@@ -142,10 +145,12 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 				}
 			}
 
-			if (ev->fsexp_evs.play_music) {
+			else  if (ev->fsexp_evs.play_music) {
 #ifdef DEBUG_PRINTF_APP
 				printf("[App] Switched to playing: %s\n", FSEXP_getMP3Path());
 #endif
+				DAC_Wrapper_Clear_Data_Array();
+				DAC_Wrapper_Clear_Next_Buffer();
 				appContext->playerContext.firstDacTransmition = true;
 				appContext->playerContext.songPaused = false;
 				appContext->playerContext.songResumed = false;
@@ -154,14 +159,16 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 				appContext->playerContext.sr_ = kMP3_44100Hz;
 				appContext->playerContext.ch_ = kMP3_Stereo;
 				appContext->playerContext.using_buffer_1 = true;
-				//TODO: Reiniciar todo para reproducir la proxima cancion.
 				switchAppState(appContext->appState, kAPP_STATE_PLAYING);
 			}
 
 		}
 
 	} else if (appContext->menuState == kAPP_MENU_VOLUME) {
-		if (ev->btn_evs.next_button) {
+		if (ev->btn_evs.off_on_button) {
+					switchAppState(appContext->appState, kAPP_STATE_OFF);
+				}
+		else if (ev->btn_evs.next_button) {
 			if (appContext->volume < 30) {
 				appContext->volume++;
 			}
@@ -182,6 +189,66 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 		} else if (ev->btn_evs.back_button) {
 			appContext->menuState = kAPP_MENU_MAIN;
 		}
+	}
+	else if(appContext->menuState ==  kAPP_MENU_EQUALIZER){
+
+		static uint8_t index = JAZZ;
+		if (ev->btn_evs.off_on_button) {
+					switchAppState(appContext->appState, kAPP_STATE_OFF);
+				}
+		else if (ev->btn_evs.next_button) {
+			index++;
+			switch (index % 3) {
+			case JAZZ:
+				printf("JAZZ preset\r\n");
+				break;
+			case ROCK:
+				printf("ROCK preset\r\n");
+				break;
+			case CLASSIC:
+				printf("CLASSIC preset\r\n");
+				break;
+			default:
+				break;
+			}
+		} else if (ev->btn_evs.prev_button) {
+			index--;
+			switch (index % 3) {
+			case JAZZ:
+				printf("JAZZ preset\r\n");
+				break;
+			case ROCK:
+				printf("ROCK preset\r\n");
+				break;
+			case CLASSIC:
+				printf("CLASSIC preset\r\n");
+				break;
+			default:
+				break;
+			}
+		} else if (ev->btn_evs.enter_button) {
+			switch (index % 3) {
+			case JAZZ:
+				printf("Jazz preset Selected\r\n");
+				break;
+			case ROCK:
+				printf("Rock preset Selected\r\n");
+				/*
+				 *TODO ADD PRESETS HERE
+				 * */
+
+				break;
+			case CLASSIC:
+				printf("Classic preset Selected\r\n");
+
+				break;
+			default:
+				break;
+			}
+		}
+		else if (ev->btn_evs.back_button) {
+					appContext->menuState = kAPP_MENU_MAIN;
+				}
 	}
 }
 
