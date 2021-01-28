@@ -12,6 +12,7 @@
 #include "sd_ev_handler.h"
 #include "button_ev_handler.h"
 #include "fsexplorer_ev_handler.h"
+#include "general.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/

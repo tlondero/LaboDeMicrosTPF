@@ -256,7 +256,7 @@ void switchAppState(app_state_t current, app_state_t target) {
 
 				MP3_Adapt_Signal((int16_t*) getbuffer1(), getbuffer1(),
 						appContext.playerContext.sampleCount,
-						appContext.playerContext.volume);
+						appContext.volume);
 				MP3_Set_Sample_Rate(appContext.playerContext.sr_,
 						appContext.playerContext.ch_);
 
@@ -302,7 +302,7 @@ void resetAppContext(void) {
 	appContext.appState = kAPP_STATE_OFF;
 	appContext.menuState = kAPP_MENU_MAIN;
 	appContext.spectrogramEnable = false;
-	appContext.volume = 50;
+	appContext.volume = 15;
 	appContext.currentFile = NULL;
 
 	resetPlayerContext();
@@ -317,7 +317,6 @@ void resetPlayerContext(void) {
 	appContext.playerContext.sr_ = kMP3_44100Hz;
 	appContext.playerContext.ch_ = kMP3_Stereo;
 	appContext.playerContext.using_buffer_1 = true;
-	appContext.playerContext.volume = 30;
 }
 
 void switchOffKinetis(void) {

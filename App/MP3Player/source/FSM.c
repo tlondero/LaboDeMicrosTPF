@@ -76,7 +76,7 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 			switch (index % 3) {
 			case FS:
 				printf("File System Explorer Menu opened\r\n");
-				appContext->currentFile= FSEXP_exploreFS(FSEXP_ROOT_DIR);
+				appContext->currentFile = FSEXP_exploreFS(FSEXP_ROOT_DIR);
 				appContext->menuState = kAPP_MENU_FILESYSTEM;
 				break;
 			case VOL:
@@ -131,24 +131,57 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 
 				if (FSEXP_goBackDir()) {
 					appContext->currentFile = FSEXP_getFilename();
-				}
+
 #ifdef DEBUG_PRINTF_APP
-				printf("[App] Went back a directory\n");
-				printf("[App] Pointing currently to: %s\n",
-						appContext->currentFile);
+					printf("[App] Went back a directory\n");
+					printf("[App] Pointing currently to: %s\n",
+							appContext->currentFile);
 #endif
+				} else {
+					appContext->menuState = kAPP_MENU_MAIN;
+				}
 			}
 
 			if (ev->fsexp_evs.play_music) {
 #ifdef DEBUG_PRINTF_APP
 				printf("[App] Switched to playing: %s\n", FSEXP_getMP3Path());
 #endif
+				appContext->playerContext.firstDacTransmition = true;
+				appContext->playerContext.songPaused = false;
+				appContext->playerContext.songResumed = false;
+				appContext->playerContext.songEnded = false;
+				appContext->playerContext.res = MP3DECODER_FILE_END;
+				appContext->playerContext.sr_ = kMP3_44100Hz;
+				appContext->playerContext.ch_ = kMP3_Stereo;
+				appContext->playerContext.using_buffer_1 = true;
 				//TODO: Reiniciar todo para reproducir la proxima cancion.
 				switchAppState(appContext->appState, kAPP_STATE_PLAYING);
 			}
 
 		}
 
+	} else if (appContext->menuState == kAPP_MENU_VOLUME) {
+		if (ev->btn_evs.next_button) {
+			if (appContext->volume < 30) {
+				appContext->volume++;
+			}
+
+#ifdef DEBUG_PRINTF_APP
+			printf("[App] Volume set to: %d\n", appContext->volume);
+#endif
+		}
+
+		else if (ev->btn_evs.prev_button) {
+			if (appContext->volume > 0) {
+				appContext->volume--;
+			}
+
+#ifdef DEBUG_PRINTF_APP
+			printf("[App] Volume set to: %d\n", appContext->volume);
+#endif
+		} else if (ev->btn_evs.back_button) {
+			appContext->menuState = kAPP_MENU_MAIN;
+		}
 	}
 }
 
@@ -204,7 +237,7 @@ void runPlayer(event_t *events, app_context_t *appContext) {
 
 				MP3_Adapt_Signal((int16_t*) u_buffer_2, u_buffer_2,
 						appContext->playerContext.sampleCount,
-						appContext->playerContext.volume);
+						appContext->volume);
 			} else {
 				//Envio el buffer 2 al dac
 				DAC_Wrapper_Set_Data_Array(&u_buffer_2,
@@ -218,7 +251,7 @@ void runPlayer(event_t *events, app_context_t *appContext) {
 						&(appContext->playerContext.sampleCount), 0);
 				MP3_Adapt_Signal((int16_t*) u_buffer_1, u_buffer_1,
 						appContext->playerContext.sampleCount,
-						appContext->playerContext.volume);
+						appContext->volume);
 			}
 
 			appContext->playerContext.using_buffer_1 =
