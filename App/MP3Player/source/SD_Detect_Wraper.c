@@ -216,17 +216,3 @@ void PIT0_IRQHandler(void) {
 	__DSB();
 
 }
-#ifdef DEBUG_FRAME_DELAY
-void PIT1_IRQHandler(void) {
-	/* Clear interrupt flag.*/
-	PIT_ClearStatusFlags(PIT, kPIT_Chnl_1, kPIT_TimerFlag);
-
-	nextFrameFlag = true;
-	/* Added for, and affects, all PIT handlers. For CPU clock which is much larger than the IP bus clock,
-	 * CPU can run out of the interrupt handler before the interrupt flag being cleared, resulting in the
-	 * CPU's entering the handler again and again. Adding DSB can prevent the issue from happening.
-	 */
-	__DSB();
-
-}
-#endif
