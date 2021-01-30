@@ -24,6 +24,7 @@
 enum {
 	FS, VOL, EQ, NOCH
 };
+enum{JAZZ,ROCK,CLASSIC};
 /*******************************************************************************
  * FUNCTION PROTOTYPES WITH FILE SCOPE
  ******************************************************************************/
@@ -41,8 +42,10 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 
 	if (appContext->menuState == kAPP_MENU_MAIN) {
 		static uint8_t index = FS;
-
-		if (ev->btn_evs.next_button) {
+		if (ev->btn_evs.off_on_button) {
+					switchAppState(appContext->appState, kAPP_STATE_OFF);
+				}
+		else if (ev->btn_evs.next_button) {
 			index++;
 			switch (index % 3) {
 			case FS:
@@ -76,7 +79,7 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 			switch (index % 3) {
 			case FS:
 				printf("File System Explorer Menu opened\r\n");
-				appContext->currentFile= FSEXP_exploreFS(FSEXP_ROOT_DIR);
+				appContext->currentFile = FSEXP_exploreFS(FSEXP_ROOT_DIR);
 				appContext->menuState = kAPP_MENU_FILESYSTEM;
 				break;
 			case VOL:
@@ -96,7 +99,7 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 		if (ev->btn_evs.off_on_button) {
 			switchAppState(appContext->appState, kAPP_STATE_OFF);
 		}
-		if (SDWRAPPER_GetMounted() && SDWRAPPER_getSDInserted()) {
+		else if (SDWRAPPER_GetMounted() && SDWRAPPER_getSDInserted()) {
 			if (ev->btn_evs.next_button) {
 				if (FSEXP_getNext()) {
 					appContext->currentFile = FSEXP_getFilename();
@@ -106,7 +109,7 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 						appContext->currentFile);
 #endif
 			}
-			if (ev->btn_evs.prev_button) {
+			else if (ev->btn_evs.prev_button) {
 				if (FSEXP_getPrev()) {
 					appContext->currentFile = FSEXP_getFilename();
 				}
@@ -115,7 +118,7 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 						appContext->currentFile);
 #endif
 			}
-			if (ev->btn_evs.enter_button) {
+			else if (ev->btn_evs.enter_button) {
 #ifdef DEBUG_PRINTF_APP
 				printf("[App] Opened %s\n", appContext->currentFile);
 #endif
@@ -127,28 +130,125 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 						appContext->currentFile);
 #endif
 			}
-			if (ev->btn_evs.back_button) {
+			else  if (ev->btn_evs.back_button) {
 
 				if (FSEXP_goBackDir()) {
 					appContext->currentFile = FSEXP_getFilename();
-				}
+
 #ifdef DEBUG_PRINTF_APP
-				printf("[App] Went back a directory\n");
-				printf("[App] Pointing currently to: %s\n",
-						appContext->currentFile);
+					printf("[App] Went back a directory\n");
+					printf("[App] Pointing currently to: %s\n",
+							appContext->currentFile);
 #endif
+				} else {
+					appContext->menuState = kAPP_MENU_MAIN;
+				}
 			}
 
-			if (ev->fsexp_evs.play_music) {
+			else  if (ev->fsexp_evs.play_music) {
 #ifdef DEBUG_PRINTF_APP
 				printf("[App] Switched to playing: %s\n", FSEXP_getMP3Path());
 #endif
-				//TODO: Reiniciar todo para reproducir la proxima cancion.
+				DAC_Wrapper_Clear_Data_Array();
+				DAC_Wrapper_Clear_Next_Buffer();
+				appContext->playerContext.firstDacTransmition = true;
+				appContext->playerContext.songPaused = false;
+				appContext->playerContext.songResumed = false;
+				appContext->playerContext.songEnded = false;
+				appContext->playerContext.res = MP3DECODER_FILE_END;
+				appContext->playerContext.sr_ = kMP3_44100Hz;
+				appContext->playerContext.ch_ = kMP3_Stereo;
+				appContext->playerContext.using_buffer_1 = true;
 				switchAppState(appContext->appState, kAPP_STATE_PLAYING);
 			}
 
 		}
 
+	} else if (appContext->menuState == kAPP_MENU_VOLUME) {
+		if (ev->btn_evs.off_on_button) {
+					switchAppState(appContext->appState, kAPP_STATE_OFF);
+				}
+		else if (ev->btn_evs.next_button) {
+			if (appContext->volume < 30) {
+				appContext->volume++;
+			}
+
+#ifdef DEBUG_PRINTF_APP
+			printf("[App] Volume set to: %d\n", appContext->volume);
+#endif
+		}
+
+		else if (ev->btn_evs.prev_button) {
+			if (appContext->volume > 0) {
+				appContext->volume--;
+			}
+
+#ifdef DEBUG_PRINTF_APP
+			printf("[App] Volume set to: %d\n", appContext->volume);
+#endif
+		} else if (ev->btn_evs.back_button) {
+			appContext->menuState = kAPP_MENU_MAIN;
+		}
+	}
+	else if(appContext->menuState ==  kAPP_MENU_EQUALIZER){
+
+		static uint8_t index = JAZZ;
+		if (ev->btn_evs.off_on_button) {
+					switchAppState(appContext->appState, kAPP_STATE_OFF);
+				}
+		else if (ev->btn_evs.next_button) {
+			index++;
+			switch (index % 3) {
+			case JAZZ:
+				printf("JAZZ preset\r\n");
+				break;
+			case ROCK:
+				printf("ROCK preset\r\n");
+				break;
+			case CLASSIC:
+				printf("CLASSIC preset\r\n");
+				break;
+			default:
+				break;
+			}
+		} else if (ev->btn_evs.prev_button) {
+			index--;
+			switch (index % 3) {
+			case JAZZ:
+				printf("JAZZ preset\r\n");
+				break;
+			case ROCK:
+				printf("ROCK preset\r\n");
+				break;
+			case CLASSIC:
+				printf("CLASSIC preset\r\n");
+				break;
+			default:
+				break;
+			}
+		} else if (ev->btn_evs.enter_button) {
+			switch (index % 3) {
+			case JAZZ:
+				printf("Jazz preset Selected\r\n");
+				break;
+			case ROCK:
+				printf("Rock preset Selected\r\n");
+				/*
+				 *TODO ADD PRESETS HERE
+				 * */
+
+				break;
+			case CLASSIC:
+				printf("Classic preset Selected\r\n");
+
+				break;
+			default:
+				break;
+			}
+		}
+		else if (ev->btn_evs.back_button) {
+					appContext->menuState = kAPP_MENU_MAIN;
+				}
 	}
 }
 
@@ -204,7 +304,7 @@ void runPlayer(event_t *events, app_context_t *appContext) {
 
 				MP3_Adapt_Signal((int16_t*) u_buffer_2, u_buffer_2,
 						appContext->playerContext.sampleCount,
-						appContext->playerContext.volume);
+						appContext->volume);
 			} else {
 				//Envio el buffer 2 al dac
 				DAC_Wrapper_Set_Data_Array(&u_buffer_2,
@@ -218,7 +318,7 @@ void runPlayer(event_t *events, app_context_t *appContext) {
 						&(appContext->playerContext.sampleCount), 0);
 				MP3_Adapt_Signal((int16_t*) u_buffer_1, u_buffer_1,
 						appContext->playerContext.sampleCount,
-						appContext->playerContext.volume);
+						appContext->volume);
 			}
 
 			appContext->playerContext.using_buffer_1 =

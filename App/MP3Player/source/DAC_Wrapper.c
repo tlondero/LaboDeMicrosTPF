@@ -294,18 +294,21 @@ bool MP3_Set_Sample_Rate(uint16_t sr, uint8_t ch) {
 void MP3_Adapt_Signal(int16_t *src, uint16_t *dst, uint16_t cnt,
 		uint8_t volumen) {
 
-	uint16_t j = 0;
-	for (j = 0; j < cnt; j++) {
-		if (volumen) {
-			uint16_t aux = (uint16_t) (((src[j]) / (VOLUME_STEPS + 1))
-					* ((volumen)));	//maximo es 30
 
-			dst[j] = ((aux + 32768) / 16);
-		} else {
-			dst[j] = 0;
+
+		uint16_t j = 0;
+		for (j = 0; j < cnt; j++) {
+			if (volumen) {
+				uint16_t aux = (uint16_t) (((src[j] ) / (VOLUME_STEPS + 1))
+						* ((volumen)*2));	//maximo es 30
+
+				dst[j] = ((aux + 32768) / 16);
+			} else {
+				dst[j] = 0;
+			}
+
 		}
 	}
-}
 
 bool DAC_Wrapper_Is_Transfer_Done(void) {
 	return onePeriodDone;
