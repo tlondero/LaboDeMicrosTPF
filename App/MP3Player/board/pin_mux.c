@@ -202,6 +202,7 @@ void BOARD_InitPins(void)
 	  PORT_SetPinMux(PORTB, PIN17_IDX, kPORT_MuxAlt3);           /* PORTB17 (pin 63) is configured as UART0_TX */
 	  PORT_SetPinMux(PORTB, PIN22_IDX, kPORT_MuxAsGpio);         /* PORTB22 (pin 68) is configured as PTB22 */
 	  PORT_SetPinMux(PORTA, 2U, kPORT_MuxAlt7);				/* PORTA2 (pin 36) is configured as TRACE_SWO */
+	  PORT_SetPinMux(PORTC, 4U, kPORT_MuxAlt3);
 
 	  const port_pin_config_t porte0_pin1_config = {
 	    kPORT_PullUp,                                            /* Internal pull-up resistor is enabled */
