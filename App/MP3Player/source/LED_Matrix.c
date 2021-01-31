@@ -76,17 +76,15 @@ void LEDMATRIX_Init(void){
 
 	}
 
-
 	/* PIT config */
 	PIT_GetDefaultConfig(&pit_config);
 	PIT_Init(PIT, &pit_config);
 	NVIC_EnableIRQ(PIT1_IRQn); //PIT
 	PIT_SetTimerPeriod(PIT, kPIT_Chnl_1, USEC_TO_COUNT(LEDMATRIX_PIT_PERIOD_MS*1000U, CLOCK_GetFreq(kCLOCK_BusClk)));
-	/* Enable timer interrupts for channel 0 */
+	/* Enable timer interrupts for channel 1 */
 	PIT_EnableInterrupts(PIT, kPIT_Chnl_1, kPIT_TimerInterruptEnable);
 
 	/* eDMA config */
-
 	/* Enable the clock for the eDMA and the DMAMUX. */
 	SIM->SCGC7 |= SIM_SCGC7_DMA_MASK;
 	SIM->SCGC6 |= SIM_SCGC6_DMAMUX_MASK;
@@ -99,13 +97,11 @@ void LEDMATRIX_Init(void){
 	/* Enable the DMA interrupts. */
 	NVIC_EnableIRQ(DMA0_IRQn);
 
-	/// ============= INIT TCD0 ===================//
 	/* Set memory address for source and destination. */
-	DMA0->TCD[0].SADDR = (uint32_t)(led_matrix);				   //List of Duties
+	DMA0->TCD[0].SADDR = (uint32_t)(led_matrix);
 
 	//DMA_TCD0_DADDR = (uint32_t)(destinationBuffer);
-	DMA0->TCD[0].DADDR = (uint32_t)(&(LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnV));  // To change FTM Duty
-
+	DMA0->TCD[0].DADDR = (uint32_t)(&(LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnV));
 
 	/* Set an offset for source and destination address. */
 	DMA0->TCD[0].SOFF =0x02; // Source address offset of 2 bytes per transaction.
@@ -124,28 +120,24 @@ void LEDMATRIX_Init(void){
 	/* Autosize SLAST for Wrap Around. This value is added to SADD at the end of Major Loop */
 	DMA0->TCD[0].SLAST = -LEDMATRIX_MAT_SIZE;
 
-
 	/* DLASTSGA DLAST Scatter and Gatter */
 	 DMA0->TCD[0].DLAST_SGA = 0x00;
 
 	/* Setup control and status register. */
-
 	DMA0->TCD[0].CSR = DMA_CSR_INTMAJOR_MASK;	//Enable Major Interrupt.
-
 
 	/* Enable request signal for channel 0. */
 	DMA0->ERQ = DMA_ERQ_ERQ0_MASK;
 
-
 	/* FTM config */
 	SIM->SCGC6 |= SIM_SCGC6_FTM0_MASK;
-	NVIC_EnableIRQ(FTM0_IRQn); //FTM?
+	NVIC_EnableIRQ(FTM0_IRQn);
 	LEDMATRIX_FTM_BASE->PWMLOAD = FTM_PWMLOAD_LDOK_MASK | (1<<0U);
 	LEDMATRIX_FTM_BASE->MODE = (LEDMATRIX_FTM_BASE->MODE & ~FTM_MODE_FTMEN_MASK) | FTM_MODE_FTMEN(1);
 	LEDMATRIX_FTM_BASE->SC = (LEDMATRIX_FTM_BASE->SC & ~FTM_SC_PS_MASK) | FTM_SC_PS(kFTM_Prescale_Divide_1);
 	LEDMATRIX_FTM_BASE->CNTIN = 0U;						//CNTIN
-	LEDMATRIX_FTM_BASE->CNT = 0U;							//CNT
-	LEDMATRIX_FTM_BASE->MOD = LEDMATRIX_FTM_MOD;						//MOD
+	LEDMATRIX_FTM_BASE->CNT = 0U;						//CNT
+	LEDMATRIX_FTM_BASE->MOD = LEDMATRIX_FTM_MOD;		//MOD
 	LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnSC = (LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnSC
 		& ~(FTM_CnSC_MSB_MASK | FTM_CnSC_MSA_MASK))
 		| (FTM_CnSC_MSB((2 >> 1) & 0X01)
@@ -171,14 +163,14 @@ void LEDMATRIX_SetLed(uint8_t row, uint8_t col, uint8_t r, uint8_t g, uint8_t b)
 }
 
 void LEDMATRIX_Enable(void){
-	FTM_EnableDmaTransfer(LEDMATRIX_FTM_BASE, kFTM_Chnl_3, true);
-	FTM_StartTimer(LEDMATRIX_FTM_BASE, kFTM_SystemClock);
+	LEDMATRIX_FTM_BASE->SC |= FTM_SC_CLKS(0x01);
 }
 
 void LEDMATRIX_Disable(void){
-	FTM_EnableDmaTransfer(LEDMATRIX_FTM_BASE, kFTM_Chnl_3, false);
-	LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnV = LEDMATRIX_FTM_CNV_ON;
+	LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnV = LEDMATRIX_FTM_CNV_ZERO;
+	LEDMATRIX_FTM_BASE->SC |= FTM_SC_CLKS(0x00);
 }
+
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH FILE SCOPE
  ******************************************************************************/
@@ -205,7 +197,7 @@ void PIT1_IRQHandler(void) {
 	else{
 		LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnV = LEDMATRIX_FTM_CNV_OFF;
 	}
-	FTM_StartTimer(LEDMATRIX_FTM_BASE, kFTM_SystemClock);
+	LEDMATRIX_Enable();
 
 	/* Added for, and affects, all PIT handlers. For CPU clock which is much larger than the IP bus clock,
 	 * CPU can run out of the interrupt handler before the interrupt flag being cleared, resulting in the
@@ -227,7 +219,7 @@ void DMA0_DriverIRQHandler(void)
 	/* Clear Edma interrupt flag. */
 	EDMA_ClearChannelStatusFlags(LEDMATRIX_DMA_BASE, LEDMATRIX_DMA_CHANNEL,
 			kEDMA_InterruptFlag);
-	FTM_StopTimer(LEDMATRIX_FTM_BASE);
+	LEDMATRIX_Disable();
 	PIT_StartTimer(PIT, kPIT_Chnl_1);
     SDK_ISR_EXIT_BARRIER;
 }
