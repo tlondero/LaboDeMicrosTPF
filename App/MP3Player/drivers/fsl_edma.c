@@ -2641,12 +2641,6 @@ void DMA0_27_31_DriverIRQHandler(void)
 /* 4 channels (No Shared): kv10  */
 #if defined(FSL_FEATURE_EDMA_MODULE_CHANNEL) && (FSL_FEATURE_EDMA_MODULE_CHANNEL > 0)
 
-void DMA0_DriverIRQHandler(void)
-{
-    EDMA_HandleIRQ(s_EDMAHandle[0]);
-    SDK_ISR_EXIT_BARRIER;
-}
-
 void DMA1_DriverIRQHandler(void)
 {
     EDMA_HandleIRQ(s_EDMAHandle[1]);

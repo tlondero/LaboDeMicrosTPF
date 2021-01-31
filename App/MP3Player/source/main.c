@@ -27,6 +27,7 @@
 #include "button.h"
 #include "FSM.h"
 #include "general.h"
+#include "LED_Matrix.h"
 
 /**********************************************************************************************
  *                                          DEFINES                                           *
@@ -66,6 +67,10 @@ static app_context_t appContext;
 int main(void) {
 
 	initDevice(); /* Init device */
+
+	while(1){}
+
+
 	prepareForSwitchOff();
 	while (true) {
 		event_t ev;
@@ -197,6 +202,8 @@ int initDevice(void) {
 	/* Init event handlers */
 	EVHANDLER_InitHandlers();
 
+	/* Led matrix */
+	LEDMATRIX_Init();
 
 	/* Init FFT */
 	fftInit(CFFT_1024);
