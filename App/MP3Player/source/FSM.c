@@ -12,6 +12,7 @@
 #include "fsl_debug_console.h"
 #include "FSM.h"
 #include "FS_explorer.h"
+#include "LED_Matrix.h"
 #include "mp3Decoder.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
@@ -22,7 +23,7 @@
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
 enum {
-	FS, VOL, EQ, NOCH
+	FS, VOL, EQ, SPECT, SUBMENU_CANT
 };
 enum{JAZZ,ROCK,CLASSIC};
 /*******************************************************************************
@@ -43,7 +44,7 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 		static uint8_t index = FS;
 		if (ev->btn_evs.next_button) {
 			index++;
-			switch (index % 3) {
+			switch (index % SUBMENU_CANT) {
 			case FS:
 				#ifdef DEBUG_PRINTF_APP
 				printf("File System Explorer Menu\r\n");
@@ -57,6 +58,11 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 			case EQ:
 				#ifdef DEBUG_PRINTF_APP
 				printf("Equalizer Menu\r\n");
+				#endif
+				break;
+			case SPECT:
+				#ifdef DEBUG_PRINTF_APP
+				printf("Spectrogram Enable/Disable\r\n");
 				#endif
 				break;
 			default:
@@ -65,7 +71,7 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 		}
 		else if (ev->btn_evs.prev_button) {
 			index--;
-			switch (index % 3) {
+			switch (index % SUBMENU_CANT) {
 			case FS:
 				#ifdef DEBUG_PRINTF_APP
 				printf("File System Explorer Menu\r\n");
@@ -81,12 +87,17 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 				printf("Equalizer Menu\r\n");
 				#endif
 				break;
+			case SPECT:
+				#ifdef DEBUG_PRINTF_APP
+				printf("Spectrogram Enable/Disable\r\n");
+				#endif
+				break;
 			default:
 				break;
 			}
 		}
 		else if (ev->btn_evs.enter_button) {
-			switch (index % 3) {
+			switch (index % SUBMENU_CANT) {
 			case FS:
 				#ifdef DEBUG_PRINTF_APP
 				printf("File System Explorer Menu opened\r\n");
@@ -105,6 +116,21 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 				printf("Equalizer Menu opened\r\n");
 				#endif
 				appContext->menuState = kAPP_MENU_EQUALIZER;
+				break;
+			case SPECT:
+				appContext->spectrogramEnable = ~appContext->spectrogramEnable;
+				if(appContext->spectrogramEnable){
+					LEDMATRIX_Enable();
+					#ifdef DEBUG_PRINTF_APP
+					printf("Spectrogram enabled\r\n");
+					#endif
+				}
+				else{
+					LEDMATRIX_Disable();
+					#ifdef DEBUG_PRINTF_APP
+					printf("Spectrogram disabled\r\n");
+					#endif
+				}
 				break;
 			default:
 				break;
