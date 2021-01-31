@@ -100,12 +100,7 @@ int main(void) {
 
 					adaptSignal(u_buffer_1, u_buffer_1, frameData.sampleCount,
 							count);
-//					uint16_t j;
-//					for (j = 0; j < frameData.sampleCount; j++) { //TODO
-//						u_buffer_1[j] = (uint16_t) ((u_buffer_1[j] + 32768)
-//								* 4095 / (65535 * count));
-//					}
-//
+
 					bool using_buffer_1 = true;
 
 					uint16_t sr_ = kMP3_44100Hz; //Default config 4 mp3 stereo
@@ -148,15 +143,14 @@ int main(void) {
 											(int16_t*) u_buffer_2,
 											MP3_DECODED_BUFFER_SIZE,
 											&sampleCount, 0);
+
+									//ECUALIZADOR CON BUFFER 2
+									//TODO
+
+									//Adpto buffer 2
 									adaptSignal(u_buffer_2, u_buffer_2,
 											frameData.sampleCount, count);
-//									for (j = 0; j < frameData.sampleCount;
-//											j++) {
-//										u_buffer_2[j] = //TODO
-//												(uint16_t) ((u_buffer_2[j]
-//														+ 32768) * 4095
-//														/ (65535 * count));
-//									}
+
 								} else {
 									//Envio el buffer 2 al dac
 									DAC_Wrapper_Set_Data_Array(&u_buffer_2,
@@ -168,15 +162,14 @@ int main(void) {
 											(int16_t*) u_buffer_1,
 											MP3_DECODED_BUFFER_SIZE,
 											&sampleCount, 0);
+
+									//ECUALIZADOR CON BUFFER 1
+									//TODO
+
+									//Adpto buffer 1
 									adaptSignal(u_buffer_1, u_buffer_1,
 											frameData.sampleCount, count);
-//									for (j = 0; j < frameData.sampleCount;
-//											j++) {
-//										u_buffer_1[j] = //TODO
-//												(uint16_t) ((u_buffer_1[j]
-//														+ 32768) * 4095
-//														/ (65535 * count));
-//									}
+
 								}
 
 								using_buffer_1 = !using_buffer_1; //Cambio el buffer al siguiente

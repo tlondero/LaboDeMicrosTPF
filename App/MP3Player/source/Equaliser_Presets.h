@@ -27,9 +27,9 @@
 
 //TODO
 /*******************************************************************************
-* En vez de ir desde 19.9 a -19.9 hice que vaya de 199 a -199
-* Es decir que para tenerlo en db habría que dividir cada numero por 10
-* Es para evitar floats por el momento, depues vemos que onda como lo arreglamos
+ * En vez de ir desde 19.9 a -19.9 hice que vaya de 199 a -199
+ * Es decir que para tenerlo en db habría que dividir cada numero por 10
+ * Es para evitar floats por el momento, depues vemos que onda como lo arreglamos
  ******************************************************************************/
 
 static int16_t eq_off_db[BAND_PASS_NUMBER] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -40,8 +40,8 @@ static int16_t eq_clasic_db[BAND_PASS_NUMBER] = { 0, 0, 0, 0, 0, 0, -71, -71,
 static int16_t eq_club_db[BAND_PASS_NUMBER] = { 0, 0, 79, 55, 55, 55, 32, 0, 0,
 		0 };
 
-static int16_t eq_dance_db[BAND_PASS_NUMBER] = { 96, 71, 24, 0, 0, -55, -71.
-		- 71, 0, 0 };
+static int16_t eq_dance_db[BAND_PASS_NUMBER] = { 96, 71, 24, 0, 0, -55, -71,
+		-71, 0, 0 };
 
 static int16_t eq_bass_db[BAND_PASS_NUMBER] = { -79, 96, 96, 55, 16, -39, -79,
 		-103, -111, -111 };

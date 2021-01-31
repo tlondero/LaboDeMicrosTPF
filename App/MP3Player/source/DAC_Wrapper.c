@@ -294,8 +294,6 @@ bool MP3_Set_Sample_Rate(uint16_t sr, uint8_t ch) {
 void MP3_Adapt_Signal(int16_t *src, uint16_t *dst, uint16_t cnt,
 		uint8_t volumen) {
 
-
-
 		uint16_t j = 0;
 		for (j = 0; j < cnt; j++) {
 			if (volumen) {
