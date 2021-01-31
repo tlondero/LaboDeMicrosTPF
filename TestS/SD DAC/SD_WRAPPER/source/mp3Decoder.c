@@ -6,7 +6,7 @@
 
 #include <string.h>
 #include <stdbool.h>  
-#include "mp3decoder.h"
+#include "mp3Decoder.h"
 #include "debug_ifdefs.h"
 #include "lib/helix/pub/mp3dec.h"
 #include "lib/id3tagParser/read_id3.h"

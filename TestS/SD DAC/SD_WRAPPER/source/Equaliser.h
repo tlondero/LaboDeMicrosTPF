@@ -12,12 +12,13 @@
  ******************************************************************************/
 
 #include "arm_math.h"
+#include "filters_coefs.h"
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
-#define EQ_NUM_OF_FILTERS			10
+
 
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
@@ -42,7 +43,7 @@ void eqInit(uint32_t frameSize);
  * @param inputF32  Pointer to input data to filter.
  * @param outputF32 Pointer to where the filtered data should be saved.
  */
-void eqFilterFrame(int16_t *inputF32, uint16_t size, float32_t *outputF32);
+void eqFilterFrame(int16_t *inputF32, uint16_t cnt);
 
 /**
  * @brief Sets all equaliser filter gains.

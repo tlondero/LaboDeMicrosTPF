@@ -165,6 +165,7 @@ int main(void) {
 
 									//ECUALIZADOR CON BUFFER 1
 									//TODO
+									eqFilterFrame(u_buffer_1, frameData.sampleCount);
 
 									//Adpto buffer 1
 									adaptSignal(u_buffer_1, u_buffer_1,
