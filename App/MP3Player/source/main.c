@@ -67,17 +67,6 @@ static app_context_t appContext;
 int main(void) {
 
 	initDevice(); /* Init device */
-
-
-#ifdef DEBUG_LED_MATRIX
-	//*********************DEBUG****************************
-	LEDMATRIX_SetLed(0, 1, 0, 2, 0);
-	while (1) {
-	}
-	//*********************DEBUG****************************
-#endif
-
-
 	prepareForSwitchOff();
 	while (true) {
 		event_t ev;
