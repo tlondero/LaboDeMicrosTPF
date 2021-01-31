@@ -36,6 +36,7 @@
 */
 void FSM_menu(event_t *events, app_context_t *context);
 
+void runPlayer(event_t *events, app_context_t *context);
 
 uint16_t * getbuffer1(void);
 #endif /* FSM_H_ */

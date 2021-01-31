@@ -70,81 +70,72 @@ int main(void) {
 
 	//*********************DEBUG****************************
 	LEDMATRIX_SetLed(0, 1, 0, 2, 0);
-	while(1){}
+	while (1) {
+	}
 	//*********************DEBUG****************************
 
 	prepareForSwitchOff();
 	while (true) {
 		event_t ev;
-
 		EVHANDLER_GetEvents(&ev); /* Get events */
-
 		switch (appContext.appState) {
-
-		/***************/
-		/*  OFF STATE  */
-		/***************/
-
+/***************/
+/*  OFF STATE  */
+/***************/
 		case kAPP_STATE_OFF:
 			switchOffKinetis(); /* Turn off */
 			switchAppState(appContext.appState, kAPP_STATE_IDDLE); /* Go back to IDDLE */
-
 			break;
 
-			/***************/
-			/* IDDLE STATE */
-			/***************/
-
+/***************/
+/* IDDLE STATE */
+/***************/
 		case kAPP_STATE_IDDLE:
-
 			if (SDWRAPPER_getJustOut()) { /* If SD is removed */
-					if (appContext.menuState == kAPP_MENU_FILESYSTEM) { /* and menu is exploring FS*/
-						appContext.menuState = kAPP_MENU_MAIN; /* Go back to main menu */
-
-					}
+				if (appContext.menuState == kAPP_MENU_FILESYSTEM) { /* and menu is exploring FS*/
+					appContext.menuState = kAPP_MENU_MAIN; /* Go back to main menu */
 				}
-
+			}
+			else if (ev.btn_evs.off_on_button) {
+				switchAppState(appContext.appState, kAPP_STATE_OFF);
+			}
 			else if (ev.btn_evs.pause_play_button) {
-					appContext.playerContext.songResumed = true;
-					switchAppState(appContext.appState, kAPP_STATE_PLAYING);
-#ifdef DEBUG_PRINTF_APP
-					printf("[App] Resumed playing.\n");
-#endif
-				}
-
+				appContext.playerContext.songResumed = true;
+				switchAppState(appContext.appState, kAPP_STATE_PLAYING);
+				#ifdef DEBUG_PRINTF_APP
+				printf("[App] Resumed playing.\n");
+				#endif
+			}
 			runMenu(&ev, &appContext); /* Run menu in background */
 			break;
 
-			/***************/
-			/*PLAYING STATE*/
-			/***************/
-
+/***************/
+/*PLAYING STATE*/
+/***************/
 		case kAPP_STATE_PLAYING:
-
 			if (SDWRAPPER_getJustOut()) { /* If SD is removed */
-					if (appContext.menuState == kAPP_MENU_FILESYSTEM) { /* and menu is exploring FS*/
-						appContext.menuState = kAPP_MENU_MAIN; /* Go back to main menu */
-						//TODO stop music, stop spectogram
-						//...
-						switchAppState(appContext.appState, kAPP_STATE_IDDLE); /* Return to iddle state */
-
-					}
+				if (appContext.menuState == kAPP_MENU_FILESYSTEM) { /* and menu is exploring FS*/
+					appContext.menuState = kAPP_MENU_MAIN; /* Go back to main menu */
+					//TODO stop music, stop spectogram
+					//...
+					switchAppState(appContext.appState, kAPP_STATE_IDDLE); /* Return to iddle state */
 				}
-
+			}
 			if (ev.btn_evs.pause_play_button) {
 				appContext.playerContext.songPaused = true;
 				switchAppState(appContext.appState, kAPP_STATE_IDDLE);
-#ifdef DEBUG_PRINTF_APP
+				#ifdef DEBUG_PRINTF_APP
 				printf("[App] Stopped playing.\n");
-#endif
+				#endif
 			}
-			runMenu(&ev, &appContext); /* Run menu in background */
-
-			if (appContext.playerContext.songEnded) {
+			else if (ev.btn_evs.off_on_button) {
+				switchAppState(appContext.appState, kAPP_STATE_OFF);
+			}
+			else if (appContext.playerContext.songEnded) {
 				appContext.playerContext.songEnded = false;
 				switchAppState(appContext.appState, kAPP_STATE_IDDLE);
-			} else {
-				runPlayer(&ev, &appContext); /* Run player in background */
+			}
+			runPlayer(&ev, &appContext); /* Run player in background */
 				/*ACA pongo lo que se hace para hacer la fft
 				 * despues me imagino irá en un PIT
 				 * para actualizar los valores cada 250ms capaz
@@ -153,8 +144,7 @@ int main(void) {
 //				fft(inputF32, outputF32, 1);
 //				fftGetMag(inputF32, outputF32);
 //				fftMakeBines8(src, dst);
-			}
-
+			runMenu(&ev, &appContext); /* Run menu in background */
 			break;
 
 		default:
