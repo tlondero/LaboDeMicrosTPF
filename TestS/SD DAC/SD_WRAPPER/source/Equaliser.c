@@ -18,7 +18,7 @@
  ******************************************************************************/
 #define MAX_BLOCKSIZE 2048
 #define FRAME_SIZE 2304
-#define NFFT 4096
+#define NFFT_MAGT 4096
 
 
 /*******************************************************************************
@@ -43,13 +43,15 @@ static float32_t eqGains32[EQ_NUM_OF_FILTERS] = // Multiplier of each equaliser 
  GLOBAL FUNCTION DEFINITIONS
  *******************************************************************************
  ******************************************************************************/
-static float32_t *outputAux;
-static float32_t *inputAux;
+static float32_t outputAux[NFFT_MAGT];
+static float32_t inputAux[NFFT_MAGT];
+static float32_t filtFFTAuxIN[NFFT_MAGT];
+static float32_t filtFFTAuxOUT[NFFT_MAGT];
+static float32_t filtFFTAuxCUMSUM[NFFT_MAGT];
 
 void eqInit(uint32_t frameSize)
 {
-	inputAux = (float32_t *) calloc(NFFT, sizeof(float32_t));
-	outputAux = (float32_t *) calloc(NFFT, sizeof(float32_t));
+	fftInit(CFFT_4096);
 
 }
 
@@ -63,18 +65,26 @@ void eqFilterFrame(int16_t *inputF32, uint16_t cnt)
 	for (x = 0; x < cnt; x++)
 	{
 		inputAux[x] = (float32_t)(inputF32[x]);
+
 	}
 
 	arm_status status;
 	status = ARM_MATH_SUCCESS;
-	float *input_copy = calloc(NFFT, sizeof(float));
-	arm_copy_f32((const float32_t *)inputF32, (const float32_t *)input_copy, NFFT);
+	float *input_copy = calloc(NFFT_MAGT, sizeof(float));
+	//FFT del input
+	fft(inputAux, outputAux, true);
+	/*
+	int i = 0;
+	for(i=0; i<EQ_NUM_OF_FILTERS; i++){
 
-	//arm_cfft_radix4_instance_f32 cfft_instance_ptr;
-	//status = arm_cfft_radix4_init_f32(cfft_instance_ptr, NFFT/2, 0, 1);
-	//arm_cfft_radix4_f32(cfft_instance_ptr, input_copy);
+		//FFT del filtro
+		memcpy(eqFirCoeffs32[i], filtFFTAuxIN, cnt);
+		fft(filtFFTAuxIN, filtFFTAuxOUT, true);
 
 
+
+	}
+*/
 }
 
 void eqSetFrameSize(uint32_t eqFrameSize_)
