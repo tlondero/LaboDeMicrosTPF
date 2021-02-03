@@ -67,6 +67,19 @@ static app_context_t appContext;
 int main(void) {
 
 	initDevice(); /* Init device */
+	LEDMATRIX_SetLed(1, 2, 0, 0, 100);
+	LEDMATRIX_SetLed(1, 5, 0, 0, 100);
+	LEDMATRIX_SetLed(4, 1, 0, 0, 100);
+	LEDMATRIX_SetLed(5, 2, 0, 0, 100);
+	LEDMATRIX_SetLed(5, 3, 0, 0, 100);
+	LEDMATRIX_SetLed(5, 4, 0, 0, 100);
+	LEDMATRIX_SetLed(5, 5, 0, 0, 100);
+	LEDMATRIX_SetLed(4, 6, 0, 0, 100);
+
+	LEDMATRIX_Enable();
+	while(1){
+
+	}
 	prepareForSwitchOff();
 	while (true) {
 		event_t ev;
@@ -168,15 +181,17 @@ int initDevice(void) {
 	LED_GREEN_INIT(LOGIC_LED_OFF);
 #endif
 
+	/* Init sub-drivers */
+	pit_config_t pit_config;
+	PIT_GetDefaultConfig(&pit_config);
+	PIT_Init(PIT, &pit_config);
+
+
 	/* Init Botonera */
 	BUTTON_Init();
 
 	/* Init Helix MP3 Decoder */
 	MP3DecoderInit();
-
-	/* Init SD wrapper */
-	SDWRAPPER_Init(cbackin, cbackout); //Init PIT, SD
-	SDWRAPPER_SetInterruptEnable(false);
 
 	/* Init DAC */
 	DAC_Wrapper_Init();		//Init DMAMUX, EDMA, PDB, DAC
@@ -184,11 +199,15 @@ int initDevice(void) {
 	DAC_Wrapper_Start_Trigger();
 	DAC_Wrapper_Sleep();
 
+	/* Led matrix */
+	LEDMATRIX_Init(); //PIT, DMA, DMAMUX, FTM
+
+	/* Init SD wrapper */
+	SDWRAPPER_Init(cbackin, cbackout); //Init PIT, SD
+	SDWRAPPER_SetInterruptEnable(false);
+
 	/* Init event handlers */
 	EVHANDLER_InitHandlers();
-
-	/* Led matrix */
-	LEDMATRIX_Init();
 
 	/* Init FFT */
 	fftInit(CFFT_1024);

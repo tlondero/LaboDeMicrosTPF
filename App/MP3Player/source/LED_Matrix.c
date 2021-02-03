@@ -8,6 +8,7 @@
 /*******************************************************************************
  * INCLUDE HEADER FILES
  ******************************************************************************/
+#include <stdio.h>
 #include "LED_Matrix.h"
 #include "fsl_ftm.h"
 #include "fsl_edma.h"
@@ -18,17 +19,17 @@
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 /*FTM*/
-#define LEDMATRIX_FTM_CNV_ON 39 //39 ticks -> 0.8us
-#define LEDMATRIX_FTM_CNV_OFF 20 //20 ticks -> 0.4us
+#define LEDMATRIX_FTM_CNV_ON 48 //39 ticks -> 0.8us
+#define LEDMATRIX_FTM_CNV_OFF 24 //20 ticks -> 0.4us
 #define LEDMATRIX_FTM_CNV_ZERO 0
-#define LEDMATRIX_FTM_MOD 62//62+1ticks ->1.26us
+#define LEDMATRIX_FTM_MOD 76//62+1ticks ->1.26us
 #define LEDMATRIX_FTM_BASE FTM0
 #define LEDMATRIX_FTM_CHANNEL 0
 
 /*MEM*/
 #define LEDMATRIX_CANT_LEDS 64
 #define LEDMATRIX_CANT_LEDS_ZERO 0
-#define LEDMATRIX_MAT_SIZE ((LEDMATRIX_CANT_LEDS+LEDMATRIX_CANT_LEDS_ZERO)*8*3*2)+(1*2) //(64 LEDS+10LEDS en zero para reset) * 8BITS * 3 COLORES * 2bytes (CNV son 16 bits)
+#define LEDMATRIX_MAT_SIZE ((LEDMATRIX_CANT_LEDS+LEDMATRIX_CANT_LEDS_ZERO)*8*3*2)//+(1*2) //(64 LEDS+10LEDS en zero para reset) * 8BITS * 3 COLORES * 2bytes (CNV son 16 bits)
 #define LEDMATRIX_ROW_SIZE 8
 
 /*PIT*/
@@ -60,8 +61,6 @@ static void set_color_brightness(uint16_t *ptr, uint8_t brightness);
  * VARIABLE DECLARATION WITH FILE SCOPE
  ******************************************************************************/
 static GRB_t led_matrix [LEDMATRIX_CANT_LEDS+LEDMATRIX_CANT_LEDS_ZERO];
-
-static pit_config_t pit_config;
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH GLOBAL SCOPE
  ******************************************************************************/
@@ -77,10 +76,8 @@ void LEDMATRIX_Init(void){
 	}
 
 	/* PIT config */
-	PIT_GetDefaultConfig(&pit_config);
-	PIT_Init(PIT, &pit_config);
 	NVIC_EnableIRQ(PIT1_IRQn); //PIT
-	PIT_SetTimerPeriod(PIT, kPIT_Chnl_1, USEC_TO_COUNT(LEDMATRIX_PIT_PERIOD_MS*1000U, CLOCK_GetFreq(kCLOCK_BusClk)));
+	PIT_SetTimerPeriod(PIT, kPIT_Chnl_1, 120000U);
 	/* Enable timer interrupts for channel 1 */
 	PIT_EnableInterrupts(PIT, kPIT_Chnl_1, kPIT_TimerInterruptEnable);
 
@@ -131,9 +128,10 @@ void LEDMATRIX_Init(void){
 
 	/* FTM config */
 	SIM->SCGC6 |= SIM_SCGC6_FTM0_MASK;
+	NVIC_ClearPendingIRQ(FTM0_IRQn);
 	NVIC_EnableIRQ(FTM0_IRQn);
 	LEDMATRIX_FTM_BASE->PWMLOAD = FTM_PWMLOAD_LDOK_MASK | (1<<0U);
-	LEDMATRIX_FTM_BASE->MODE = (LEDMATRIX_FTM_BASE->MODE & ~FTM_MODE_FTMEN_MASK) | FTM_MODE_FTMEN(1);
+	//LEDMATRIX_FTM_BASE->MODE = (LEDMATRIX_FTM_BASE->MODE & ~FTM_MODE_FTMEN_MASK) | FTM_MODE_FTMEN(1);
 	LEDMATRIX_FTM_BASE->SC = (LEDMATRIX_FTM_BASE->SC & ~FTM_SC_PS_MASK) | FTM_SC_PS(kFTM_Prescale_Divide_1);
 	LEDMATRIX_FTM_BASE->CNTIN = 0U;						//CNTIN
 	LEDMATRIX_FTM_BASE->CNT = 0U;						//CNT
@@ -152,7 +150,6 @@ void LEDMATRIX_Init(void){
 		& ~FTM_CnSC_CHIE_MASK) | FTM_CnSC_CHIE(1);
 	LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnSC = (LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnSC & ~(FTM_CnSC_DMA_MASK)) |
 										  (FTM_CnSC_DMA(1));
-	LEDMATRIX_FTM_BASE->SC |= FTM_SC_CLKS(0x01);
 }
 
 void LEDMATRIX_SetLed(uint8_t row, uint8_t col, uint8_t r, uint8_t g, uint8_t b){
@@ -167,7 +164,7 @@ void LEDMATRIX_Enable(void){
 }
 
 void LEDMATRIX_Disable(void){
-	LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnV = LEDMATRIX_FTM_CNV_ZERO;
+	//LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnV = LEDMATRIX_FTM_CNV_ZERO;
 	LEDMATRIX_FTM_BASE->SC |= FTM_SC_CLKS(0x00);
 }
 
@@ -191,13 +188,14 @@ void PIT1_IRQHandler(void) {
 	/* Clear interrupt flag.*/
 	PIT_ClearStatusFlags(PIT, kPIT_Chnl_1, kPIT_TimerFlag);
 	PIT_StopTimer(PIT, kPIT_Chnl_1);
+	printf("Pit stopped\n");
 	if(led_matrix[0].G[0] == LEDMATRIX_FTM_CNV_ON){
 		LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnV = LEDMATRIX_FTM_CNV_ON;
 	}
 	else{
 		LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnV = LEDMATRIX_FTM_CNV_OFF;
 	}
-	LEDMATRIX_Enable();
+	LEDMATRIX_FTM_BASE->SC |= FTM_SC_CLKS(0x01);
 
 	/* Added for, and affects, all PIT handlers. For CPU clock which is much larger than the IP bus clock,
 	 * CPU can run out of the interrupt handler before the interrupt flag being cleared, resulting in the
@@ -217,10 +215,10 @@ void FTM0_IRQHandler(void) {
 void DMA0_DriverIRQHandler(void)
 {
 	/* Clear Edma interrupt flag. */
-	EDMA_ClearChannelStatusFlags(LEDMATRIX_DMA_BASE, LEDMATRIX_DMA_CHANNEL,
-			kEDMA_InterruptFlag);
-	LEDMATRIX_Disable();
+	DMA0->CINT |= 0;
+	LEDMATRIX_FTM_BASE->SC |= FTM_SC_CLKS(0x00);
 	PIT_StartTimer(PIT, kPIT_Chnl_1);
+	printf("Pit started\n");
     SDK_ISR_EXIT_BARRIER;
 }
 

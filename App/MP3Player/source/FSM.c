@@ -62,7 +62,12 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 				break;
 			case SPECT:
 				#ifdef DEBUG_PRINTF_APP
-				printf("Spectrogram Enable/Disable\r\n");
+				if(appContext->spectrogramEnable){
+					printf("Spectrogram on\r\n");
+				}
+				else{
+					printf("Spectrogram off\r\n");
+				}
 				#endif
 				break;
 			default:
@@ -89,7 +94,12 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 				break;
 			case SPECT:
 				#ifdef DEBUG_PRINTF_APP
-				printf("Spectrogram Enable/Disable\r\n");
+				if(appContext->spectrogramEnable){
+					printf("Spectrogram on\r\n");
+				}
+				else{
+					printf("Spectrogram off\r\n");
+				}
 				#endif
 				break;
 			default:
@@ -99,10 +109,11 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 		else if (ev->btn_evs.enter_button) {
 			switch (index % SUBMENU_CANT) {
 			case FS:
+				appContext->currentFile = FSEXP_exploreFS(FSEXP_ROOT_DIR);
 				#ifdef DEBUG_PRINTF_APP
 				printf("File System Explorer Menu opened\r\n");
+				printf("Currently pointing to: %s", appContext->currentFile);
 				#endif
-				appContext->currentFile = FSEXP_exploreFS(FSEXP_ROOT_DIR);
 				appContext->menuState = kAPP_MENU_FILESYSTEM;
 				break;
 			case VOL:
@@ -118,23 +129,26 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 				appContext->menuState = kAPP_MENU_EQUALIZER;
 				break;
 			case SPECT:
-				appContext->spectrogramEnable = ~appContext->spectrogramEnable;
+				appContext->spectrogramEnable = !appContext->spectrogramEnable;
 				if(appContext->spectrogramEnable){
 					LEDMATRIX_Enable();
 					#ifdef DEBUG_PRINTF_APP
-					printf("Spectrogram enabled\r\n");
+					printf("Spectrogram on\r\n");
 					#endif
 				}
 				else{
 					LEDMATRIX_Disable();
 					#ifdef DEBUG_PRINTF_APP
-					printf("Spectrogram disabled\r\n");
+					printf("Spectrogram off\r\n");
 					#endif
 				}
 				break;
 			default:
 				break;
 			}
+		}
+		else if (ev->btn_evs.back_button) {
+
 		}
 	}
 	else if (appContext->menuState == kAPP_MENU_FILESYSTEM) {
@@ -181,6 +195,9 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 				}
 				else {
 					appContext->menuState = kAPP_MENU_MAIN;
+				#ifdef DEBUG_PRINTF_APP
+				printf("Main menu\r\n");
+				#endif
 				}
 			}
 			else if (ev->fsexp_evs.play_music) {
@@ -220,6 +237,9 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 		}
 		else if (ev->btn_evs.back_button) {
 			appContext->menuState = kAPP_MENU_MAIN;
+			#ifdef DEBUG_PRINTF_APP
+			printf("Main menu\r\n");
+			#endif
 		}
 	}
 	else if (appContext->menuState == kAPP_MENU_EQUALIZER) {
@@ -294,6 +314,9 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 		}
 		else if (ev->btn_evs.back_button) {
 			appContext->menuState = kAPP_MENU_MAIN;
+			#ifdef DEBUG_PRINTF_APP
+			printf("Main menu\r\n");
+			#endif
 		}
 	}
 }

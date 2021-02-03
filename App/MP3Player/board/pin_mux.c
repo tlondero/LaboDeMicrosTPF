@@ -334,7 +334,7 @@ void BOARD_InitPins(void) {
 	/* PORTD0 (pin 93) is configured as PTD0 */
 	PORT_SetPinConfig(PORTD, PIN0_IDX, &portd0_pin93_config);
 
-	const port_pin_config_t portd0_pin94_config = {/* Internal pull-down resistor is enabled */
+	const port_pin_config_t portd1_pin94_config = {/* Internal pull-down resistor is enabled */
 	kPORT_PullDown,
 	/* Fast slew rate is configured */
 	kPORT_FastSlewRate,
@@ -344,14 +344,14 @@ void BOARD_InitPins(void) {
 	kPORT_OpenDrainDisable,
 	/* Low drive strength is configured */
 	kPORT_LowDriveStrength,
-	/* Pin is configured as PTD0 */
+	/* Pin is configured as PTD1 */
 	kPORT_MuxAsGpio,
 	/* Pin Control Register fields [15:0] are not locked */
 	kPORT_UnlockRegister };
-	/* PORTD0 (pin 94) is configured as PTD0 */
-	PORT_SetPinConfig(PORTD, PIN1_IDX, &portd0_pin94_config);
+	/* PORTD1 (pin 94) is configured as PTD1 */
+	PORT_SetPinConfig(PORTD, PIN1_IDX, &portd1_pin94_config);
 
-	const port_pin_config_t portd0_pin95_config = {/* Internal pull-down resistor is enabled */
+	const port_pin_config_t portd2_pin95_config = {/* Internal pull-down resistor is enabled */
 	kPORT_PullDown,
 	/* Fast slew rate is configured */
 	kPORT_FastSlewRate,
@@ -361,12 +361,29 @@ void BOARD_InitPins(void) {
 	kPORT_OpenDrainDisable,
 	/* Low drive strength is configured */
 	kPORT_LowDriveStrength,
-	/* Pin is configured as PTD0 */
+	/* Pin is configured as PTD2 */
 	kPORT_MuxAsGpio,
 	/* Pin Control Register fields [15:0] are not locked */
 	kPORT_UnlockRegister };
-	/* PORTD0 (pin 95) is configured as PTD0 */
-	PORT_SetPinConfig(PORTD, PIN2_IDX, &portd0_pin95_config);
+	/* PORTD2 (pin 95) is configured as PTD2 */
+	PORT_SetPinConfig(PORTD, PIN2_IDX, &portd2_pin95_config);
+
+	const port_pin_config_t portd3_pin96_config = {/* Internal pull-down resistor is enabled */
+	kPORT_PullDown,
+	/* Fast slew rate is configured */
+	kPORT_FastSlewRate,
+	/* Passive filter is disabled */
+	kPORT_PassiveFilterDisable,
+	/* Open drain is disabled */
+	kPORT_OpenDrainDisable,
+	/* Low drive strength is configured */
+	kPORT_LowDriveStrength,
+	/* Pin is configured as PTD3 */
+	kPORT_MuxAsGpio,
+	/* Pin Control Register fields [15:0] are not locked */
+	kPORT_UnlockRegister };
+	/* PORTD3 (pin 95) is configured as PTD3 */
+	PORT_SetPinConfig(PORTD, PIN3_IDX, &portd3_pin96_config);
 
 	const port_pin_config_t portc1_pin71_config = {/* Internal pull-down resistor is enabled */
 	kPORT_PullDisable,
@@ -378,11 +395,11 @@ void BOARD_InitPins(void) {
 	kPORT_OpenDrainDisable,
 	/* Low drive strength is configured */
 	kPORT_HighDriveStrength,
-	/* Pin is configured as PTD0 */
+	/* Pin is configured as PTC1 */
 	kPORT_MuxAlt4,
 	/* Pin Control Register fields [15:0] are not locked */
 	kPORT_UnlockRegister };
-	/* PORTD0 (pin 96) is configured as PTD0 */
+	/* PORTC1 (pin 71) is configured as FTM0 */
 	PORT_SetPinConfig(PORTC, PIN1_IDX, &portc1_pin71_config);
 
 	SIM->SOPT5 = ((SIM->SOPT5 & (~(SIM_SOPT5_UART0TXSRC_MASK))) /* Mask bits to zero which are setting */
