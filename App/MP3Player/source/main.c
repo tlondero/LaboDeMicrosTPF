@@ -67,6 +67,8 @@ static app_context_t appContext;
 int main(void) {
 
 	initDevice(); /* Init device */
+
+	//Debug, dejar porque no jode..
 	LEDMATRIX_SetLed(1, 2, 0, 0, 100);
 	LEDMATRIX_SetLed(1, 5, 0, 0, 100);
 	LEDMATRIX_SetLed(4, 1, 0, 0, 100);
@@ -75,11 +77,8 @@ int main(void) {
 	LEDMATRIX_SetLed(5, 4, 0, 0, 100);
 	LEDMATRIX_SetLed(5, 5, 0, 0, 100);
 	LEDMATRIX_SetLed(4, 6, 0, 0, 100);
+	LEDMATRIX_Pause();
 
-	LEDMATRIX_Enable();
-	while(1){
-
-	}
 	prepareForSwitchOff();
 	while (true) {
 		event_t ev;

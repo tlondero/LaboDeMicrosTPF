@@ -77,7 +77,7 @@ void LEDMATRIX_Init(void){
 
 	/* PIT config */
 	NVIC_EnableIRQ(PIT1_IRQn); //PIT
-	PIT_SetTimerPeriod(PIT, kPIT_Chnl_1, 12000U);
+	PIT_SetTimerPeriod(PIT, kPIT_Chnl_1, MSEC_TO_COUNT(2U, CLOCK_GetFreq(kCLOCK_BusClk)));
 	/* Enable timer interrupts for channel 1 */
 	PIT_EnableInterrupts(PIT, kPIT_Chnl_1, kPIT_TimerInterruptEnable);
 
@@ -158,6 +158,21 @@ void LEDMATRIX_SetLed(uint8_t row, uint8_t col, uint8_t r, uint8_t g, uint8_t b)
 	set_color_brightness(led_matrix[LEDMATRIX_ROW_SIZE*row+col].B, b);
 }
 
+void LEDMATRIX_Resume(void){
+	if(led_matrix[0].G[0] == LEDMATRIX_FTM_CNV_ON){
+		LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnV = LEDMATRIX_FTM_CNV_ON;
+	}
+	else{
+		LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnV = LEDMATRIX_FTM_CNV_OFF;
+	}
+	LEDMATRIX_Enable();
+}
+
+void LEDMATRIX_Pause(void){
+	LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnV = LEDMATRIX_FTM_CNV_OFF;
+	LEDMATRIX_FTM_BASE->SC &= ~FTM_SC_CLKS(0x01);
+}
+
 void LEDMATRIX_Enable(void){
 	LEDMATRIX_FTM_BASE->SC |= FTM_SC_CLKS(0x01);
 }
@@ -187,7 +202,6 @@ void PIT1_IRQHandler(void) {
 	/* Clear interrupt flag.*/
 	PIT_ClearStatusFlags(PIT, kPIT_Chnl_1, kPIT_TimerFlag);
 	PIT_StopTimer(PIT, kPIT_Chnl_1);
-	printf("Pit stopped\n");
 	if(led_matrix[0].G[0] == LEDMATRIX_FTM_CNV_ON){
 		LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnV = LEDMATRIX_FTM_CNV_ON;
 	}
@@ -217,7 +231,6 @@ void DMA0_DriverIRQHandler(void)
 	DMA0->CINT |= 0;
 	LEDMATRIX_Disable();
 	PIT_StartTimer(PIT, kPIT_Chnl_1);
-	printf("Pit started\n");
     SDK_ISR_EXIT_BARRIER;
 }
 

@@ -58,4 +58,8 @@ void LEDMATRIX_Enable(void);
 */
 void LEDMATRIX_Disable(void);
 
+void LEDMATRIX_Pause(void);
+
+void LEDMATRIX_Resume(void);
+
 #endif /* LED_MATRIX_H_ */

@@ -131,13 +131,13 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 			case SPECT:
 				appContext->spectrogramEnable = !appContext->spectrogramEnable;
 				if(appContext->spectrogramEnable){
-					LEDMATRIX_Enable();
+					LEDMATRIX_Resume();
 					#ifdef DEBUG_PRINTF_APP
 					printf("Spectrogram on\r\n");
 					#endif
 				}
 				else{
-					LEDMATRIX_Disable();
+					LEDMATRIX_Pause();
 					#ifdef DEBUG_PRINTF_APP
 					printf("Spectrogram off\r\n");
 					#endif
