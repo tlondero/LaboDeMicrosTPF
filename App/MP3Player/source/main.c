@@ -77,6 +77,7 @@ int main(void) {
 	LEDMATRIX_SetLed(5, 4, 0, 0, 100);
 	LEDMATRIX_SetLed(5, 5, 0, 0, 100);
 	LEDMATRIX_SetLed(4, 6, 0, 0, 100);
+	LEDMATRIX_Enable();
 	LEDMATRIX_Pause();
 
 	prepareForSwitchOff();
