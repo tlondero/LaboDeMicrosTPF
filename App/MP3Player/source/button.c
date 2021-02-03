@@ -10,6 +10,10 @@
  ******************************************************************************/
 #include "button.h"
 #include "fsl_port.h"
+#include "debug_ifdefs.h"
+#ifdef BUTTON_DEBOUNCE
+#include "fsl_sdmmc_osa.h"
+#endif
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
@@ -170,18 +174,42 @@ void PORTD_IRQHandler(void)	//BOTONERA
 {
 	if (((1U << 0U) & PORT_GetPinsInterruptFlags(PORTD))){ //PTD0
 			PORT_ClearPinsInterruptFlags(PORTD, (1U << 0U));
-			BUTTON_NEXT_CALLBACK();
+			SDMMC_OSADelay(20U);
+#ifdef BUTTON_DEBOUNCE
+			if(GPIO_PinRead(GPIOD, 0U))
+#endif
+			{
+				BUTTON_NEXT_CALLBACK();
+			}
 	}
 	else if (((1U << 1U) & PORT_GetPinsInterruptFlags(PORTD))){ //PTD1
 			PORT_ClearPinsInterruptFlags(PORTD, (1U << 1U));
-			BUTTON_PREV_CALLBACK();
+			SDMMC_OSADelay(20U);
+#ifdef BUTTON_DEBOUNCE
+			if(GPIO_PinRead(GPIOD, 1U))
+#endif
+			{
+				BUTTON_PREV_CALLBACK();
+			}
 	}
 	else if (((1U << 2U) & PORT_GetPinsInterruptFlags(PORTD))){ //PTD2
 			PORT_ClearPinsInterruptFlags(PORTD, (1U << 2U));
-			BUTTON_ENTER_CALLBACK();
+			SDMMC_OSADelay(20U);
+#ifdef BUTTON_DEBOUNCE
+			if(GPIO_PinRead(GPIOD, 2U))
+#endif
+			{
+				BUTTON_ENTER_CALLBACK();
+			}
 	}
 	else if (((1U << 3U) & PORT_GetPinsInterruptFlags(PORTD))){ //PTD3
 			PORT_ClearPinsInterruptFlags(PORTD, (1U << 3U));
+			SDMMC_OSADelay(20U);
+#ifdef BUTTON_DEBOUNCE
+			if(GPIO_PinRead(GPIOD, 3U))
+#endif
+			{
 			BUTTON_BACK_CALLBACK();
+			}
 	}
 }
