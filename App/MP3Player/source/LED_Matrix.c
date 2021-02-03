@@ -19,10 +19,10 @@
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 /*FTM*/
-#define LEDMATRIX_FTM_CNV_ON 48 //39 ticks -> 0.8us
-#define LEDMATRIX_FTM_CNV_OFF 24 //20 ticks -> 0.4us
+#define LEDMATRIX_FTM_CNV_ON 48 // -> 0.8us
+#define LEDMATRIX_FTM_CNV_OFF 24 // -> 0.4us
 #define LEDMATRIX_FTM_CNV_ZERO 0
-#define LEDMATRIX_FTM_MOD 76//62+1ticks ->1.26us
+#define LEDMATRIX_FTM_MOD 76// -> 1.26us
 #define LEDMATRIX_FTM_BASE FTM0
 #define LEDMATRIX_FTM_CHANNEL 0
 
@@ -77,7 +77,7 @@ void LEDMATRIX_Init(void){
 
 	/* PIT config */
 	NVIC_EnableIRQ(PIT1_IRQn); //PIT
-	PIT_SetTimerPeriod(PIT, kPIT_Chnl_1, 120000U);
+	PIT_SetTimerPeriod(PIT, kPIT_Chnl_1, 12000U);
 	/* Enable timer interrupts for channel 1 */
 	PIT_EnableInterrupts(PIT, kPIT_Chnl_1, kPIT_TimerInterruptEnable);
 
@@ -131,7 +131,6 @@ void LEDMATRIX_Init(void){
 	NVIC_ClearPendingIRQ(FTM0_IRQn);
 	NVIC_EnableIRQ(FTM0_IRQn);
 	LEDMATRIX_FTM_BASE->PWMLOAD = FTM_PWMLOAD_LDOK_MASK | (1<<0U);
-	//LEDMATRIX_FTM_BASE->MODE = (LEDMATRIX_FTM_BASE->MODE & ~FTM_MODE_FTMEN_MASK) | FTM_MODE_FTMEN(1);
 	LEDMATRIX_FTM_BASE->SC = (LEDMATRIX_FTM_BASE->SC & ~FTM_SC_PS_MASK) | FTM_SC_PS(kFTM_Prescale_Divide_1);
 	LEDMATRIX_FTM_BASE->CNTIN = 0U;						//CNTIN
 	LEDMATRIX_FTM_BASE->CNT = 0U;						//CNT
@@ -165,7 +164,7 @@ void LEDMATRIX_Enable(void){
 
 void LEDMATRIX_Disable(void){
 	//LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnV = LEDMATRIX_FTM_CNV_ZERO;
-	LEDMATRIX_FTM_BASE->SC |= FTM_SC_CLKS(0x00);
+	LEDMATRIX_FTM_BASE->SC &= ~FTM_SC_CLKS(0x01);
 }
 
 /*******************************************************************************
@@ -195,7 +194,7 @@ void PIT1_IRQHandler(void) {
 	else{
 		LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnV = LEDMATRIX_FTM_CNV_OFF;
 	}
-	LEDMATRIX_FTM_BASE->SC |= FTM_SC_CLKS(0x01);
+	LEDMATRIX_Enable();
 
 	/* Added for, and affects, all PIT handlers. For CPU clock which is much larger than the IP bus clock,
 	 * CPU can run out of the interrupt handler before the interrupt flag being cleared, resulting in the
@@ -216,7 +215,7 @@ void DMA0_DriverIRQHandler(void)
 {
 	/* Clear Edma interrupt flag. */
 	DMA0->CINT |= 0;
-	LEDMATRIX_FTM_BASE->SC |= FTM_SC_CLKS(0x00);
+	LEDMATRIX_Disable();
 	PIT_StartTimer(PIT, kPIT_Chnl_1);
 	printf("Pit started\n");
     SDK_ISR_EXIT_BARRIER;
