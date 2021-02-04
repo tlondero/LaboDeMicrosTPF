@@ -112,7 +112,7 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 				appContext->currentFile = FSEXP_exploreFS(FSEXP_ROOT_DIR);
 				#ifdef DEBUG_PRINTF_APP
 				printf("File System Explorer Menu opened\r\n");
-				printf("Currently pointing to: %s", appContext->currentFile);
+				printf("Currently pointing to: %s\r\n", appContext->currentFile);
 				#endif
 				appContext->menuState = kAPP_MENU_FILESYSTEM;
 				break;

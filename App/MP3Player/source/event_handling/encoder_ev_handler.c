@@ -1,5 +1,5 @@
 /***************************************************************************//**
- @file     event_handler.c
+ @file     FileName.c
  @brief
  @author   MAGT
  ******************************************************************************/
@@ -7,11 +7,16 @@
 /*******************************************************************************
  * INCLUDE HEADER FILES
  ******************************************************************************/
-#include "event_handler.h"
+#include "encoder_ev_handler.h"
+#include "board.h"
+#include "fsl_gpio.h"
+#include "stdbool.h"
+#include "encoder.h"
+#include "fsl_common.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
-
+//#define DEBOUNCE_SDKDELAY
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
@@ -27,18 +32,19 @@
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH GLOBAL SCOPE
  ******************************************************************************/
-void EVHANDLER_GetEvents(event_t *evs) {
-	BUTTONS_EVHANDLER_GetEvents(&(evs->btn_evs));
-	SD_EVHANDLER_GetEvents(&(evs->sd_evs));
-	FSEXP_EVHANDLER_GetEvents(&(evs->fsexp_evs));
-	encoderHandlerGetEvents(&(evs->encoder_evs));
+void encoderHandlerGetEvents(encoder_event_t *encoder_event) {
+	if(EncoderEventAVB(0)==EVENT_AVB){
+		if(EncoderPopEvent(0) == LEFT_TURN){
+			encoder_event->back_button=true;
+		}
+		else{
+			encoder_event->next_button=true;
+		}
+	}
 }
 
-void EVHANDLER_InitHandlers(void){
-	FSEXP_EVHANDLER_Init();
-	SD_EVHANDLER_Init();
-	BUTTONS_EVHANDLER_Init();
-	encoderHandlerInit();
+void encoderHandlerInit(void){
+
 }
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH FILE SCOPE
@@ -47,4 +53,3 @@ void EVHANDLER_InitHandlers(void){
 /*******************************************************************************
  *						 INTERRUPTION ROUTINES
  ******************************************************************************/
-

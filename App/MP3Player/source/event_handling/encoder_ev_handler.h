@@ -3,29 +3,26 @@
   @brief	///
   @author   MAGT
  ******************************************************************************/
-#ifndef EVENT_HANDLING_EVENT_HANDLER_H_
-#define EVENT_HANDLING_EVENT_HANDLER_H_
+#ifndef EVENT_HANDLING_ENCODER_EV_HANDLER_H_
+#define EVENT_HANDLING_ENCODER_EV_HANDLER_H_
 
 /*******************************************************************************
  * INCLUDE HEADER FILES
  ******************************************************************************/
-#include "sd_ev_handler.h"
-#include "button_ev_handler.h"
-#include "fsexplorer_ev_handler.h"
-#include "encoder_ev_handler.h"
-#include "general.h"
+
+#include "stdbool.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
-typedef struct{
-	sd_event_t sd_evs;
-	button_event_t btn_evs;
-	fsexplorer_event_t fsexp_evs;
-	encoder_event_t encoder_evs;
-}event_t;
+
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
+
+typedef struct{
+	bool back_button;
+	bool next_button;
+} encoder_event_t;
 
 
 /*******************************************************************************
@@ -37,17 +34,18 @@ typedef struct{
  ******************************************************************************/
 
 /**
- * @brief  event_handler_get_event
- * @param evs pointer to the Evs to be filled by the event handler
+ * @brief  encoderHandlerGetEvents
+ * @param  encoder_event: event structure for the encoder
  * @return --
 */
-void EVHANDLER_GetEvents(event_t * evs);
+void encoderHandlerGetEvents(encoder_event_t *encoder_event);
 
 /**
- * @brief  initializates all the event handlers
- * @param --
+ * @brief  initializates the ev handler
+ * @param  --
  * @return --
 */
-void EVHANDLER_InitHandlers(void);
 
-#endif /* EVENT_HANDLING_EVENT_HANDLER_H_ */
+void encoderHandlerInit(void);
+
+#endif /* EVENT_HANDLING_ENCODER_EV_HANDLER_H_ */

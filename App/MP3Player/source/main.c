@@ -25,6 +25,7 @@
 #include <fft.h>
 #include "math_helper.h"
 #include "button.h"
+#include "encoder.h"
 #include "FSM.h"
 #include "general.h"
 #include "LED_Matrix.h"
@@ -82,7 +83,7 @@ int main(void) {
 
 	prepareForSwitchOff();
 	while (true) {
-		event_t ev;
+		event_t ev={0};
 		EVHANDLER_GetEvents(&ev); /* Get events */
 		switch (appContext.appState) {
 /***************/
@@ -112,6 +113,18 @@ int main(void) {
 				printf("[App] Resumed playing.\n");
 				#endif
 			}
+			else if(ev.encoder_evs.back_button && appContext.volume>0){
+				appContext.volume--;
+#ifdef DEBUG_PRINTF_APP
+printf("[App] Volume decreased, set to: %d\n", appContext.volume);
+#endif
+			}
+			else if(ev.encoder_evs.next_button && appContext.volume<30){
+				appContext.volume++;
+#ifdef DEBUG_PRINTF_APP
+printf("[App] Volume increased, set to: %d\n", appContext.volume);
+#endif
+			}
 			runMenu(&ev, &appContext); /* Run menu in background */
 			break;
 
@@ -140,12 +153,10 @@ int main(void) {
 			else if (appContext.playerContext.songEnded) {
 
 				appContext.playerContext.songEnded = false;
-//ESTO ES LO VIEJO
-				//				switchAppState(appContext.appState, kAPP_STATE_IDDLE);
-				//INTENTO PASAR A LA SIGUIENTE CANCION
+
 				if (FSEXP_getNext()) {
 									appContext.currentFile = FSEXP_getFilename();
-									//Aca me fijo si es MP3 y si lo es le doy al play
+
 									if ((!(FSEXP_isdir())) && FSEXP_openSelected()) {
 										appContext.currentFile = FSEXP_getFilename();
 									}
@@ -154,6 +165,19 @@ int main(void) {
 									switchAppState(appContext.appState, kAPP_STATE_IDDLE);
 				}
 			}
+			else if(ev.encoder_evs.back_button && appContext.volume>0){
+				appContext.volume--;
+#ifdef DEBUG_PRINTF_APP
+//printf("[App] Volume decreased, set to: %d\n", appContext.volume);
+#endif
+			}
+			else if(ev.encoder_evs.next_button && appContext.volume<30){
+				appContext.volume++;
+#ifdef DEBUG_PRINTF_APP
+//printf("[App] Volume increased, set to: %d\n", appContext.volume);
+#endif
+			}
+
 			runPlayer(&ev, &appContext); /* Run player in background */
 				/*ACA pongo lo que se hace para hacer la fft
 				 * despues me imagino irá en un PIT
@@ -227,8 +251,9 @@ int initDevice(void) {
 
 	/* Reset app context */
 	resetAppContext();
-
-
+	/*encoder */
+	EncoderInit();
+	EncoderRegister(1,1);
 	return true; //TODO agregar verificaciones al resto de los inits
 
 }

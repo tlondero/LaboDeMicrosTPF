@@ -4,6 +4,8 @@
 #include "core_cm4.h"
 #include <stdbool.h>
 #include "fsl_port.h"
+#include "fsl_sdmmc_osa.h"
+#include "fsl_pit.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
@@ -14,12 +16,12 @@
 #define LOW 0
 
 #define LEN(array) sizeof(array) / sizeof(array[0])
-#define PORT_ENCODER_A PORTD
-#define PIN_ENCODER_A	2
+#define PORT_ENCODER_A PORTB
+#define PIN_ENCODER_A	18
 
-#define PORT_ENCODER_B PORTD
-#define PIN_ENCODER_B	2
-#define GPIO_ENCODER GPIOD
+#define PORT_ENCODER_B PORTB
+#define PIN_ENCODER_B	19
+#define GPIO_ENCODER GPIOB
 /*******************************************************************************
  * STRUCTS AND TYPEDEFS
  ******************************************************************************/
@@ -28,7 +30,7 @@ typedef struct
 	uint8_t pin_A;
 	uint8_t pin_B;
 	bool event_flag;
-	event_t event_queue[20];
+	event_enc_t event_queue[20];
 //	tim_id_t timer_id;
 	uint8_t in_pointer;
 	uint8_t out_pointer;
@@ -41,6 +43,7 @@ typedef struct
 static encoder_state_t encoders[MAX_ENCODERS];
 static uint16_t enconders_cant = 0;
 //static tim_id_t encoder_timer_id;
+static bool busy=false;
 
 /*******************************************************************************
  * FUNCTION DECLARATIONS WITH LOCAL SCOPE
@@ -51,7 +54,7 @@ static uint16_t enconders_cant = 0;
  * @param encoder_id unique encoder identifier
  * @param event_t RIGHT_TURN LEFT_TURN
  */
-void EncoderAddNewEvent(encoder_id id, event_t ev);
+void EncoderAddNewEvent(encoder_id id, event_enc_t ev);
 /**
  * @brief Updates the event queue if a new event has been detected
  */
@@ -101,50 +104,46 @@ encoder_id EncoderRegister(uint8_t pin_A, uint8_t pin_B)
 	conf.passiveFilterEnable=kPORT_PassiveFilterDisable;
 	conf.pullSelect=kPORT_PullUp;
 	conf.slewRate = kPORT_FastSlewRate;
+
 	PORT_SetPinConfig(PORT_ENCODER_A, PIN_ENCODER_A, &conf); // pin A del encoder configured
 
 	PORT_SetPinConfig(PORT_ENCODER_B, PIN_ENCODER_B, &conf);// pin B del encoder configured
 
 //	gpioMode(encoders[id].pin_B, INPUT_PULLUP);
+
 //	gpioIRQ(encoders[id].pin_B, GPIO_IRQ_MODE_FALLING_EDGE, EncoderUpdate);
 
 	PORT_SetPinInterruptConfig(PORT_ENCODER_B, PIN_ENCODER_B, kPORT_InterruptFallingEdge);
 
-	NVIC_EnableIRQ(PORTD_IRQn);
-
-	//Funcion que agregue el callback a el irq handler. saludooooooooooooooooooooooooooooooos
-	//TODO AGREGAR AL HANDLER DE IRQPORTD EL CALLBACK  EncoderUpdate
-
-	//	gpioMode(encoders[id].pin_A, INPUT_PULLUP);
+	NVIC_EnableIRQ(PORTB_IRQn);
 
 
+	PIT_SetTimerPeriod(PIT, kPIT_Chnl_2,
+					USEC_TO_COUNT(100U, CLOCK_GetFreq(kCLOCK_BusClk)));
+	PIT_EnableInterrupts(PIT, kPIT_Chnl_2, kPIT_TimerInterruptEnable);
+	EnableIRQ(PIT2_IRQn);
 	return id;
 }
 
 //Update encoders
 void EncoderUpdate(void)
 {
+
 	encoder_id id = 0;
 
-
-	for (id = 0; id < enconders_cant; id++)
-	{
-//		if (timerExpired(encoders[id].timer_id))//TODO AGREGAR EL DEBOUNCE!
-//		{
-
-			//COMPARE PREV AND CURRENT STATE
+	if(!busy){
+	PIT_StartTimer(PIT, kPIT_Chnl_2);
+	busy=true;
+	for (id = 0; id < enconders_cant; id++){
 			if (GPIO_PinRead(GPIO_ENCODER, PIN_ENCODER_A) == HIGH)
 			{
 				EncoderAddNewEvent(id, RIGHT_TURN);
 			}
-			else if (GPIO_PinRead(GPIO_ENCODER, PIN_ENCODER_A) == LOW)
-			{
+			else if (GPIO_PinRead(GPIO_ENCODER, PIN_ENCODER_A) == LOW){
 				EncoderAddNewEvent(id, LEFT_TURN);
 			}
-//			timerReset(encoder_timer_id);//TODO AGREGAR EL DEBOUNCE!
-//		}
 	}
-
+	}
 
 }
 //Reports if a new event is available
@@ -154,7 +153,7 @@ bool EncoderEventAVB(encoder_id id)
 }
 //Circular event buffer
 //Adds a new a event to the queue
-void EncoderAddNewEvent(encoder_id id, event_t ev)
+void EncoderAddNewEvent(encoder_id id, event_enc_t ev)
 {
 	if (encoders[id].in_pointer != (encoders[id].out_pointer + LEN(encoders[id].event_queue)))
 	{
@@ -164,12 +163,12 @@ void EncoderAddNewEvent(encoder_id id, event_t ev)
 	}
 }
 //Pops the last event in the queue
-event_t EncoderPopEvent(encoder_id id)
+event_enc_t EncoderPopEvent(encoder_id id)
 {
 	//Is the buffer non-empty?
 	if (encoders[id].out_pointer != encoders[id].in_pointer)
 	{
-		event_t ev;
+		event_enc_t ev;
 		ev = encoders[id].event_queue[encoders[id].out_pointer];
 		encoders[id].out_pointer = (++encoders[id].out_pointer) % (LEN(encoders[id].event_queue));
 		if (encoders[id].out_pointer == encoders[id].in_pointer)
@@ -180,4 +179,30 @@ event_t EncoderPopEvent(encoder_id id)
 	}
 	else
 		return EVENT_NOT_AVB;
+}
+
+void PORTB_IRQHandler(void)   //encoder
+{
+	 if (((1U << PIN_ENCODER_B) & PORT_GetPinsInterruptFlags(PORTB))){
+	    PORT_ClearPinsInterruptFlags(PORTB, (1U << PIN_ENCODER_B));
+
+	    EncoderUpdate();
+
+	 }
+}
+
+
+
+void PIT2_IRQHandler(void) {
+	/* Clear interrupt flag.*/
+	PIT_ClearStatusFlags(PIT, kPIT_Chnl_2, kPIT_TimerFlag);
+
+	busy=false;
+	PIT_StopTimer(PIT, kPIT_Chnl_2);
+	/* Added for, and affects, all PIT handlers. For CPU clock which is much larger than the IP bus clock,
+	 * CPU can run out of the interrupt handler before the interrupt flag being cleared, resulting in the
+	 * CPU's entering the handler again and again. Adding DSB can prevent the issue from happening.
+	 */
+	__DSB();
+
 }
