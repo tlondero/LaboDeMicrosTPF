@@ -52,7 +52,7 @@ typedef struct {
 	directory_name_att directoryNames[NAME_LIST_SIZE];
 	char directory_path[MAX_PATH_LENGHT];
 	char mp3path[MAX_PATH_LENGHT];
-
+	char full_path[MAX_PATH_LENGHT];
 
 	//callback
 	cback mycb;
@@ -81,6 +81,14 @@ char* FSEXP_getMP3Path(void){
 	data.mp3path[data.path_index] = '/';
 	copyFname(&(data.mp3path[data.path_index+1]), data.directoryNames[data.directory_index].name);
 	return data.mp3path;
+
+}
+
+char* FSEXP_getFullPath(void){
+	copyFname(data.full_path, FSEXP_getPath());
+	data.full_path[data.path_index] = '/';
+	copyFname(&(data.full_path[data.path_index+1]), data.directoryNames[data.directory_index].name);
+	return data.full_path;
 
 }
 

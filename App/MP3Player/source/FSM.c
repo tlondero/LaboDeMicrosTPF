@@ -23,7 +23,7 @@
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
 enum {
-	FS, VOL, EQ, SPECT, SUBMENU_CANT
+	FS, EQ, SPECT, SUBMENU_CANT
 };
 enum{JAZZ,ROCK,CLASSIC};
 /*******************************************************************************
@@ -50,11 +50,7 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 				printf("File System Explorer Menu\r\n");
 				#endif
 				break;
-			case VOL:
-				#ifdef DEBUG_PRINTF_APP
-				printf("Volume Menu\r\n");
-				#endif
-				break;
+
 			case EQ:
 				#ifdef DEBUG_PRINTF_APP
 				printf("Equalizer Menu\r\n");
@@ -80,11 +76,6 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 			case FS:
 				#ifdef DEBUG_PRINTF_APP
 				printf("File System Explorer Menu\r\n");
-				#endif
-				break;
-			case VOL:
-				#ifdef DEBUG_PRINTF_APP
-				printf("Volume Menu\r\n");
 				#endif
 				break;
 			case EQ:
@@ -116,12 +107,7 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 				#endif
 				appContext->menuState = kAPP_MENU_FILESYSTEM;
 				break;
-			case VOL:
-				#ifdef DEBUG_PRINTF_APP
-				printf("Volume Menu opened\r\n");
-				#endif
-				appContext->menuState = kAPP_MENU_VOLUME;
-				break;
+
 			case EQ:
 				#ifdef DEBUG_PRINTF_APP
 				printf("Equalizer Menu opened\r\n");
@@ -218,30 +204,7 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 			}
 		}
 	}
-	else if (appContext->menuState == kAPP_MENU_VOLUME) {
-		if (ev->btn_evs.next_button) {
-			if (appContext->volume < 30) {
-				appContext->volume++;
-			}
-			#ifdef DEBUG_PRINTF_APP
-			printf("[App] Volume set to: %d\n", appContext->volume);
-			#endif
-		}
-		else if (ev->btn_evs.prev_button) {
-			if (appContext->volume > 0) {
-				appContext->volume--;
-			}
-			#ifdef DEBUG_PRINTF_APP
-			printf("[App] Volume set to: %d\n", appContext->volume);
-			#endif
-		}
-		else if (ev->btn_evs.back_button) {
-			appContext->menuState = kAPP_MENU_MAIN;
-			#ifdef DEBUG_PRINTF_APP
-			printf("Main menu\r\n");
-			#endif
-		}
-	}
+
 	else if (appContext->menuState == kAPP_MENU_EQUALIZER) {
 		static uint8_t index = JAZZ;
 		if (ev->btn_evs.next_button) {

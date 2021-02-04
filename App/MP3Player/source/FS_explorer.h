@@ -102,17 +102,20 @@ void FSEXP_addCallbackForFile(cback cb);
 
 /**
 
- * @brief  addCallbackForFile: returns name of pointed file
+ * @brief  FSEXP_getFilename: returns name of pointed file
  * @param  --
  * @return pointed file
 */
 char * FSEXP_getFilename(void);
+
+
 /*
  * @brief  FSEXP_closeDir: closes directory
  * @param  --
  * @return --
 */
 void FSEXP_closeDir(void);
+
 
 /*
  * @brief  FSEXP_isdir: indicates if is a dir
