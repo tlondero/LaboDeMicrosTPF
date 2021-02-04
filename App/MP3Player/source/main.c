@@ -66,7 +66,7 @@ static app_context_t appContext;
 
 int main(void) {
 
-	initDevice(); /* Init device */
+   	initDevice(); /* Init device */
 
 	//Debug, dejar porque no jode..
 	LEDMATRIX_SetLed(1, 2, 0, 0, 100);
@@ -138,8 +138,21 @@ int main(void) {
 				switchAppState(appContext.appState, kAPP_STATE_OFF);
 			}
 			else if (appContext.playerContext.songEnded) {
+
 				appContext.playerContext.songEnded = false;
-				switchAppState(appContext.appState, kAPP_STATE_IDDLE);
+//ESTO ES LO VIEJO
+				//				switchAppState(appContext.appState, kAPP_STATE_IDDLE);
+				//INTENTO PASAR A LA SIGUIENTE CANCION
+				if (FSEXP_getNext()) {
+									appContext.currentFile = FSEXP_getFilename();
+									//Aca me fijo si es MP3 y si lo es le doy al play
+									if ((!(FSEXP_isdir())) && FSEXP_openSelected()) {
+										appContext.currentFile = FSEXP_getFilename();
+									}
+								}
+				else{
+									switchAppState(appContext.appState, kAPP_STATE_IDDLE);
+				}
 			}
 			runPlayer(&ev, &appContext); /* Run player in background */
 				/*ACA pongo lo que se hace para hacer la fft
@@ -199,13 +212,13 @@ int initDevice(void) {
 	DAC_Wrapper_Start_Trigger();
 	DAC_Wrapper_Sleep();
 
-	/* Led matrix */
-	LEDMATRIX_Init(); //PIT, DMA, DMAMUX, FTM
+
 
 	/* Init SD wrapper */
 	SDWRAPPER_Init(cbackin, cbackout); //Init PIT, SD
 	SDWRAPPER_SetInterruptEnable(false);
-
+	/* Led matrix */
+	LEDMATRIX_Init(); //PIT, DMA, DMAMUX, FTM
 	/* Init event handlers */
 	EVHANDLER_InitHandlers();
 

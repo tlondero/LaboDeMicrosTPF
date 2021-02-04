@@ -282,6 +282,10 @@ void FSEXP_addCallbackForFile(cback cb){
 void FSEXP_closeDir(void){
 	f_closedir(&data.directory);
 }
+
+bool FSEXP_isdir(void){
+	return (data.directoryNames[data.directory_index].is_directory);
+}
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH FILE SCOPE
  ******************************************************************************/

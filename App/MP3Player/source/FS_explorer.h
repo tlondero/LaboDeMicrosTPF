@@ -114,4 +114,10 @@ char * FSEXP_getFilename(void);
 */
 void FSEXP_closeDir(void);
 
+/*
+ * @brief  FSEXP_isdir: indicates if is a dir
+ * @param  --
+ * @return --
+*/
+bool FSEXP_isdir(void);
 #endif /* FS_EXPLORER_H_ */
