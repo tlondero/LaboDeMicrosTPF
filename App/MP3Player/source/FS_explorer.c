@@ -63,7 +63,7 @@ typedef struct {
 /*******************************************************************************
  * FUNCTION PROTOTYPES WITH FILE SCOPE
  ******************************************************************************/
-void copyFname(char *destiny, char *source);
+
 void addToPath(char *s);
 void removeDirFromPath();
 

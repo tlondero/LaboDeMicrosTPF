@@ -100,6 +100,7 @@ char * FSEXP_getPath(void);
 */
 void FSEXP_addCallbackForFile(cback cb);
 
+
 /**
 
  * @brief  FSEXP_getFilename: returns name of pointed file
@@ -123,4 +124,8 @@ void FSEXP_closeDir(void);
  * @return --
 */
 bool FSEXP_isdir(void);
+
+
+void copyFname(char *destiny, char *source);
+
 #endif /* FS_EXPLORER_H_ */

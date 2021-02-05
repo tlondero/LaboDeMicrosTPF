@@ -83,14 +83,13 @@ void EncoderInit(encoder_id enc_id)
 }
 
 //Adds new encoder
-encoder_id EncoderRegister(uint8_t pin_A, uint8_t pin_B)
+encoder_id EncoderRegister()
 {
 
 	encoder_id id;
 	id = enconders_cant++;
 	EncoderInit(id);
-	encoders[id].pin_A = pin_A;
-	encoders[id].pin_B = pin_B;
+
 	encoders[id].event_flag = false;
 
 	//Init circular buffer
@@ -119,7 +118,7 @@ encoder_id EncoderRegister(uint8_t pin_A, uint8_t pin_B)
 
 
 	PIT_SetTimerPeriod(PIT, kPIT_Chnl_2,
-					USEC_TO_COUNT(100U, CLOCK_GetFreq(kCLOCK_BusClk)));
+					USEC_TO_COUNT(50000U, CLOCK_GetFreq(kCLOCK_BusClk)));
 	PIT_EnableInterrupts(PIT, kPIT_Chnl_2, kPIT_TimerInterruptEnable);
 	EnableIRQ(PIT2_IRQn);
 	return id;

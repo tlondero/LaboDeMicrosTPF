@@ -14,10 +14,11 @@
 #include "FS_explorer.h"
 #include "LED_Matrix.h"
 #include "mp3Decoder.h"
+#include "fsl_uart.h"
+#include "debug_ifdefs.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
-#define DEBUG_PRINTF_APP
 
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
@@ -25,7 +26,9 @@
 enum {
 	FS, EQ, SPECT, SUBMENU_CANT
 };
-enum{JAZZ,ROCK,CLASSIC};
+enum {
+	JAZZ, ROCK, CLASSIC
+};
 /*******************************************************************************
  * FUNCTION PROTOTYPES WITH FILE SCOPE
  ******************************************************************************/
@@ -34,7 +37,7 @@ enum{JAZZ,ROCK,CLASSIC};
  ******************************************************************************/
 static uint16_t u_buffer_1[MP3_DECODED_BUFFER_SIZE];
 static uint16_t u_buffer_2[MP3_DECODED_BUFFER_SIZE];
-
+static char packPath[MAX_PATH_LENGHT + 5];
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH GLOBAL SCOPE
  ******************************************************************************/
@@ -46,150 +49,223 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 			index++;
 			switch (index % SUBMENU_CANT) {
 			case FS:
-				#ifdef DEBUG_PRINTF_APP
+#ifdef DEBUG_PRINTF_APP
 				printf("File System Explorer Menu\r\n");
-				#endif
+#else
+				UART_WriteBlocking(UART0, "00File System Explorer Menu\r\n", 30);
+#endif
 				break;
 
 			case EQ:
-				#ifdef DEBUG_PRINTF_APP
+#ifdef DEBUG_PRINTF_APP
 				printf("Equalizer Menu\r\n");
-				#endif
+#else
+				UART_WriteBlocking(UART0, "00Equalizer Menu\r\n", 19);
+
+#endif
 				break;
 			case SPECT:
-				#ifdef DEBUG_PRINTF_APP
-				if(appContext->spectrogramEnable){
+#ifdef DEBUG_PRINTF_APP
+				if (appContext->spectrogramEnable) {
 					printf("Spectrogram on\r\n");
-				}
-				else{
+				} else {
 					printf("Spectrogram off\r\n");
 				}
-				#endif
+#else
+				if (appContext->spectrogramEnable) {
+					UART_WriteBlocking(UART0, "00Spectrogram on\r\n", 19);
+
+				} else {
+					UART_WriteBlocking(UART0, "00Spectrogram off\r\n", 20);
+				}
+#endif
 				break;
 			default:
 				break;
 			}
-		}
-		else if (ev->btn_evs.prev_button) {
+		} else if (ev->btn_evs.prev_button) {
 			index--;
 			switch (index % SUBMENU_CANT) {
 			case FS:
-				#ifdef DEBUG_PRINTF_APP
+#ifdef DEBUG_PRINTF_APP
 				printf("File System Explorer Menu\r\n");
+#else
+				UART_WriteBlocking(UART0, "00File System Explorer Menu\r\n", 30);
 				#endif
 				break;
 			case EQ:
-				#ifdef DEBUG_PRINTF_APP
+#ifdef DEBUG_PRINTF_APP
 				printf("Equalizer Menu\r\n");
+#else
+				UART_WriteBlocking(UART0, "00Equalizer Menu\r\n", 19);
 				#endif
 				break;
 			case SPECT:
-				#ifdef DEBUG_PRINTF_APP
-				if(appContext->spectrogramEnable){
+#ifdef DEBUG_PRINTF_APP
+				if (appContext->spectrogramEnable) {
 					printf("Spectrogram on\r\n");
-				}
-				else{
+				} else {
 					printf("Spectrogram off\r\n");
+				}
+#else
+				if (appContext->spectrogramEnable) {
+					UART_WriteBlocking(UART0, "00Spectrogram on\r\n", 19);
+
+				} else {
+					UART_WriteBlocking(UART0, "00Spectrogram off\r\n", 20);
 				}
 				#endif
 				break;
 			default:
 				break;
 			}
-		}
-		else if (ev->btn_evs.enter_button) {
+		} else if (ev->btn_evs.enter_button) {
 			switch (index % SUBMENU_CANT) {
 			case FS:
 				appContext->currentFile = FSEXP_exploreFS(FSEXP_ROOT_DIR);
-				#ifdef DEBUG_PRINTF_APP
+#ifdef DEBUG_PRINTF_APP
 				printf("File System Explorer Menu opened\r\n");
-				printf("Currently pointing to: %s\r\n", appContext->currentFile);
+				printf("Currently pointing to: %s\r\n",
+						appContext->currentFile);
+#else
+				packPath[0]='0';
+				packPath[1]='6';
+				copyFname(&(packPath[2]),appContext->currentFile);
+				uint16_t i=0;
+				while(packPath[i] != '\0'){i++;}
+				packPath[i++]='\r';
+				packPath[i++]='\n';
+				packPath[i++]='\0';
+				UART_WriteBlocking(UART0, packPath, i);
+				//ACA HAY QUE PONER LA DIRECCION
+				//TODO
+
 				#endif
 				appContext->menuState = kAPP_MENU_FILESYSTEM;
 				break;
 
 			case EQ:
-				#ifdef DEBUG_PRINTF_APP
+#ifdef DEBUG_PRINTF_APP
 				printf("Equalizer Menu opened\r\n");
-				#endif
+#endif
 				appContext->menuState = kAPP_MENU_EQUALIZER;
 				break;
 			case SPECT:
 				appContext->spectrogramEnable = !appContext->spectrogramEnable;
-				if(appContext->spectrogramEnable){
+				if (appContext->spectrogramEnable) {
 					LEDMATRIX_Resume();
-					#ifdef DEBUG_PRINTF_APP
+#ifdef DEBUG_PRINTF_APP
 					printf("Spectrogram on\r\n");
+#else
+					UART_WriteBlocking(UART0, "00Spectrogram on\r\n", 19);
 					#endif
-				}
-				else{
+				} else {
 					LEDMATRIX_Pause();
-					#ifdef DEBUG_PRINTF_APP
+#ifdef DEBUG_PRINTF_APP
 					printf("Spectrogram off\r\n");
+#else
+					UART_WriteBlocking(UART0, "00Spectrogram off\r\n", 20);
 					#endif
 				}
 				break;
 			default:
 				break;
 			}
-		}
-		else if (ev->btn_evs.back_button) {
+		} else if (ev->btn_evs.back_button) {
 
 		}
-	}
-	else if (appContext->menuState == kAPP_MENU_FILESYSTEM) {
+	} else if (appContext->menuState == kAPP_MENU_FILESYSTEM) {
 		if (SDWRAPPER_GetMounted() && SDWRAPPER_getSDInserted()) {
 			if (ev->btn_evs.next_button) {
 				if (FSEXP_getNext()) {
 					appContext->currentFile = FSEXP_getFilename();
 				}
-				#ifdef DEBUG_PRINTF_APP
+#ifdef DEBUG_PRINTF_APP
 				printf("[App] Pointing currently to: %s\n",
 						appContext->currentFile);
+#else
+				packPath[0]='0';
+				packPath[1]='6';
+				copyFname(&(packPath[2]),appContext->currentFile);
+				uint16_t i=0;
+				while(packPath[i] != '\0'){i++;}
+				packPath[i++]='\r';
+				packPath[i++]='\n';
+				packPath[i++]='\0';
+				UART_WriteBlocking(UART0, packPath, i);
+
 				#endif
-			}
-			else if (ev->btn_evs.prev_button) {
+			} else if (ev->btn_evs.prev_button) {
 				if (FSEXP_getPrev()) {
 					appContext->currentFile = FSEXP_getFilename();
 				}
-				#ifdef DEBUG_PRINTF_APP
+#ifdef DEBUG_PRINTF_APP
 				printf("[App] Pointing currently to: %s\n",
 						appContext->currentFile);
+#else
+				packPath[0]='0';
+				packPath[1]='6';
+				copyFname(&(packPath[2]),appContext->currentFile);
+				uint16_t i=0;
+				while(packPath[i] != '\0'){i++;}
+				packPath[i++]='\r';
+				packPath[i++]='\n';
+				packPath[i++]='\0';
+				UART_WriteBlocking(UART0, packPath, i);
+
 				#endif
-			}
-			else if (ev->btn_evs.enter_button) {
-				#ifdef DEBUG_PRINTF_APP
+			} else if (ev->btn_evs.enter_button) {
+#ifdef DEBUG_PRINTF_APP
 				printf("[App] Opened %s\n", appContext->currentFile);
-				#endif
+#endif
 				if (FSEXP_openSelected()) {
 					appContext->currentFile = FSEXP_getFilename();
+
 				}
-				#ifdef DEBUG_PRINTF_APP
+#ifdef DEBUG_PRINTF_APP
 				printf("[App] Pointing currently to: %s\n",
 						appContext->currentFile);
+#else
+				packPath[0]='0';
+				packPath[1]='6';
+				copyFname(&(packPath[2]),appContext->currentFile);
+				uint16_t i=0;
+				while(packPath[i] != '\0'){i++;}
+				packPath[i++]='\r';
+				packPath[i++]='\n';
+				packPath[i++]='\0';
+				UART_WriteBlocking(UART0, packPath, i);
+
 				#endif
-			}
-			else if (ev->btn_evs.back_button) {
+			} else if (ev->btn_evs.back_button) {
 				if (FSEXP_goBackDir()) {
 					appContext->currentFile = FSEXP_getFilename();
 
-					#ifdef DEBUG_PRINTF_APP
+#ifdef DEBUG_PRINTF_APP
 					printf("[App] Went back a directory\n");
 					printf("[App] Pointing currently to: %s\n",
 							appContext->currentFile);
+#else
+					packPath[0]='0';
+					packPath[1]='6';
+					copyFname(&(packPath[2]),appContext->currentFile);
+					uint16_t i=0;
+					while(packPath[i] != '\0'){i++;}
+					packPath[i++]='\r';
+					packPath[i++]='\n';
+					packPath[i++]='\0';
+					UART_WriteBlocking(UART0, packPath, i);
 					#endif
-				}
-				else {
+				} else {
 					appContext->menuState = kAPP_MENU_MAIN;
-				#ifdef DEBUG_PRINTF_APP
-				printf("Main menu\r\n");
-				#endif
+#ifdef DEBUG_PRINTF_APP
+					printf("Main menu\r\n");
+#endif
 				}
-			}
-			else if (ev->fsexp_evs.play_music) {
-				#ifdef DEBUG_PRINTF_APP
+			} else if (ev->fsexp_evs.play_music) {
+#ifdef DEBUG_PRINTF_APP
 				printf("[App] Switched to playing: %s\n", FSEXP_getMP3Path());
-				#endif
+#endif
 				DAC_Wrapper_Clear_Data_Array();
 				DAC_Wrapper_Clear_Next_Buffer();
 				appContext->playerContext.firstDacTransmition = true;
@@ -211,75 +287,84 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 			index++;
 			switch (index % 3) {
 			case JAZZ:
-				#ifdef DEBUG_PRINTF_APP
+#ifdef DEBUG_PRINTF_APP
 				printf("JAZZ preset\r\n");
+#else
+				UART_WriteBlocking(UART0, "11JAZZ\r\n", 9);
 				#endif
 				break;
 			case ROCK:
-				#ifdef DEBUG_PRINTF_APP
+#ifdef DEBUG_PRINTF_APP
 				printf("ROCK preset\r\n");
+#else
+				UART_WriteBlocking(UART0, "11ROCK\r\n", 9);
 				#endif
 				break;
 			case CLASSIC:
-				#ifdef DEBUG_PRINTF_APP
+#ifdef DEBUG_PRINTF_APP
 				printf("CLASSIC preset\r\n");
+#else
+				UART_WriteBlocking(UART0, "11CLASSIC\r\n", 12);
 				#endif
 				break;
 			default:
 				break;
 			}
-		}
-		else if (ev->btn_evs.prev_button) {
+		} else if (ev->btn_evs.prev_button) {
 			index--;
 			switch (index % 3) {
 			case JAZZ:
-				#ifdef DEBUG_PRINTF_APP
+#ifdef DEBUG_PRINTF_APP
 				printf("JAZZ preset\r\n");
+#else
+				UART_WriteBlocking(UART0, "11JAZZ\r\n", 9);
 				#endif
 				break;
 			case ROCK:
-				#ifdef DEBUG_PRINTF_APP
+#ifdef DEBUG_PRINTF_APP
 				printf("ROCK preset\r\n");
+#else
+				UART_WriteBlocking(UART0, "11ROCK\r\n", 9);
 				#endif
 				break;
 			case CLASSIC:
-				#ifdef DEBUG_PRINTF_APP
+#ifdef DEBUG_PRINTF_APP
 				printf("CLASSIC preset\r\n");
+#else
+				UART_WriteBlocking(UART0, "11CLASSIC\r\n", 12);
 				#endif
 				break;
 			default:
 				break;
 			}
-		}
-		else if (ev->btn_evs.enter_button) {
+		} else if (ev->btn_evs.enter_button) {
 			switch (index % 3) {
 			case JAZZ:
-				#ifdef DEBUG_PRINTF_APP
+#ifdef DEBUG_PRINTF_APP
 				printf("Jazz preset Selected\r\n");
-				#endif
+#endif
 				break;
 			case ROCK:
-				#ifdef DEBUG_PRINTF_APP
+#ifdef DEBUG_PRINTF_APP
 				printf("Rock preset Selected\r\n");
-				#endif
+#endif
 				/*
 				 *TODO ADD PRESETS HERE
 				 * */
 				break;
 			case CLASSIC:
-				#ifdef DEBUG_PRINTF_APP
+#ifdef DEBUG_PRINTF_APP
 				printf("Classic preset Selected\r\n");
-				#endif
+#endif
 				break;
 			default:
 				break;
 			}
-		}
-		else if (ev->btn_evs.back_button) {
+		} else if (ev->btn_evs.back_button) {
 			appContext->menuState = kAPP_MENU_MAIN;
-			#ifdef DEBUG_PRINTF_APP
+#ifdef DEBUG_PRINTF_APP
 			printf("Main menu\r\n");
-			#endif
+#endif
 		}
 	}
 }

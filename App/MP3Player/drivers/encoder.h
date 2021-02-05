@@ -32,7 +32,7 @@ typedef uint8_t encoder_id;
  * @param pin_A Clock
  * @param pin_B Data
  */
-encoder_id EncoderRegister(uint8_t pin_A, uint8_t pin_B);
+encoder_id EncoderRegister(void);
 /**
  * @brief Reports if there is an event available
  * @param encoder_id unique encoder identifier

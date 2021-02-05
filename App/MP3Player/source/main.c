@@ -10,7 +10,7 @@
 #include "debug_ifdefs.h"
 #include "MK64F12.h"
 #include "fsl_sysmpu.h"
-#include "fsl_debug_console.h"
+
 #include "sdmmc_config.h"
 #include "fsl_smc.h"
 #include "fsl_sd_disk.h"
@@ -29,7 +29,8 @@
 #include "FSM.h"
 #include "general.h"
 #include "LED_Matrix.h"
-
+#include "fsl_uart.h"
+#include "fsl_clock.h"
 /**********************************************************************************************
  *                                          DEFINES                                           *
  **********************************************************************************************/
@@ -60,7 +61,8 @@ void cbackout(void);
  **********************************************************************************************/
 
 static app_context_t appContext;
-
+static char volString[7];
+static char id3Buffer[ID3_MAX_FIELD_SIZE+2];
 /**********************************************************************************************
  *                                         MAIN                                               *
  **********************************************************************************************/
@@ -80,7 +82,17 @@ int main(void) {
 	LEDMATRIX_SetLed(4, 6, 0, 0, 100);
 	LEDMATRIX_Enable();
 	LEDMATRIX_Pause();
+	/*vol string initialize*/
+	volString[0]='0';
+	volString[1]='9';
+	volString[2]='1';
+	volString[3]='5';
+	volString[4]='\r';
+	volString[5]='\n';
+	volString[6]='\0';
 
+	/* ID3 initialize */
+	id3Buffer[0]='0';
 	prepareForSwitchOff();
 	while (true) {
 		event_t ev={0};
@@ -111,18 +123,29 @@ int main(void) {
 				switchAppState(appContext.appState, kAPP_STATE_PLAYING);
 				#ifdef DEBUG_PRINTF_APP
 				printf("[App] Resumed playing.\n");
+				#else
+				UART_WriteBlocking(UART0,"08P\r\n" , 6);
 				#endif
 			}
 			else if(ev.encoder_evs.back_button && appContext.volume>0){
 				appContext.volume--;
+
 #ifdef DEBUG_PRINTF_APP
 printf("[App] Volume decreased, set to: %d\n", appContext.volume);
+#else
+			volString[2]= (appContext.volume/10)+'0';
+			volString[3]= (appContext.volume - (appContext.volume/10)*10)+'0';
+			UART_WriteBlocking(UART0,volString , 7);
 #endif
 			}
 			else if(ev.encoder_evs.next_button && appContext.volume<30){
 				appContext.volume++;
 #ifdef DEBUG_PRINTF_APP
 printf("[App] Volume increased, set to: %d\n", appContext.volume);
+#else
+			volString[2]= (appContext.volume/10)+'0';
+			volString[3]= (appContext.volume - (appContext.volume/10)*10)+'0';
+			UART_WriteBlocking(UART0,volString , 7);
 #endif
 			}
 			runMenu(&ev, &appContext); /* Run menu in background */
@@ -145,6 +168,8 @@ printf("[App] Volume increased, set to: %d\n", appContext.volume);
 				switchAppState(appContext.appState, kAPP_STATE_IDDLE);
 				#ifdef DEBUG_PRINTF_APP
 				printf("[App] Stopped playing.\n");
+#else
+				UART_WriteBlocking(UART0,"08S\r\n" , 6);
 				#endif
 			}
 			else if (ev.btn_evs.off_on_button) {
@@ -168,14 +193,22 @@ printf("[App] Volume increased, set to: %d\n", appContext.volume);
 			else if(ev.encoder_evs.back_button && appContext.volume>0){
 				appContext.volume--;
 #ifdef DEBUG_PRINTF_APP
-//printf("[App] Volume decreased, set to: %d\n", appContext.volume);
-#endif
+printf("[App] Volume decreased, set to: %d\n", appContext.volume);
+#else
+			volString[2]= (appContext.volume/10)+'0';
+			volString[3]= (appContext.volume - (appContext.volume/10)*10)+'0';
+			UART_WriteBlocking(UART0,volString , 7);
+				#endif
 			}
 			else if(ev.encoder_evs.next_button && appContext.volume<30){
 				appContext.volume++;
 #ifdef DEBUG_PRINTF_APP
 //printf("[App] Volume increased, set to: %d\n", appContext.volume);
-#endif
+#else
+			volString[2]= (appContext.volume/10)+'0';
+			volString[3]= (appContext.volume - (appContext.volume/10)*10)+'0';
+			UART_WriteBlocking(UART0,volString , 7);
+			#endif
 			}
 
 			runPlayer(&ev, &appContext); /* Run player in background */
@@ -208,8 +241,19 @@ int initDevice(void) {
 	BOARD_InitBootClocks();
 
 	/* Init FSL debug console. */
-#ifndef BOARD_INIT_DEBUG_CONSOLE_PERIPHERAL
+#ifdef DEBUG_PRINTF_APP
 	BOARD_InitDebugConsole();
+#else
+	BOARD_InitDebugConsole();
+	/* uart */
+	    uart_config_t config;
+	    UART_GetDefaultConfig(&config);
+	       config.baudRate_Bps = BOARD_DEBUG_UART_BAUDRATE;
+	       config.enableTx     = true;
+	       config.enableRx     = true;
+	       UART_Init(UART0, &config, CLOCK_GetFreq(UART0_CLK_SRC));
+	       UART_EnableInterrupts(UART0, kUART_RxDataRegFullInterruptEnable | kUART_RxOverrunInterruptEnable);
+	        EnableIRQ(UART0_RX_TX_IRQn);
 #endif
 
 #ifdef APP_KINETIS_LEDS
@@ -252,15 +296,22 @@ int initDevice(void) {
 	/* Reset app context */
 	resetAppContext();
 	/*encoder */
-	EncoderInit();
-	EncoderRegister(1,1);
+	EncoderRegister();
+
+
+
 	return true; //TODO agregar verificaciones al resto de los inits
 
 }
 
 void switchAppState(app_state_t current, app_state_t target) {
+
+
 	switch (target) {
 	case kAPP_STATE_OFF: /* Can come from IDDLE or PLAYING */
+#ifndef DEBUG_PRINTF_APP
+		UART_WriteBlocking(UART0, "10A\r\n", 6);
+#endif
 		if (current == kAPP_STATE_IDDLE) {
 			prepareForSwitchOff();
 			appContext.appState = target;
@@ -276,6 +327,9 @@ void switchAppState(app_state_t current, app_state_t target) {
 		break;
 	case kAPP_STATE_IDDLE: /* Can come from OFF or PLAYING */
 		if (current == kAPP_STATE_OFF) {
+#ifndef DEBUG_PRINTF_APP
+			UART_WriteBlocking(UART0, "10P\r\n", 6);
+#endif
 			prepareForSwitchOn();
 			appContext.appState = target;
 		} else if (current == kAPP_STATE_PLAYING) {
@@ -311,7 +365,74 @@ void switchAppState(app_state_t current, app_state_t target) {
 							appContext.playerContext.ID3Data.trackNum);
 					printf("YEAR: %s\n", appContext.playerContext.ID3Data.year);
 				}
-#endif
+#else
+				UART_WriteBlocking(UART0,"08P\r\n" , 6);
+
+				if (MP3GetTagData(&appContext.playerContext.ID3Data)) {
+					uint8_t i=0;
+					while(appContext.playerContext.ID3Data.title[i] != '\0'){
+						i++;
+					}
+					appContext.playerContext.ID3Data.title[i++]='\r';
+					appContext.playerContext.ID3Data.title[i++]='\n';
+					appContext.playerContext.ID3Data.title[i++]='\0';
+					id3Buffer[1]='1';
+					copyFname(&(id3Buffer[2]), appContext.playerContext.ID3Data.title);
+					UART_WriteBlocking(UART0,appContext.playerContext.ID3Data.title ,i);
+					i=0;
+
+					while(appContext.playerContext.ID3Data.artist[i] != '\0'){
+						i++;
+					}
+					appContext.playerContext.ID3Data.artist[i++]='\r';
+					appContext.playerContext.ID3Data.artist[i++]='\n';
+					appContext.playerContext.ID3Data.artist[i++]='\0';
+					id3Buffer[1]='2';
+					copyFname(&(id3Buffer[2]), appContext.playerContext.ID3Data.artist);
+					UART_WriteBlocking(UART0,appContext.playerContext.ID3Data.artist ,i);
+
+
+					i=0;
+
+					while(appContext.playerContext.ID3Data.album[i] != '\0'){
+						i++;
+					}
+					appContext.playerContext.ID3Data.album[i++]='\r';
+					appContext.playerContext.ID3Data.album[i++]='\n';
+					appContext.playerContext.ID3Data.album[i++]='\0';
+					id3Buffer[1]='3';
+					copyFname(&(id3Buffer[2]), appContext.playerContext.ID3Data.album);
+					UART_WriteBlocking(UART0,appContext.playerContext.ID3Data.album ,i);
+
+
+					i=0;
+
+					while(appContext.playerContext.ID3Data.trackNum[i] != '\0'){
+						i++;
+					}
+					appContext.playerContext.ID3Data.trackNum[i++]='\r';
+					appContext.playerContext.ID3Data.trackNum[i++]='\n';
+					appContext.playerContext.ID3Data.trackNum[i++]='\0';
+					id3Buffer[1]='4';
+					copyFname(&(id3Buffer[2]), appContext.playerContext.ID3Data.trackNum);
+					UART_WriteBlocking(UART0,appContext.playerContext.ID3Data.trackNum ,i);
+
+
+					i=0;
+
+					while(appContext.playerContext.ID3Data.year[i] != '\0'){
+						i++;
+					}
+					appContext.playerContext.ID3Data.year[i++]='\r';
+					appContext.playerContext.ID3Data.year[i++]='\n';
+					appContext.playerContext.ID3Data.year[i++]='\0';
+					id3Buffer[1]='5';
+					copyFname(&(id3Buffer[2]), appContext.playerContext.ID3Data.year);
+					UART_WriteBlocking(UART0,appContext.playerContext.ID3Data.year ,i);
+
+				}
+				#endif
+
 
 				//Empiezo por el buffer 1
 				appContext.playerContext.res = MP3GetDecodedFrame(
@@ -415,6 +536,8 @@ void switchOffKinetis(void) {
 void cbackin(void) {
 #ifdef DEBUG_PRINTF_APP
 	printf("[App] SD Card inserted.\r\n");
+#else
+	UART_WriteBlocking(UART0,"07I\r\n" , 6);
 #endif
 
 }
@@ -422,7 +545,9 @@ void cbackin(void) {
 void cbackout(void) {
 #ifdef DEBUG_PRINTF_APP
 	printf("[App] SD Card removed.\r\n");
-#endif
+#else
+	UART_WriteBlocking(UART0,"07O\r\n" , 6);
+	#endif
 }
 void adaptFFT(float32_t * src,float32_t * dst,uint16_t cnt){
 uint16_t i=0;

@@ -449,10 +449,7 @@ void readID3Tag(void) {
 
 		unsigned int tagSize = get_ID3_size(mp3File);
 
-#ifdef DEBUG
-		printf("ID3 Track found.\n");
-		printf("ID3 Tag is %d bytes long\n", tagSize);
-#endif
+
 		fileSeek(tagSize);
 		context_data.bytes_remaining -= tagSize;
 	} else {

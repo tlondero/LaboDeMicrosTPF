@@ -197,6 +197,7 @@ void BOARD_InitPins(void) {
 	PORT_SetPinMux(PORTB, 22U, kPORT_MuxAsGpio); /* PORTB22 (LED RED) is configured as GPIO */
 	PORT_SetPinMux(PORTE, 26U, kPORT_MuxAsGpio); /* PORTE26 (LED GREEN) is configured as GPIO */
 #endif
+
 	PORT_SetPinMux(PORTB, PIN16_IDX, kPORT_MuxAlt3); /* PORTB16 (pin 62) is configured as UART0_RX */
 	PORT_SetPinMux(PORTB, PIN17_IDX, kPORT_MuxAlt3); /* PORTB17 (pin 63) is configured as UART0_TX */
 	PORT_SetPinMux(PORTB, PIN22_IDX, kPORT_MuxAsGpio); /* PORTB22 (pin 68) is configured as PTB22 */

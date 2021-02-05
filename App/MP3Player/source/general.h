@@ -1,7 +1,7 @@
-/***************************************************************************/ /**
-  @file     FileName.h
-  @brief	///
-  @author   Guido Lambertucci
+/***************************************************************************//**
+ @file     FileName.h
+ @brief	///
+ @author   Guido Lambertucci
  ******************************************************************************/
 #ifndef GENERAL_H_
 #define GENERAL_H_
@@ -19,17 +19,14 @@
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
 
-
 typedef enum {
 	kAPP_STATE_OFF, kAPP_STATE_IDDLE, kAPP_STATE_PLAYING
 } app_state_t;
 
 typedef enum {
-	kAPP_MENU_MAIN,
-	kAPP_MENU_FILESYSTEM,
-	kAPP_MENU_VOLUME,
-	kAPP_MENU_EQUALIZER,
-	kAPP_MENU_SPECTROGRAM
+	kAPP_MENU_MAIN, kAPP_MENU_FILESYSTEM,
+
+	kAPP_MENU_EQUALIZER, kAPP_MENU_SPECTROGRAM
 } menu_state_t;
 
 typedef struct {
@@ -67,6 +64,6 @@ typedef struct {
  * @brief  --
  * @param  --
  * @return --
-*/
+ */
 
 #endif /* GENERAL_H_ */
