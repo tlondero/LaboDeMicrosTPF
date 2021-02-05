@@ -377,7 +377,10 @@ void switchAppState(app_state_t current, app_state_t target) {
 					appContext.playerContext.ID3Data.title[i++]='\0';
 					id3Buffer[1]='1';
 					copyFname(&(id3Buffer[2]), appContext.playerContext.ID3Data.title);
-					UART_WriteBlocking(UART0,appContext.playerContext.ID3Data.title ,i);
+					UART_WriteBlocking(UART0, id3Buffer, i+2);
+
+					SDMMC_OSADelay(100U);
+
 					i=0;
 
 					while(appContext.playerContext.ID3Data.artist[i] != '\0'){
@@ -388,8 +391,9 @@ void switchAppState(app_state_t current, app_state_t target) {
 					appContext.playerContext.ID3Data.artist[i++]='\0';
 					id3Buffer[1]='2';
 					copyFname(&(id3Buffer[2]), appContext.playerContext.ID3Data.artist);
-					UART_WriteBlocking(UART0,appContext.playerContext.ID3Data.artist ,i);
+					UART_WriteBlocking(UART0, id3Buffer, i+2);
 
+					SDMMC_OSADelay(100U);
 
 					i=0;
 
@@ -401,8 +405,9 @@ void switchAppState(app_state_t current, app_state_t target) {
 					appContext.playerContext.ID3Data.album[i++]='\0';
 					id3Buffer[1]='3';
 					copyFname(&(id3Buffer[2]), appContext.playerContext.ID3Data.album);
-					UART_WriteBlocking(UART0,appContext.playerContext.ID3Data.album ,i);
+					UART_WriteBlocking(UART0, id3Buffer, i+2);
 
+					SDMMC_OSADelay(100U);
 
 					i=0;
 
@@ -414,8 +419,9 @@ void switchAppState(app_state_t current, app_state_t target) {
 					appContext.playerContext.ID3Data.trackNum[i++]='\0';
 					id3Buffer[1]='4';
 					copyFname(&(id3Buffer[2]), appContext.playerContext.ID3Data.trackNum);
-					UART_WriteBlocking(UART0,appContext.playerContext.ID3Data.trackNum ,i);
+					UART_WriteBlocking(UART0, id3Buffer, i+2);
 
+					SDMMC_OSADelay(100U);
 
 					i=0;
 
@@ -427,8 +433,9 @@ void switchAppState(app_state_t current, app_state_t target) {
 					appContext.playerContext.ID3Data.year[i++]='\0';
 					id3Buffer[1]='5';
 					copyFname(&(id3Buffer[2]), appContext.playerContext.ID3Data.year);
-					UART_WriteBlocking(UART0,appContext.playerContext.ID3Data.year ,i);
+					UART_WriteBlocking(UART0, id3Buffer, i+2);
 
+					SDMMC_OSADelay(100U);
 				}
 				#endif
 
