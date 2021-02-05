@@ -760,6 +760,10 @@ void runPlayer(event_t *events, app_context_t *appContext) {
 		appContext->playerContext.songEnded = true;
 	}
 }
+
+char * GetPackPath(void){
+	return packPath;
+}
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH FILE SCOPE
  ******************************************************************************/
