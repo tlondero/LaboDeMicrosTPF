@@ -244,7 +244,6 @@ int initDevice(void) {
 #ifdef DEBUG_PRINTF_APP
 	BOARD_InitDebugConsole();
 #else
-	BOARD_InitDebugConsole();
 	/* uart */
 	    uart_config_t config;
 	    UART_GetDefaultConfig(&config);
