@@ -322,10 +322,11 @@ void removeDirFromPath() {
 
 void copyFname(char *destiny, char *source) {
 	uint8_t i = 0;
-	while ((*source != '\0') && (i < NAMES_BUFFER_SIZE)) {
+	while ((source[i] != '\0') && (i < NAMES_BUFFER_SIZE)) {
 		destiny[i] = source[i];
 		i++;
 	}
+	destiny[i] = '\0';
 
 }
 /*******************************************************************************

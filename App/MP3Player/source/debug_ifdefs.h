@@ -13,7 +13,7 @@
 #define BUTTON_DEBOUNCE
 #define APP_KINETIS_LEDS
 //#define DEBUG_PRINTF_ERROR
-#define DEBUG_PRINTF_APP
+//#define DEBUG_PRINTF_APP
 //#define DEBUG_PRINTF_INFO
 
 #endif /* DEBUG_IFDEFS_H_ */
