@@ -1,18 +1,18 @@
 /***************************************************************************//**
- @file     FileName.c
+ @file     FSM.c
  @brief
- @author   Guido Lambertucci
+ @author   MAGT
  ******************************************************************************/
 
 /*******************************************************************************
  * INCLUDE HEADER FILES
  ******************************************************************************/
-#include "DAC_Wrapper.h"
-#include "SD_Detect_Wraper.h"
+#include "../HAL/DAC_Wrapper.h"
+#include "../HAL/SD_Detect_Wraper.h"
 #include "fsl_debug_console.h"
 #include "FSM.h"
 #include "FS_explorer.h"
-#include "LED_Matrix.h"
+#include "../HAL/LED_Matrix.h"
 #include "mp3Decoder.h"
 #include "fsl_uart.h"
 #include "debug_ifdefs.h"
@@ -27,7 +27,25 @@ enum {
 	FS, EQ, SPECT, SUBMENU_CANT
 };
 enum {
-	JAZZ, ROCK, CLASSIC
+	OFF,
+	CLASSIC,
+	CLUB,
+	DANCE,
+	BASS,
+	BASS_AND_TREBLE,
+	TREBLE,
+	HEADSET,
+	HALL,
+	LIVE,
+	PARTY,
+	POP,
+	REGGAE,
+	ROCK,
+	SKA,
+	SOFT,
+	SOFT_ROCK,
+	TECHNO,
+	CANT_PRESETS
 };
 /*******************************************************************************
  * FUNCTION PROTOTYPES WITH FILE SCOPE
@@ -52,7 +70,8 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 #ifdef DEBUG_PRINTF_APP
 				printf("File System Explorer Menu\r\n");
 #else
-				UART_WriteBlocking(UART0, "00File System Explorer Menu\r\n", 30);
+				UART_WriteBlocking(UART0, "00File System Explorer Menu\r\n",
+						30);
 #endif
 				break;
 
@@ -90,15 +109,16 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 #ifdef DEBUG_PRINTF_APP
 				printf("File System Explorer Menu\r\n");
 #else
-				UART_WriteBlocking(UART0, "00File System Explorer Menu\r\n", 30);
-				#endif
+				UART_WriteBlocking(UART0, "00File System Explorer Menu\r\n",
+						30);
+#endif
 				break;
 			case EQ:
 #ifdef DEBUG_PRINTF_APP
 				printf("Equalizer Menu\r\n");
 #else
 				UART_WriteBlocking(UART0, "00Equalizer Menu\r\n", 19);
-				#endif
+#endif
 				break;
 			case SPECT:
 #ifdef DEBUG_PRINTF_APP
@@ -114,7 +134,7 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 				} else {
 					UART_WriteBlocking(UART0, "00Spectrogram off\r\n", 20);
 				}
-				#endif
+#endif
 				break;
 			default:
 				break;
@@ -128,19 +148,20 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 				printf("Currently pointing to: %s\r\n",
 						appContext->currentFile);
 #else
-				packPath[0]='0';
-				packPath[1]='6';
-				copyFname(&(packPath[2]),appContext->currentFile);
-				uint16_t i=0;
-				while(packPath[i] != '\0'){i++;}
-				packPath[i++]='\r';
-				packPath[i++]='\n';
-				packPath[i++]='\0';
+				packPath[0] = '0';
+				packPath[1] = '6';
+				copyFname(&(packPath[2]), appContext->currentFile);
+				uint16_t i = 0;
+				while (packPath[i] != '\0') {
+					i++;
+				}
+				packPath[i++] = '\r';
+				packPath[i++] = '\n';
+				packPath[i++] = '\0';
 				UART_WriteBlocking(UART0, packPath, i);
-				//ACA HAY QUE PONER LA DIRECCION
-				//TODO
 
-				#endif
+
+#endif
 				appContext->menuState = kAPP_MENU_FILESYSTEM;
 				break;
 
@@ -158,14 +179,14 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 					printf("Spectrogram on\r\n");
 #else
 					UART_WriteBlocking(UART0, "00Spectrogram on\r\n", 19);
-					#endif
+#endif
 				} else {
 					LEDMATRIX_Pause();
 #ifdef DEBUG_PRINTF_APP
 					printf("Spectrogram off\r\n");
 #else
 					UART_WriteBlocking(UART0, "00Spectrogram off\r\n", 20);
-					#endif
+#endif
 				}
 				break;
 			default:
@@ -184,17 +205,19 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 				printf("[App] Pointing currently to: %s\n",
 						appContext->currentFile);
 #else
-				packPath[0]='0';
-				packPath[1]='6';
-				copyFname(&(packPath[2]),appContext->currentFile);
-				uint16_t i=0;
-				while(packPath[i] != '\0'){i++;}
-				packPath[i++]='\r';
-				packPath[i++]='\n';
-				packPath[i++]='\0';
+				packPath[0] = '0';
+				packPath[1] = '6';
+				copyFname(&(packPath[2]), appContext->currentFile);
+				uint16_t i = 0;
+				while (packPath[i] != '\0') {
+					i++;
+				}
+				packPath[i++] = '\r';
+				packPath[i++] = '\n';
+				packPath[i++] = '\0';
 				UART_WriteBlocking(UART0, packPath, i);
 
-				#endif
+#endif
 			} else if (ev->btn_evs.prev_button) {
 				if (FSEXP_getPrev()) {
 					appContext->currentFile = FSEXP_getFilename();
@@ -203,17 +226,19 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 				printf("[App] Pointing currently to: %s\n",
 						appContext->currentFile);
 #else
-				packPath[0]='0';
-				packPath[1]='6';
-				copyFname(&(packPath[2]),appContext->currentFile);
-				uint16_t i=0;
-				while(packPath[i] != '\0'){i++;}
-				packPath[i++]='\r';
-				packPath[i++]='\n';
-				packPath[i++]='\0';
+				packPath[0] = '0';
+				packPath[1] = '6';
+				copyFname(&(packPath[2]), appContext->currentFile);
+				uint16_t i = 0;
+				while (packPath[i] != '\0') {
+					i++;
+				}
+				packPath[i++] = '\r';
+				packPath[i++] = '\n';
+				packPath[i++] = '\0';
 				UART_WriteBlocking(UART0, packPath, i);
 
-				#endif
+#endif
 			} else if (ev->btn_evs.enter_button) {
 #ifdef DEBUG_PRINTF_APP
 				printf("[App] Opened %s\n", appContext->currentFile);
@@ -226,17 +251,19 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 				printf("[App] Pointing currently to: %s\n",
 						appContext->currentFile);
 #else
-				packPath[0]='0';
-				packPath[1]='6';
-				copyFname(&(packPath[2]),appContext->currentFile);
-				uint16_t i=0;
-				while(packPath[i] != '\0'){i++;}
-				packPath[i++]='\r';
-				packPath[i++]='\n';
-				packPath[i++]='\0';
+				packPath[0] = '0';
+				packPath[1] = '6';
+				copyFname(&(packPath[2]), appContext->currentFile);
+				uint16_t i = 0;
+				while (packPath[i] != '\0') {
+					i++;
+				}
+				packPath[i++] = '\r';
+				packPath[i++] = '\n';
+				packPath[i++] = '\0';
 				UART_WriteBlocking(UART0, packPath, i);
 
-				#endif
+#endif
 			} else if (ev->btn_evs.back_button) {
 				if (FSEXP_goBackDir()) {
 					appContext->currentFile = FSEXP_getFilename();
@@ -246,16 +273,18 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 					printf("[App] Pointing currently to: %s\n",
 							appContext->currentFile);
 #else
-					packPath[0]='0';
-					packPath[1]='6';
-					copyFname(&(packPath[2]),appContext->currentFile);
-					uint16_t i=0;
-					while(packPath[i] != '\0'){i++;}
-					packPath[i++]='\r';
-					packPath[i++]='\n';
-					packPath[i++]='\0';
+					packPath[0] = '0';
+					packPath[1] = '6';
+					copyFname(&(packPath[2]), appContext->currentFile);
+					uint16_t i = 0;
+					while (packPath[i] != '\0') {
+						i++;
+					}
+					packPath[i++] = '\r';
+					packPath[i++] = '\n';
+					packPath[i++] = '\0';
 					UART_WriteBlocking(UART0, packPath, i);
-					#endif
+#endif
 				} else {
 					appContext->menuState = kAPP_MENU_MAIN;
 #ifdef DEBUG_PRINTF_APP
@@ -282,81 +311,370 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 	}
 
 	else if (appContext->menuState == kAPP_MENU_EQUALIZER) {
-		static uint8_t index = JAZZ;
+		static uint8_t index = OFF;
 		if (ev->btn_evs.next_button) {
 			index++;
-			switch (index % 3) {
-			case JAZZ:
+			switch (index % CANT_PRESETS) {
+			//OFF,CLASSIC,CLUB,DANCE,BASS,BASS_AND_TREBLE , TREBLE, HEADSET,HALL,LIVE,PARTY,POP,REGGAE,ROCK,SKA,SOFT,SOFT_ROCK,TECHNO
+			case OFF:
 #ifdef DEBUG_PRINTF_APP
-				printf("JAZZ preset\r\n");
+				printf("OFF preset\r\n");
 #else
-				UART_WriteBlocking(UART0, "11JAZZ\r\n", 9);
-				#endif
-				break;
-			case ROCK:
-#ifdef DEBUG_PRINTF_APP
-				printf("ROCK preset\r\n");
-#else
-				UART_WriteBlocking(UART0, "11ROCK\r\n", 9);
-				#endif
+				UART_WriteBlocking(UART0, "11OFF\r\n", 8);
+#endif
 				break;
 			case CLASSIC:
 #ifdef DEBUG_PRINTF_APP
 				printf("CLASSIC preset\r\n");
 #else
 				UART_WriteBlocking(UART0, "11CLASSIC\r\n", 12);
-				#endif
+#endif
+				break;
+			case CLUB:
+#ifdef DEBUG_PRINTF_APP
+							printf("CLUB preset\r\n");
+			#else
+				UART_WriteBlocking(UART0, "11CLUB\r\n", 9);
+#endif
+				break;
+			case DANCE:
+#ifdef DEBUG_PRINTF_APP
+				printf("DANCE preset\r\n");
+#else
+				UART_WriteBlocking(UART0, "11DANCE\r\n", 10);
+#endif
+				break;
+			case BASS:
+#ifdef DEBUG_PRINTF_APP
+				printf("BASS preset\r\n");
+#else
+				UART_WriteBlocking(UART0, "11BASS\r\n", 9);
+#endif
+				break;
+			case BASS_AND_TREBLE:
+#ifdef DEBUG_PRINTF_APP
+				printf("BASS_AND_TREBLE preset\r\n");
+#else
+				UART_WriteBlocking(UART0, "11BASS_AND_TREBLE\r\n", 20);
+#endif
+				break;
+			case TREBLE:
+#ifdef DEBUG_PRINTF_APP
+				printf("TREBLE preset\r\n");
+#else
+				UART_WriteBlocking(UART0, "11TREBLE\r\n", 11);
+#endif
+				break;
+			case HEADSET:
+#ifdef DEBUG_PRINTF_APP
+				printf("HEADSET preset\r\n");
+#else
+				UART_WriteBlocking(UART0, "11HEADSET\r\n", 12);
+#endif
+				break;
+			case HALL:
+#ifdef DEBUG_PRINTF_APP
+				printf("HALL preset\r\n");
+#else
+				UART_WriteBlocking(UART0, "11HALL\r\n", 9);
+#endif
+				break;
+			case LIVE:
+#ifdef DEBUG_PRINTF_APP
+				printf("LIVE preset\r\n");
+#else
+				UART_WriteBlocking(UART0, "11LIVE\r\n", 9);
+#endif
+				break;
+			case PARTY:
+#ifdef DEBUG_PRINTF_APP
+				printf("PARTY preset\r\n");
+#else
+				UART_WriteBlocking(UART0, "11PARTY\r\n", 10);
+#endif
+				break;
+			case POP:
+#ifdef DEBUG_PRINTF_APP
+				printf("POP preset\r\n");
+#else
+				UART_WriteBlocking(UART0, "11POP\r\n", 8);
+#endif
+				break;
+			case REGGAE:
+#ifdef DEBUG_PRINTF_APP
+				printf("REGGAE preset\r\n");
+#else
+				UART_WriteBlocking(UART0, "11REGGAE\r\n", 11);
+#endif
+				break;
+			case ROCK:
+#ifdef DEBUG_PRINTF_APP
+				printf("ROCK preset\r\n");
+#else
+				UART_WriteBlocking(UART0, "11ROCK\r\n", 9);
+#endif
+				break;
+			case SKA:
+#ifdef DEBUG_PRINTF_APP
+				printf("SKA preset\r\n");
+#else
+				UART_WriteBlocking(UART0, "11SKA\r\n", 8);
+#endif
+				break;
+			case SOFT:
+#ifdef DEBUG_PRINTF_APP
+				printf("SOFT preset\r\n");
+#else
+				UART_WriteBlocking(UART0, "11SOFT\r\n", 9);
+#endif
+				break;
+			case SOFT_ROCK:
+#ifdef DEBUG_PRINTF_APP
+				printf("SOFT_ROCK preset\r\n");
+#else
+				UART_WriteBlocking(UART0, "11SOFT_ROCK\r\n", 14);
+#endif
+				break;
+			case TECHNO:
+#ifdef DEBUG_PRINTF_APP
+				printf("TECHNO preset\r\n");
+#else
+				UART_WriteBlocking(UART0, "11TECHNO\r\n", 11);
+#endif
 				break;
 			default:
 				break;
 			}
 		} else if (ev->btn_evs.prev_button) {
 			index--;
-			switch (index % 3) {
-			case JAZZ:
+			switch (index % CANT_PRESETS) {
+			//OFF,CLASSIC,CLUB,DANCE,BASS,BASS_AND_TREBLE , TREBLE, HEADSET,HALL,LIVE,PARTY,POP,REGGAE,ROCK,SKA,SOFT,SOFT_ROCK,TECHNO
+			case OFF:
 #ifdef DEBUG_PRINTF_APP
-				printf("JAZZ preset\r\n");
+				printf("OFF preset\r\n");
 #else
-				UART_WriteBlocking(UART0, "11JAZZ\r\n", 9);
-				#endif
-				break;
-			case ROCK:
-#ifdef DEBUG_PRINTF_APP
-				printf("ROCK preset\r\n");
-#else
-				UART_WriteBlocking(UART0, "11ROCK\r\n", 9);
-				#endif
+				UART_WriteBlocking(UART0, "11OFF\r\n", 8);
+#endif
 				break;
 			case CLASSIC:
 #ifdef DEBUG_PRINTF_APP
 				printf("CLASSIC preset\r\n");
 #else
 				UART_WriteBlocking(UART0, "11CLASSIC\r\n", 12);
-				#endif
+#endif
+				break;
+			case CLUB:
+#ifdef DEBUG_PRINTF_APP
+							printf("CLUB preset\r\n");
+			#else
+				UART_WriteBlocking(UART0, "11CLUB\r\n", 9);
+#endif
+				break;
+			case DANCE:
+#ifdef DEBUG_PRINTF_APP
+				printf("DANCE preset\r\n");
+#else
+				UART_WriteBlocking(UART0, "11DANCE\r\n", 10);
+#endif
+				break;
+			case BASS:
+#ifdef DEBUG_PRINTF_APP
+				printf("BASS preset\r\n");
+#else
+				UART_WriteBlocking(UART0, "11BASS\r\n", 9);
+#endif
+				break;
+			case BASS_AND_TREBLE:
+#ifdef DEBUG_PRINTF_APP
+				printf("BASS_AND_TREBLE preset\r\n");
+#else
+				UART_WriteBlocking(UART0, "11BASS_AND_TREBLE\r\n", 20);
+#endif
+				break;
+			case TREBLE:
+#ifdef DEBUG_PRINTF_APP
+				printf("TREBLE preset\r\n");
+#else
+				UART_WriteBlocking(UART0, "11TREBLE\r\n", 11);
+#endif
+				break;
+			case HEADSET:
+#ifdef DEBUG_PRINTF_APP
+				printf("HEADSET preset\r\n");
+#else
+				UART_WriteBlocking(UART0, "11HEADSET\r\n", 12);
+#endif
+				break;
+			case HALL:
+#ifdef DEBUG_PRINTF_APP
+				printf("HALL preset\r\n");
+#else
+				UART_WriteBlocking(UART0, "11HALL\r\n", 9);
+#endif
+				break;
+			case LIVE:
+#ifdef DEBUG_PRINTF_APP
+				printf("LIVE preset\r\n");
+#else
+				UART_WriteBlocking(UART0, "11LIVE\r\n", 9);
+#endif
+				break;
+			case PARTY:
+#ifdef DEBUG_PRINTF_APP
+				printf("PARTY preset\r\n");
+#else
+				UART_WriteBlocking(UART0, "11PARTY\r\n", 10);
+#endif
+				break;
+			case POP:
+#ifdef DEBUG_PRINTF_APP
+				printf("POP preset\r\n");
+#else
+				UART_WriteBlocking(UART0, "11POP\r\n", 8);
+#endif
+				break;
+			case REGGAE:
+#ifdef DEBUG_PRINTF_APP
+				printf("REGGAE preset\r\n");
+#else
+				UART_WriteBlocking(UART0, "11REGGAE\r\n", 11);
+#endif
+				break;
+			case ROCK:
+#ifdef DEBUG_PRINTF_APP
+				printf("ROCK preset\r\n");
+#else
+				UART_WriteBlocking(UART0, "11ROCK\r\n", 9);
+#endif
+				break;
+			case SKA:
+#ifdef DEBUG_PRINTF_APP
+				printf("SKA preset\r\n");
+#else
+				UART_WriteBlocking(UART0, "11SKA\r\n", 8);
+#endif
+				break;
+			case SOFT:
+#ifdef DEBUG_PRINTF_APP
+				printf("SOFT preset\r\n");
+#else
+				UART_WriteBlocking(UART0, "11SOFT\r\n", 9);
+#endif
+				break;
+			case SOFT_ROCK:
+#ifdef DEBUG_PRINTF_APP
+				printf("SOFT_ROCK preset\r\n");
+#else
+				UART_WriteBlocking(UART0, "11SOFT_ROCK\r\n", 14);
+#endif
+				break;
+			case TECHNO:
+#ifdef DEBUG_PRINTF_APP
+				printf("TECHNO preset\r\n");
+#else
+				UART_WriteBlocking(UART0, "11TECHNO\r\n", 11);
+#endif
 				break;
 			default:
 				break;
 			}
 		} else if (ev->btn_evs.enter_button) {
-			switch (index % 3) {
-			case JAZZ:
+			switch (index % CANT_PRESETS) {
+			//OFF,CLASSIC,CLUB,DANCE,BASS,BASS_AND_TREBLE , TREBLE, HEADSET,HALL,LIVE,PARTY,POP,REGGAE,ROCK,SKA,SOFT,SOFT_ROCK,TECHNO
+			case OFF:
 #ifdef DEBUG_PRINTF_APP
-				printf("Jazz preset Selected\r\n");
+				printf("OFF preset Selected\r\n");
 #endif
 				break;
-			case ROCK:
+			case CLASSIC:
 #ifdef DEBUG_PRINTF_APP
-				printf("Rock preset Selected\r\n");
+				printf("CLASSIC preset Selected\r\n");
 #endif
 				/*
 				 *TODO ADD PRESETS HERE
 				 * */
 				break;
-			case CLASSIC:
+			case CLUB:
 #ifdef DEBUG_PRINTF_APP
-				printf("Classic preset Selected\r\n");
+				printf("CLUB preset Selected\r\n");
 #endif
 				break;
+			case DANCE:
+#ifdef DEBUG_PRINTF_APP
+				printf("DANCE preset Selected\r\n");
+#endif
+				break;
+			case BASS:
+#ifdef DEBUG_PRINTF_APP
+				printf("BASS preset Selected\r\n");
+#endif
+				break;
+			case BASS_AND_TREBLE:
+#ifdef DEBUG_PRINTF_APP
+				printf("BASS_AND_TREBLE preset Selected\r\n");
+#endif
+				break;
+			case TREBLE:
+#ifdef DEBUG_PRINTF_APP
+				printf("TREBLE preset Selected\r\n");
+#endif
+				break;
+			case HEADSET:
+#ifdef DEBUG_PRINTF_APP
+				printf("HEADSET preset Selected\r\n");
+#endif
+				break;
+			case HALL:
+#ifdef DEBUG_PRINTF_APP
+				printf("HALL preset Selected\r\n");
+#endif
+				break;
+			case LIVE:
+#ifdef DEBUG_PRINTF_APP
+				printf("LIVE preset Selected\r\n");
+#endif
+				break;
+			case PARTY:
+#ifdef DEBUG_PRINTF_APP
+				printf("PARTY preset Selected\r\n");
+#endif
+				break;
+			case POP:
+#ifdef DEBUG_PRINTF_APP
+				printf("POP preset Selected\r\n");
+#endif
+				break;
+			case REGGAE:
+#ifdef DEBUG_PRINTF_APP
+				printf("REGGAE preset Selected\r\n");
+#endif
+				break;
+			case ROCK:
+#ifdef DEBUG_PRINTF_APP
+				printf("ROCK preset Selected\r\n");
+#endif
+				break;
+			case SKA:
+#ifdef DEBUG_PRINTF_APP
+				printf("SKA preset Selected\r\n");
+#endif
+				break;
+			case SOFT:
+			#ifdef DEBUG_PRINTF_APP
+							printf("SOFT preset Selected\r\n");
+			#endif
+							break;
+			case SOFT_ROCK:
+			#ifdef DEBUG_PRINTF_APP
+							printf("SOFT_ROCK preset Selected\r\n");
+			#endif
+							break;
+			case TECHNO:
+			#ifdef DEBUG_PRINTF_APP
+							printf("TECHNO preset Selected\r\n");
+			#endif
+							break;
+
 			default:
 				break;
 			}
@@ -374,7 +692,6 @@ uint16_t* getbuffer1(void) {
 }
 
 void runPlayer(event_t *events, app_context_t *appContext) {
-//TODO: Implementar aca el reproductor y el espectrograma (ver si no van a funcar a interrupciones tho)
 
 	if (appContext->playerContext.songPaused) {
 		DAC_Wrapper_Clear_Data_Array();

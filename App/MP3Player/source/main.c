@@ -2,35 +2,31 @@
  * @file    MK64FN1M0xxx12_Project.c
  * @brief   Application entry point.
  */
+
 #include <stdio.h>
 #include "board.h"
-#include "peripherals.h"
-#include "pin_mux.h"
-#include "clock_config.h"
-#include "debug_ifdefs.h"
-#include "MK64F12.h"
-#include "fsl_sysmpu.h"
 
-#include "sdmmc_config.h"
-#include "fsl_smc.h"
-#include "fsl_sd_disk.h"
-#include "fsl_common.h"
-#include "fsl_pit.h"
-#include "SD_Detect_Wraper.h"
-#include "mp3Decoder.h"
-#include "ff.h"
-#include "DAC_Wrapper.h"
-#include "FS_explorer.h"
 #include "event_handling/event_handler.h"
+
+#include "debug_ifdefs.h"
+
+#include "fsl_pit.h"
+#include "fsl_uart.h"
+
+
+#include "../HAL/SD_Detect_Wraper.h"
+#include "../HAL/DAC_Wrapper.h"
+#include "FS_explorer.h"
+
 #include <fft.h>
-#include "math_helper.h"
-#include "button.h"
+
+#include "../HAL/button.h"
 #include "encoder.h"
 #include "FSM.h"
 #include "general.h"
-#include "LED_Matrix.h"
-#include "fsl_uart.h"
-#include "fsl_clock.h"
+#include "../HAL/LED_Matrix.h"
+
+
 /**********************************************************************************************
  *                                          DEFINES                                           *
  **********************************************************************************************/
@@ -93,6 +89,7 @@ int main(void) {
 
 	/* ID3 initialize */
 	id3Buffer[0]='0';
+
 	prepareForSwitchOff();
 	while (true) {
 		event_t ev={0};
@@ -214,7 +211,7 @@ printf("[App] Volume decreased, set to: %d\n", appContext.volume);
 			runPlayer(&ev, &appContext); /* Run player in background */
 				/*ACA pongo lo que se hace para hacer la fft
 				 * despues me imagino irá en un PIT
-				 * para actualizar los valores cada 250ms capaz
+				 * para actualizar los valores cada 250ms capaz//TODO
 				 * */
 //				adaptFFT(src, dst, 1024);
 //				fft(inputF32, outputF32, 1);
@@ -247,7 +244,7 @@ int initDevice(void) {
 	/* uart */
 	    uart_config_t config;
 	    UART_GetDefaultConfig(&config);
-	       config.baudRate_Bps = BOARD_DEBUG_UART_BAUDRATE;
+	       config.baudRate_Bps = 9600;
 	       config.enableTx     = true;
 	       config.enableRx     = true;
 	       UART_Init(UART0, &config, CLOCK_GetFreq(UART0_CLK_SRC));
@@ -350,7 +347,6 @@ void switchAppState(app_state_t current, app_state_t target) {
 				MP3LoadFile(&songName[1]);
 
 #ifdef DEBUG_PRINTF_APP
-				//TODO Calculo que vamos a tener que hacer algo con esta data
 				printf("[App] Playing music...");
 				if (MP3GetTagData(&appContext.playerContext.ID3Data)) {
 					printf("\nSONG INFO\n");
@@ -461,7 +457,7 @@ void switchAppState(app_state_t current, app_state_t target) {
 }
 
 void runMenu(event_t *events, app_context_t *context) {
-	FSM_menu(events, context); //TODO: La fsm del menu
+	FSM_menu(events, context);
 }
 
 char* concat(const char *s1, const char *s2) {

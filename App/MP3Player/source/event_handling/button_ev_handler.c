@@ -11,7 +11,7 @@
 #include "board.h"
 #include "fsl_gpio.h"
 #include "stdbool.h"
-#include "button.h"
+#include "../HAL/button.h"
 #include "fsl_common.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
