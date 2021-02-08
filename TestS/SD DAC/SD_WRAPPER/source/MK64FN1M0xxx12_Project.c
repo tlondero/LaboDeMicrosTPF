@@ -71,6 +71,8 @@ int main(void) {
 /////////////////////////////////////////////////////////////
 
 	DAC_Wrapper_Wake_Up();
+	eqInit(15);
+
 	while (true) {
 
 		for (count = 1; count < VOLUME_STEPS + 1; count++) {
@@ -146,6 +148,10 @@ int main(void) {
 
 									//ECUALIZADOR CON BUFFER 2
 									//TODO
+									if (i != 0) {
+										eqFilterFrame(u_buffer_1,
+												frameData.sampleCount);
+									}
 
 									//Adpto buffer 2
 									adaptSignal(u_buffer_2, u_buffer_2,
@@ -165,7 +171,9 @@ int main(void) {
 
 									//ECUALIZADOR CON BUFFER 1
 									//TODO
-									eqFilterFrame(u_buffer_1, frameData.sampleCount);
+
+									eqFilterFrame(u_buffer_1,
+											frameData.sampleCount);
 
 									//Adpto buffer 1
 									adaptSignal(u_buffer_1, u_buffer_1,

@@ -1,9 +1,9 @@
 #define BLOCK_SIZE 32
 #define NUM_TAPS 1001
-#define EQ_NUM_OF_FILTERS			8
+#define EQ_NUM_OF_FILTERS			10
 #include "arm_math.h"
 
-static const float32_t eqFirCoeffs32[EQ_NUM_OF_FILTERS][EQ_NUM_OF_FILTERS] __attribute__((aligned(32))) = // Coefficients of each bandpass FIR filter. Computed with MATLAB.
+static const float32_t eqFirCoeffs32[EQ_NUM_OF_FILTERS][NUM_TAPS] __attribute__((aligned(32))) = // Coefficients of each bandpass FIR filter. Computed with MATLAB.
 	{
 		//32
 		{6.1969e-21, -1.5765e-09, -6.2654e-09, -1.4006e-08,

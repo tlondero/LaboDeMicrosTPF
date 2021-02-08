@@ -14,7 +14,7 @@
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
-typedef uint8_t event_t;
+typedef uint8_t event_enc_t;
 typedef uint8_t encoder_id;
 
 /*******************************************************************************
@@ -32,7 +32,7 @@ typedef uint8_t encoder_id;
  * @param pin_A Clock
  * @param pin_B Data
  */
-encoder_id EncoderRegister(uint8_t pin_A, uint8_t pin_B);
+encoder_id EncoderRegister(void);
 /**
  * @brief Reports if there is an event available
  * @param encoder_id unique encoder identifier
@@ -45,4 +45,4 @@ bool EncoderEventAVB(encoder_id id);
  * @param encoder_id unique encoder identifier
  * @returns LEFT_TURN or RIGHT_TURN  if events still available, EVENT_NOT_AVB otherwise
  */
-event_t EncoderPopEvent(encoder_id id);
+event_enc_t EncoderPopEvent(encoder_id id);

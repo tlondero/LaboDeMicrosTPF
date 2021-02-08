@@ -52,7 +52,7 @@ typedef struct {
 	directory_name_att directoryNames[NAME_LIST_SIZE];
 	char directory_path[MAX_PATH_LENGHT];
 	char mp3path[MAX_PATH_LENGHT];
-
+	char full_path[MAX_PATH_LENGHT];
 
 	//callback
 	cback mycb;
@@ -63,7 +63,7 @@ typedef struct {
 /*******************************************************************************
  * FUNCTION PROTOTYPES WITH FILE SCOPE
  ******************************************************************************/
-void copyFname(char *destiny, char *source);
+
 void addToPath(char *s);
 void removeDirFromPath();
 
@@ -81,6 +81,14 @@ char* FSEXP_getMP3Path(void){
 	data.mp3path[data.path_index] = '/';
 	copyFname(&(data.mp3path[data.path_index+1]), data.directoryNames[data.directory_index].name);
 	return data.mp3path;
+
+}
+
+char* FSEXP_getFullPath(void){
+	copyFname(data.full_path, FSEXP_getPath());
+	data.full_path[data.path_index] = '/';
+	copyFname(&(data.full_path[data.path_index+1]), data.directoryNames[data.directory_index].name);
+	return data.full_path;
 
 }
 
@@ -282,6 +290,10 @@ void FSEXP_addCallbackForFile(cback cb){
 void FSEXP_closeDir(void){
 	f_closedir(&data.directory);
 }
+
+bool FSEXP_isdir(void){
+	return (data.directoryNames[data.directory_index].is_directory);
+}
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH FILE SCOPE
  ******************************************************************************/
@@ -310,10 +322,11 @@ void removeDirFromPath() {
 
 void copyFname(char *destiny, char *source) {
 	uint8_t i = 0;
-	while ((*source != '\0') && (i < NAMES_BUFFER_SIZE)) {
+	while ((source[i] != '\0') && (i < NAMES_BUFFER_SIZE)) {
 		destiny[i] = source[i];
 		i++;
 	}
+	destiny[i] = '\0';
 
 }
 /*******************************************************************************

@@ -31,12 +31,14 @@ void EVHANDLER_GetEvents(event_t *evs) {
 	BUTTONS_EVHANDLER_GetEvents(&(evs->btn_evs));
 	SD_EVHANDLER_GetEvents(&(evs->sd_evs));
 	FSEXP_EVHANDLER_GetEvents(&(evs->fsexp_evs));
+	encoderHandlerGetEvents(&(evs->encoder_evs));
 }
 
 void EVHANDLER_InitHandlers(void){
 	FSEXP_EVHANDLER_Init();
 	SD_EVHANDLER_Init();
 	BUTTONS_EVHANDLER_Init();
+	encoderHandlerInit();
 }
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH FILE SCOPE
