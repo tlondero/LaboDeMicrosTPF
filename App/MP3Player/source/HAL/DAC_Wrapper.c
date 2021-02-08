@@ -298,7 +298,7 @@ void MP3_Adapt_Signal(int16_t *src, uint16_t *dst, uint16_t cnt,
 		for (j = 0; j < cnt; j++) {
 			if (volumen) {
 				uint16_t aux = (uint16_t) (((src[j] ) / (VOLUME_STEPS + 1))
-						* ((volumen)*2));	//maximo es 30
+						* ((volumen)));	//maximo es 30
 
 				dst[j] = ((aux + 32768) / 16);
 			} else {

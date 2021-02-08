@@ -450,7 +450,7 @@ void switchAppState(app_state_t current, app_state_t target) {
 				appContext.playerContext.res = MP3GetDecodedFrame(
 						(int16_t*) getbuffer1(),
 						MP3_DECODED_BUFFER_SIZE,
-						&appContext.playerContext.sampleCount, 0);
+						&appContext.playerContext.sampleCount);
 
 				MP3_Adapt_Signal((int16_t*) getbuffer1(), getbuffer1(),
 						appContext.playerContext.sampleCount,

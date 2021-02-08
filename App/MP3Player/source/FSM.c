@@ -732,7 +732,7 @@ void runPlayer(event_t *events, app_context_t *appContext) {
 				appContext->playerContext.res = MP3GetDecodedFrame(
 						(int16_t*) u_buffer_2,
 						MP3_DECODED_BUFFER_SIZE,
-						&(appContext->playerContext.sampleCount), 0);
+						&(appContext->playerContext.sampleCount));
 
 				MP3_Adapt_Signal((int16_t*) u_buffer_2, u_buffer_2,
 						appContext->playerContext.sampleCount,
@@ -747,7 +747,7 @@ void runPlayer(event_t *events, app_context_t *appContext) {
 				appContext->playerContext.res = MP3GetDecodedFrame(
 						(int16_t*) u_buffer_1,
 						MP3_DECODED_BUFFER_SIZE,
-						&(appContext->playerContext.sampleCount), 0);
+						&(appContext->playerContext.sampleCount));
 				MP3_Adapt_Signal((int16_t*) u_buffer_1, u_buffer_1,
 						appContext->playerContext.sampleCount,
 						appContext->volume);
