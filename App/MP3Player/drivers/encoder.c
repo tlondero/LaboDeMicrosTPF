@@ -4,8 +4,7 @@
 #include "core_cm4.h"
 #include <stdbool.h>
 #include "fsl_port.h"
-#include "fsl_sdmmc_osa.h"
-#include "fsl_pit.h"
+#include "../HAL/delays.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
@@ -44,7 +43,7 @@ static encoder_state_t encoders[MAX_ENCODERS];
 static uint16_t enconders_cant = 0;
 //static tim_id_t encoder_timer_id;
 static bool busy=false;
-
+static uint8_t delay_bro;
 /*******************************************************************************
  * FUNCTION DECLARATIONS WITH LOCAL SCOPE
  ******************************************************************************/
@@ -66,20 +65,6 @@ void EncoderUpdate(void);
 
 void EncoderInit(encoder_id enc_id)
 {
-	static bool warm_up_rdy = false;
-	if (!warm_up_rdy)
-	{
-		warm_up_rdy = true;
-//		timerInit();
-//		encoder_timer_id = timerGetId();
-//		encoders[enc_id].timer_id = encoder_timer_id;
-//		timerStart(encoder_timer_id, (uint32_t)TIMER_MS2TICKS(100), TIM_MODE_SINGLESHOT, NULL); //Previene rebotes
-
-#if DEBUGGIN_MODE_ENCODER
-		gpioMode(DEBUG_PIN, OUTPUT);
-		gpioWrite(DEBUG_PIN, LOW);
-#endif
-	}
 }
 
 //Adds new encoder
@@ -108,19 +93,14 @@ encoder_id EncoderRegister()
 
 	PORT_SetPinConfig(PORT_ENCODER_B, PIN_ENCODER_B, &conf);// pin B del encoder configured
 
-//	gpioMode(encoders[id].pin_B, INPUT_PULLUP);
 
-//	gpioIRQ(encoders[id].pin_B, GPIO_IRQ_MODE_FALLING_EDGE, EncoderUpdate);
 
 	PORT_SetPinInterruptConfig(PORT_ENCODER_B, PIN_ENCODER_B, kPORT_InterruptFallingEdge);
 
 	NVIC_EnableIRQ(PORTB_IRQn);
+	delay_bro=delaysinitDelayBlockInterrupt(50000U,&busy);
 
 
-	PIT_SetTimerPeriod(PIT, kPIT_Chnl_2,
-					USEC_TO_COUNT(50000U, CLOCK_GetFreq(kCLOCK_BusClk)));
-	PIT_EnableInterrupts(PIT, kPIT_Chnl_2, kPIT_TimerInterruptEnable);
-	EnableIRQ(PIT2_IRQn);
 	return id;
 }
 
@@ -131,8 +111,8 @@ void EncoderUpdate(void)
 	encoder_id id = 0;
 
 	if(!busy){
-	PIT_StartTimer(PIT, kPIT_Chnl_2);
-	busy=true;
+	delaysStart(delay_bro);
+	busy=true;// the order matters!
 	for (id = 0; id < enconders_cant; id++){
 			if (GPIO_PinRead(GPIO_ENCODER, PIN_ENCODER_A) == HIGH)
 			{
@@ -192,16 +172,4 @@ void PORTB_IRQHandler(void)   //encoder
 
 
 
-void PIT2_IRQHandler(void) {
-	/* Clear interrupt flag.*/
-	PIT_ClearStatusFlags(PIT, kPIT_Chnl_2, kPIT_TimerFlag);
 
-	busy=false;
-	PIT_StopTimer(PIT, kPIT_Chnl_2);
-	/* Added for, and affects, all PIT handlers. For CPU clock which is much larger than the IP bus clock,
-	 * CPU can run out of the interrupt handler before the interrupt flag being cleared, resulting in the
-	 * CPU's entering the handler again and again. Adding DSB can prevent the issue from happening.
-	 */
-	__DSB();
-
-}

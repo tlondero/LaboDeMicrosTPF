@@ -57,6 +57,8 @@ void cbackout(void);
 static app_context_t appContext;
 static char volString[7];
 static char id3Buffer[ID3_MAX_FIELD_SIZE + 2];
+static uint8_t delay_id;
+static bool busy;
 /**********************************************************************************************
  *                                         MAIN                                               *
  **********************************************************************************************/
@@ -302,6 +304,8 @@ int initDevice(void) {
 	/*encoder */
 	EncoderRegister();
 
+	/*delay block*/
+	delay_id = delaysinitDelayBlockInterrupt(100000U, busy);
 	return true; //TODO agregar verificaciones al resto de los inits
 
 }

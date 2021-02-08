@@ -12,7 +12,7 @@
 #include "fsl_port.h"
 #include "debug_ifdefs.h"
 #ifdef BUTTON_DEBOUNCE
-#include "fsl_sdmmc_osa.h"
+#include "delays.h"
 #endif
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
@@ -41,7 +41,8 @@ static bool prev_button;
 static bool enter_button;
 static bool off_on_button;
 static bool pause_play_button;
-
+static uint8_t delay_id;
+static bool busy;
 static bool kinetisWakeupArmed = true;
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH GLOBAL SCOPE
@@ -62,6 +63,8 @@ void BUTTON_Init(void){
 	PORT_SetPinInterruptConfig(PORTD, 3U, kPORT_InterruptRisingEdge); //PCR PORTD3
 	PORT_SetPinInterruptConfig(BOARD_SW3_PORT, BOARD_SW3_GPIO_PIN,
 			kPORT_InterruptFallingEdge); //PCR SW3
+	//delay id
+	delay_id = delaysinitDelayBlockInterrupt(250000U, &busy);
 }
 
 bool BUTTON_GetBackButton(void){
@@ -152,7 +155,7 @@ void BUTTON_ON_OFF_CALLBACK(void){
 
 void PORTC_IRQHandler(void){
 
-    if (((1U << 6U) & PORT_GetPinsInterruptFlags(PORTC)))
+    if ( ((1U << 6U) & PORT_GetPinsInterruptFlags(PORTC)))
     {
         PORT_ClearPinsInterruptFlags(PORTC, (1U << 6U));
         __DSB();
@@ -172,29 +175,34 @@ void PORTA_IRQHandler(void)   //SW2
 
 void PORTD_IRQHandler(void)	//BOTONERA
 {
-	if (((1U << 0U) & PORT_GetPinsInterruptFlags(PORTD))){ //PTD0
+	if ( !busy && ((1U << 0U) & PORT_GetPinsInterruptFlags(PORTD))){ //PTD0
+
 			PORT_ClearPinsInterruptFlags(PORTD, (1U << 0U));
-			SDMMC_OSADelay(20U);
-#ifdef BUTTON_DEBOUNCE
+			delaysStart(delay_id);
+			busy=true;
+			#ifdef BUTTON_DEBOUNCE
 			if(GPIO_PinRead(GPIOD, 0U))
 #endif
 			{
 				BUTTON_NEXT_CALLBACK();
 			}
 	}
-	else if (((1U << 1U) & PORT_GetPinsInterruptFlags(PORTD))){ //PTD1
+	else if (!busy && ((1U << 1U) & PORT_GetPinsInterruptFlags(PORTD))){ //PTD1
 			PORT_ClearPinsInterruptFlags(PORTD, (1U << 1U));
-			SDMMC_OSADelay(20U);
-#ifdef BUTTON_DEBOUNCE
+
+			delaysStart(delay_id);
+			busy=true;
+			#ifdef BUTTON_DEBOUNCE
 			if(GPIO_PinRead(GPIOD, 1U))
 #endif
 			{
 				BUTTON_PREV_CALLBACK();
 			}
 	}
-	else if (((1U << 2U) & PORT_GetPinsInterruptFlags(PORTD))){ //PTD2
+	else if (!busy && ((1U << 2U) & PORT_GetPinsInterruptFlags(PORTD))){ //PTD2
 			PORT_ClearPinsInterruptFlags(PORTD, (1U << 2U));
-			SDMMC_OSADelay(20U);
+			delaysStart(delay_id);
+			busy=true;
 #ifdef BUTTON_DEBOUNCE
 			if(GPIO_PinRead(GPIOD, 2U))
 #endif
@@ -202,9 +210,10 @@ void PORTD_IRQHandler(void)	//BOTONERA
 				BUTTON_ENTER_CALLBACK();
 			}
 	}
-	else if (((1U << 3U) & PORT_GetPinsInterruptFlags(PORTD))){ //PTD3
+	else if (!busy && ((1U << 3U) & PORT_GetPinsInterruptFlags(PORTD))){ //PTD3
 			PORT_ClearPinsInterruptFlags(PORTD, (1U << 3U));
-			SDMMC_OSADelay(20U);
+			delaysStart(delay_id);
+			busy=true;
 #ifdef BUTTON_DEBOUNCE
 			if(GPIO_PinRead(GPIOD, 3U))
 #endif
