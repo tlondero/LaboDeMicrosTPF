@@ -14,7 +14,7 @@
    * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
    ******************************************************************************/
 
-#define MP3_DECODED_BUFFER_SIZE (10240)                                     // maximum frame size if max bitrate is used (in samples)
+#define MP3_DECODED_BUFFER_SIZE (5000)                                     // maximum frame size if max bitrate is used (in samples)
 #define ID3_MAX_FIELD_SIZE      50
 
    /*******************************************************************************
