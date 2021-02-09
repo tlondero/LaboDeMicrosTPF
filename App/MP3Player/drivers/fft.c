@@ -15,17 +15,17 @@
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
-#define BINES 10
+#define BINES 8
 #define SIZE 4096
 
-
-#define BIN7 10000000U
-#define BIN6 9000000U
-#define BIN5 8000000U
-#define BIN4 7500000U
-#define BIN3 6500000U
-#define BIN2 6000000U
-#define BIN1 5000000U
+#define BIN8 168513740U
+#define BIN7 56851374U
+#define BIN6 4851374U
+#define BIN5 2300000U
+#define BIN4 1638400U
+#define BIN3  909600U
+#define BIN2  409600U
+#define BIN1  209600U
 
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
@@ -72,15 +72,43 @@ void fftGetMag(float32_t *inputF32, float32_t *outputF32) {
 }
 
 void fftMakeBines8(float32_t *src, float32_t *dst) {
+	float32_t maxValue=0;
+	uint32_t index=0;
+	arm_max_f32(src, SIZE, &maxValue, &index);
+
 
 	for (int j = 0; j < BINES; j++) {
-		float32_t aux = 0;
-		for (int i = 0; i < SIZE / BINES; i++) {
-			aux += src[i + (SIZE / BINES) * j];
-			if (i == (SIZE / BINES) - 1) {
-				dst[j] = aux;
-			}
+		switch(j){
+		case 0:
+			arm_max_f32(src, 40, &maxValue, &index);
+			break;
+		case 1:
+			arm_max_f32(src+40, 60, &maxValue, &index);
+			break;
+		case 2:
+			arm_max_f32(src+100, 100, &maxValue, &index);
+			break;
+		case 3:
+			arm_max_f32(src+200, 300, &maxValue, &index);
+			break;
+		case 4:
+			arm_max_f32(src+500, 600, &maxValue, &index);
+			break;
+		case 5:
+			arm_max_f32(src+1100, 800, &maxValue, &index);
+			break;
+		case 6:
+			arm_max_f32(src+1900, 1000, &maxValue, &index);
+			break;
+		case 7:
+			arm_max_f32(src+2900, 1196, &maxValue, &index);
+			break;
+		default:
+			break;
 		}
+		dst[j] = maxValue;
+//		arm_max_f32(src+(SIZE/BINES)*j, (SIZE/BINES), &maxValue, &index);
+//		dst[j] = maxValue;
 		assignBines(&(dst[j]));
 	}
 
@@ -152,7 +180,10 @@ uint32_t fftInstanceToSize(arm_cfft_instance_f32 *instance) {
 	return size;
 }
 void assignBines(float32_t *bines) {
-	if(*bines > BIN7){
+	if(*bines > BIN8){
+		*bines=8;
+	}
+	else if(*bines > BIN7){
 		*bines=7;
 	}
 	else if(*bines > BIN6){

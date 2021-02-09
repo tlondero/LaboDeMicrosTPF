@@ -5,8 +5,8 @@
  * (c) NXP Semiconductors 2013-2021
  * Generated linker script file for MK64FN1M0xxx12
  * Created from linkscript.ldt by FMCreateLinkLibraries
- * Using Freemarker v2.3.30
- * MCUXpresso IDE v11.3.0 [Build 5222] [2021-01-11] on 31/01/2021 21:26:57
+ * Using Freemarker v2.3.23
+ * MCUXpresso IDE v11.2.1 [Build 4149] [2020-10-07] on Feb 9, 2021 1:29:37 PM
  */
 
 INCLUDE "testFFT_Debug_library.ld"

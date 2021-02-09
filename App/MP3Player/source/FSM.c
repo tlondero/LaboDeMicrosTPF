@@ -22,6 +22,18 @@
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 #define USECS_SPECTROGRAM 250000U
+
+
+typedef float32_t REAL;
+#define NPOLE 2
+#define NZERO 2
+REAL acoeff[]={0.33336499651457274,-0.9428985937980157,1};
+REAL bcoeff[]={1,2,1};
+REAL gain=10.244159221308562;
+REAL xv[]={0,0,0};
+REAL yv[]={0,0,0};
+REAL applyfilter(REAL v);
+
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
@@ -52,7 +64,7 @@ enum {
 /*******************************************************************************
  * FUNCTION PROTOTYPES WITH FILE SCOPE
  ******************************************************************************/
-void adaptFFT(uint16_t *src, float32_t *dst, uint16_t cnt);
+void adaptFFT(int16_t *src, float32_t *dst, uint16_t cnt);
 void translateBinesToMatrix(float32_t *bines);
 /*******************************************************************************
  * VARIABLE DECLARATION WITH FILE SCOPE
@@ -68,7 +80,7 @@ static bool fft_samples_ready;
 static float32_t u_buffer_fft[4096 * 2];
 static float32_t buffer_fft_calculated[4096 * 2];
 static float32_t buffer_fft_calculated_mag[4096];
-static float32_t fft_8_bines[10];
+static float32_t fft_8_bines[8];
 
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH GLOBAL SCOPE
@@ -728,7 +740,7 @@ uint16_t* getbuffer1(void) {
 }
 
 void runPlayer(event_t *events, app_context_t *appContext) {
-
+	char pijas[13]={0};
 	if (appContext->playerContext.songPaused) {
 		DAC_Wrapper_Clear_Data_Array();
 		DAC_Wrapper_Clear_Next_Buffer();
@@ -770,6 +782,22 @@ void runPlayer(event_t *events, app_context_t *appContext) {
 						MP3_DECODED_BUFFER_SIZE,
 						&(appContext->playerContext.sampleCount));
 
+				adaptFFT((int16_t*)u_buffer_2, u_buffer_fft, 512);
+				if (fft_samples_ready) {
+					fft_samples_ready = false;
+					fft(u_buffer_fft, buffer_fft_calculated, 1);
+					fftGetMag(buffer_fft_calculated, buffer_fft_calculated_mag);
+					fftMakeBines8(buffer_fft_calculated_mag, fft_8_bines);
+					translateBinesToMatrix(&(fft_8_bines[0]));
+//					for(int k=0;k<8;k++){
+//						pijas[k]=fft_8_bines[k] + '0';
+//					}
+//					pijas[10-2]='\r';
+//					pijas[11-2]='\n';
+//					pijas[12-2]='\0';
+//					UART_WriteBlocking(UART0, pijas, 13);
+				}
+
 				MP3_Adapt_Signal((int16_t*) u_buffer_2, u_buffer_2,
 						appContext->playerContext.sampleCount,
 						appContext->volume);
@@ -784,6 +812,24 @@ void runPlayer(event_t *events, app_context_t *appContext) {
 						(int16_t*) u_buffer_1,
 						MP3_DECODED_BUFFER_SIZE,
 						&(appContext->playerContext.sampleCount));
+
+
+				adaptFFT((int16_t*)u_buffer_1, u_buffer_fft, 512);
+				if (fft_samples_ready) {
+					fft_samples_ready = false;
+					fft(u_buffer_fft, buffer_fft_calculated, 1);
+					fftGetMag(buffer_fft_calculated, buffer_fft_calculated_mag);
+					fftMakeBines8(buffer_fft_calculated_mag, fft_8_bines);
+					translateBinesToMatrix(&(fft_8_bines[0]));
+//					for(int k=0;k<8;k++){
+//						pijas[k]=fft_8_bines[k] + '0';
+//					}
+//					pijas[10-2]='\r';
+//					pijas[11-2]='\n';
+//					pijas[12-2]='\0';
+//					UART_WriteBlocking(UART0, pijas, 13);
+				}
+
 				MP3_Adapt_Signal((int16_t*) u_buffer_1, u_buffer_1,
 						appContext->playerContext.sampleCount,
 						appContext->volume);
@@ -798,29 +844,22 @@ void runPlayer(event_t *events, app_context_t *appContext) {
 //	if(!(busy)){
 
 	//PIT_StartTimer(PIT, kPIT_Chnl_3);
-	if (appContext->playerContext.using_buffer_1) {
-		adaptFFT(u_buffer_1, u_buffer_fft, 512);
-	} else {
-		adaptFFT(u_buffer_2, u_buffer_fft, 512);
-	}
-	if (fft_samples_ready) {
-		fft_samples_ready=false;
-		fft(u_buffer_fft, buffer_fft_calculated, 1);
-		fftGetMag(buffer_fft_calculated, buffer_fft_calculated_mag);
-		fftMakeBines8(buffer_fft_calculated_mag, fft_8_bines);
-		translateBinesToMatrix(&(fft_8_bines[1]));
-//	char pijas[13]={0};
-//	pijas[0]='1';
-//	pijas[1]='2';
-//	for(int k=0;k<8;k++){
-//		pijas[k+2]=fft_8_bines[k] + '0';
+//	if (appContext->playerContext.using_buffer_1) {
+//		adaptFFT(u_buffer_1, u_buffer_fft, 512);
+//	} else {
+//		adaptFFT(u_buffer_2, u_buffer_fft, 512);
 //	}
-//	pijas[10]='\r';
-//	pijas[11]='\n';
-//	pijas[12]='\0';
-//	UART_WriteBlocking(UART0, pijas, 13);
+//	if (fft_samples_ready) {
+//		fft_samples_ready = false;
+//		fft(u_buffer_fft, buffer_fft_calculated, 1);
+//		fftGetMag(buffer_fft_calculated, buffer_fft_calculated_mag);
+//		fftMakeBines8(buffer_fft_calculated_mag, fft_8_bines);
+//		translateBinesToMatrix(&(fft_8_bines[0]));
+
+
+
 //	}
-	}
+
 }
 
 char* GetPackPath(void) {
@@ -829,11 +868,16 @@ char* GetPackPath(void) {
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH FILE SCOPE
  ******************************************************************************/
-void adaptFFT(uint16_t *src, float32_t *dst, uint16_t cnt) {
+void adaptFFT(int16_t *src, float32_t *dst, uint16_t cnt) {
 	static uint16_t i = 0;
+	int16_t aux[2048]={0};
 	uint16_t j = 0;
+	for(j=0;j<2048;j++){
+//		aux[j]= src[j];
+		aux[j]=	applyfilter(src[j]);
+	}
 	for (j = 0; j < cnt; i++, j++) {
-		dst[i * 2] = src[j * 4] + 0.0f;
+				dst[i * 2] = aux[j * 4] + 0.0f;
 	}
 	if (i == 4096) {
 		i = 0;
@@ -847,11 +891,14 @@ void translateBinesToMatrix(float32_t *bines) {
 		for (j = 0; j < 8; j++) {
 			if (j < bines[i] + 1) {
 				if (j < 3) {
-					LEDMATRIX_SetLed(j, i, 0, 1, 0);
+					if(bines[j] == 0){
+						LEDMATRIX_SetLed(j, i, 0, 0, 0);
+					}
+					LEDMATRIX_SetLed(j-1, i, 0, 1, 0);
 				} else if (j < 6) {
-					LEDMATRIX_SetLed(j, i, 1, 0, 0);
+					LEDMATRIX_SetLed(j-1, i, 1, 0, 0);
 				} else {
-					LEDMATRIX_SetLed(j, i, 0, 0, 1);
+					LEDMATRIX_SetLed(j-1, i, 0, 0, 1);
 				}
 			} else {
 				LEDMATRIX_SetLed(j, i, 0, 0, 0);
@@ -859,6 +906,23 @@ void translateBinesToMatrix(float32_t *bines) {
 		}
 	}
 }
+
+
+
+
+REAL applyfilter(REAL v)
+{
+    int i;
+    REAL out=0;
+    for (i=0; i<NZERO; i++) {xv[i]=xv[i+1];}
+    xv[NZERO] = v/gain;
+    for (i=0; i<NPOLE; i++) {yv[i]=yv[i+1];}
+    for (i=0; i<=NZERO; i++) {out+=xv[i]*bcoeff[i];}
+    for (i=0; i<NPOLE; i++) {out-=yv[i]*acoeff[i];}
+    yv[NPOLE]=out;
+    return out;
+}
+
 /*******************************************************************************
  *						 INTERRUPTION ROUTINES
  ******************************************************************************/
