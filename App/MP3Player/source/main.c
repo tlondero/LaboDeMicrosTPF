@@ -36,7 +36,7 @@
 /**********************************************************************************************
  *                        FUNCTION DECLARATION WITH LOCAL SCOPE                               *
  **********************************************************************************************/
-void adaptFFT(float32_t *src, float32_t *dst, uint16_t cnt);
+
 void runMenu(event_t *events, app_context_t *context);
 
 void switchAppState(app_state_t current, app_state_t target);
@@ -57,7 +57,7 @@ void cbackout(void);
 static app_context_t appContext;
 static char volString[7];
 static char id3Buffer[ID3_MAX_FIELD_SIZE + 2];
-static uint8_t delay_id;
+
 /**********************************************************************************************
  *                                         MAIN                                               *
  **********************************************************************************************/
@@ -67,14 +67,14 @@ int main(void) {
 	initDevice(); /* Init device */
 
 	//Debug, dejar porque no jode..
-	LEDMATRIX_SetLed(1, 2, 0, 0, 100);
-	LEDMATRIX_SetLed(1, 5, 0, 0, 100);
-	LEDMATRIX_SetLed(4, 1, 0, 0, 100);
-	LEDMATRIX_SetLed(5, 2, 0, 0, 100);
-	LEDMATRIX_SetLed(5, 3, 0, 0, 100);
-	LEDMATRIX_SetLed(5, 4, 0, 0, 100);
-	LEDMATRIX_SetLed(5, 5, 0, 0, 100);
-	LEDMATRIX_SetLed(4, 6, 0, 0, 100);
+	LEDMATRIX_SetLed(1, 2, 0, 0, 10);
+	LEDMATRIX_SetLed(1, 5, 0, 0, 10);
+	LEDMATRIX_SetLed(4, 1, 0, 0, 10);
+	LEDMATRIX_SetLed(5, 2, 0, 0, 10);
+	LEDMATRIX_SetLed(5, 3, 0, 0, 10);
+	LEDMATRIX_SetLed(5, 4, 0, 0, 10);
+	LEDMATRIX_SetLed(5, 5, 0, 0, 10);
+	LEDMATRIX_SetLed(4, 6, 0, 0, 10);
 	LEDMATRIX_Enable();
 	LEDMATRIX_Pause();
 	/*vol string initialize*/
@@ -223,10 +223,8 @@ printf("[App] Volume decreased, set to: %d\n", appContext.volume);
 			 * despues me imagino irá en un PIT
 			 * para actualizar los valores cada 250ms capaz//TODO
 			 * */
-//				adaptFFT(src, dst, 1024);
-//				fft(inputF32, outputF32, 1);
-//				fftGetMag(inputF32, outputF32);
-//				fftMakeBines8(src, dst);
+
+
 			runMenu(&ev, &appContext); /* Run menu in background */
 			break;
 
@@ -296,13 +294,18 @@ int initDevice(void) {
 	EVHANDLER_InitHandlers();
 
 	/* Init FFT */
-	fftInit(CFFT_1024);
+	fftInit(CFFT_4096);
 
 	/* Reset app context */
 	resetAppContext();
 	/*encoder */
 	EncoderRegister();
-
+	/* FSM init */
+	FSM_init();
+	/*   */
+#ifndef DEBUG_PRINTF_APP
+		UART_WriteBlocking(UART0, "10A\r\n", 6);
+#endif
 
 	return true; //TODO agregar verificaciones al resto de los inits
 
@@ -564,10 +567,4 @@ void cbackout(void) {
 //	DAC_Wrapper_Clear_Next_Buffer();
 	UART_WriteBlocking(UART0, "07O\r\n", 6);
 #endif
-}
-void adaptFFT(float32_t *src, float32_t *dst, uint16_t cnt) {
-	uint16_t i = 0;
-	for (i = 0; i < cnt; i++) {
-		dst[i * 2] = src[i];
-	}
 }

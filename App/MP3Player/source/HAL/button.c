@@ -1,8 +1,7 @@
-
-/***************************************************************************/ /**
-  @file     FileName.c
-  @brief
-  @author   MAGT
+/***************************************************************************//**
+ @file     FileName.c
+ @brief
+ @author   MAGT
  ******************************************************************************/
 
 /*******************************************************************************
@@ -47,7 +46,7 @@ static bool kinetisWakeupArmed = true;
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH GLOBAL SCOPE
  ******************************************************************************/
-void BUTTON_Init(void){
+void BUTTON_Init(void) {
 	/* Init wakeup interruption */
 	SMC_SetPowerModeProtection(SMC, kSMC_AllowPowerModeAll);
 	NVIC_EnableIRQ(APP_WAKEUP_BUTTON_IRQ);	//NVIC del wakeup (SW2)
@@ -67,57 +66,51 @@ void BUTTON_Init(void){
 	delay_id = delaysinitDelayBlockInterrupt(250000U, &busy);
 }
 
-bool BUTTON_GetBackButton(void){
-	if(back_button){
+bool BUTTON_GetBackButton(void) {
+	if (back_button) {
 		back_button = false;
 		return true;
-	}
-	else{
+	} else {
 		return false;
 	}
 }
-bool BUTTON_GetPrevButton(void){
-	if(prev_button){
+bool BUTTON_GetPrevButton(void) {
+	if (prev_button) {
 		prev_button = false;
 		return true;
-	}
-	else{
+	} else {
 		return false;
 	}
 }
-bool BUTTON_GetNextButton(void){
-	if(next_button){
+bool BUTTON_GetNextButton(void) {
+	if (next_button) {
 		next_button = false;
 		return true;
-	}
-	else{
+	} else {
 		return false;
 	}
 }
-bool BUTTON_GetPausePlayButton(void){
-	if(pause_play_button){
+bool BUTTON_GetPausePlayButton(void) {
+	if (pause_play_button) {
 		pause_play_button = false;
 		return true;
-	}
-	else{
+	} else {
 		return false;
 	}
 }
-bool BUTTON_GetOnOffButton(void){
-	if(off_on_button){
+bool BUTTON_GetOnOffButton(void) {
+	if (off_on_button) {
 		off_on_button = false;
 		return true;
-	}
-	else{
+	} else {
 		return false;
 	}
 }
-bool BUTTON_GetEnterButton(void){
-	if(enter_button){
+bool BUTTON_GetEnterButton(void) {
+	if (enter_button) {
 		enter_button = false;
 		return true;
-	}
-	else{
+	} else {
 		return false;
 	}
 }
@@ -128,98 +121,102 @@ bool BUTTON_GetEnterButton(void){
 /*******************************************************************************
  *						 INTERRUPTION ROUTINES
  ******************************************************************************/
-void BUTTON_NEXT_CALLBACK(void){
+void BUTTON_NEXT_CALLBACK(void) {
 	next_button = true;
 }
-void BUTTON_PREV_CALLBACK(void){
+void BUTTON_PREV_CALLBACK(void) {
 	prev_button = true;
 }
-void BUTTON_BACK_CALLBACK(void){
+void BUTTON_BACK_CALLBACK(void) {
 	back_button = true;
 }
-void BUTTON_ENTER_CALLBACK(void){
+void BUTTON_ENTER_CALLBACK(void) {
 	enter_button = true;
 }
-void BUTTON_PLAY_CALLBACK(void){
+void BUTTON_PLAY_CALLBACK(void) {
 	pause_play_button = true;
 }
-void BUTTON_ON_OFF_CALLBACK(void){
-	if(kinetisWakeupArmed){
+void BUTTON_ON_OFF_CALLBACK(void) {
+	if (kinetisWakeupArmed) {
 		kinetisWakeupArmed = false;
-	}
-	else{
+	} else {
 		off_on_button = true;
 		kinetisWakeupArmed = true;
 	}
 }
 
-void PORTC_IRQHandler(void){
+void PORTC_IRQHandler(void) {
 
-    if ( ((1U << 6U) & PORT_GetPinsInterruptFlags(PORTC)))
-    {
-        PORT_ClearPinsInterruptFlags(PORTC, (1U << 6U));
-        __DSB();
-        BUTTON_ON_OFF_CALLBACK();
-        /* Add for ARM errata 838869, affects Cortex-M4, Cortex-M4F Store immediate overlapping
-        exception return operation might vector to incorrect interrupt */
-    }
+	if (((1U << 6U) & PORT_GetPinsInterruptFlags(PORTC))) {
+		PORT_ClearPinsInterruptFlags(PORTC, (1U << 6U));
+		__DSB();
+		BUTTON_ON_OFF_CALLBACK();
+		/* Add for ARM errata 838869, affects Cortex-M4, Cortex-M4F Store immediate overlapping
+		 exception return operation might vector to incorrect interrupt */
+	}
 }
 
 void PORTA_IRQHandler(void)   //SW2
 {
-	 if (((1U << 4U) & PORT_GetPinsInterruptFlags(PORTA))){
-	    PORT_ClearPinsInterruptFlags(PORTA, (1U << 4U));
-	    BUTTON_PLAY_CALLBACK();
-	 }
+	if (((1U << 4U) & PORT_GetPinsInterruptFlags(PORTA))) {
+		PORT_ClearPinsInterruptFlags(PORTA, (1U << 4U));
+		BUTTON_PLAY_CALLBACK();
+	}
 }
 
 void PORTD_IRQHandler(void)	//BOTONERA
 {
-	if ( !busy && ((1U << 0U) & PORT_GetPinsInterruptFlags(PORTD))){ //PTD0
+	if (((1U << 0U) & PORT_GetPinsInterruptFlags(PORTD))) { //PTD0
 
-			PORT_ClearPinsInterruptFlags(PORTD, (1U << 0U));
+		PORT_ClearPinsInterruptFlags(PORTD, (1U << 0U));
+		if (!busy) {
 			delaysStart(delay_id);
-			busy=true;
-			#ifdef BUTTON_DEBOUNCE
-			if(GPIO_PinRead(GPIOD, 0U))
+			busy = true;
+#ifdef BUTTON_DEBOUNCE
+			if (GPIO_PinRead(GPIOD, 0U))
 #endif
-			{
+					{
 				BUTTON_NEXT_CALLBACK();
 			}
-	}
-	else if (!busy && ((1U << 1U) & PORT_GetPinsInterruptFlags(PORTD))){ //PTD1
-			PORT_ClearPinsInterruptFlags(PORTD, (1U << 1U));
-
+		}
+	} else if (((1U << 1U) & PORT_GetPinsInterruptFlags(PORTD))) { //PTD1
+		PORT_ClearPinsInterruptFlags(PORTD, (1U << 1U));
+		if (!busy) {
 			delaysStart(delay_id);
-			busy=true;
-			#ifdef BUTTON_DEBOUNCE
-			if(GPIO_PinRead(GPIOD, 1U))
+			busy = true;
+#ifdef BUTTON_DEBOUNCE
+			if (GPIO_PinRead(GPIOD, 1U))
 #endif
-			{
+					{
 				BUTTON_PREV_CALLBACK();
 			}
-	}
-	else if (!busy && ((1U << 2U) & PORT_GetPinsInterruptFlags(PORTD))){ //PTD2
-			PORT_ClearPinsInterruptFlags(PORTD, (1U << 2U));
+		}
+	} else if (((1U << 2U) & PORT_GetPinsInterruptFlags(PORTD))) { //PTD2
+		PORT_ClearPinsInterruptFlags(PORTD, (1U << 2U));
+		if (!busy) {
 			delaysStart(delay_id);
-			busy=true;
+			busy = true;
 #ifdef BUTTON_DEBOUNCE
-			if(GPIO_PinRead(GPIOD, 2U))
+			if (GPIO_PinRead(GPIOD, 2U))
 #endif
-			{
+					{
 				BUTTON_ENTER_CALLBACK();
 			}
-	}
-	else if (!busy && ((1U << 3U) & PORT_GetPinsInterruptFlags(PORTD))){ //PTD3
-			PORT_ClearPinsInterruptFlags(PORTD, (1U << 3U));
+		}
+
+	} else if (((1U << 3U) & PORT_GetPinsInterruptFlags(PORTD))) { //PTD3
+		PORT_ClearPinsInterruptFlags(PORTD, (1U << 3U));
+		if (!busy) {
 			delaysStart(delay_id);
-			busy=true;
+			busy = true;
 #ifdef BUTTON_DEBOUNCE
-			if(GPIO_PinRead(GPIOD, 3U))
+			if (GPIO_PinRead(GPIOD, 3U))
 #endif
-			{
-			BUTTON_BACK_CALLBACK();
+					{
+				BUTTON_BACK_CALLBACK();
 			}
+		}
+
 	}
 }
 

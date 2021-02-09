@@ -15,17 +15,17 @@
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
-#define BINES 8
-#define SIZE 1024
+#define BINES 10
+#define SIZE 4096
 
 
-#define BIN7 15000
-#define BIN6 9000
-#define BIN5 7000
-#define BIN4 5000
-#define BIN3 2600
-#define BIN2 1300
-#define BIN1 500
+#define BIN7 10000000U
+#define BIN6 9000000U
+#define BIN5 8000000U
+#define BIN4 7500000U
+#define BIN3 6500000U
+#define BIN2 6000000U
+#define BIN1 5000000U
 
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
@@ -73,10 +73,6 @@ void fftGetMag(float32_t *inputF32, float32_t *outputF32) {
 
 void fftMakeBines8(float32_t *src, float32_t *dst) {
 
-	float32_t maxValue = 0;
-	uint32_t index = 0;
-
-	arm_max_f32(src, SIZE, &maxValue, &index);
 	for (int j = 0; j < BINES; j++) {
 		float32_t aux = 0;
 		for (int i = 0; i < SIZE / BINES; i++) {

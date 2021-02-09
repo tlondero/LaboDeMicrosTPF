@@ -34,6 +34,7 @@
  * @param  --
  * @return --
 */
+void FSM_init();
 void FSM_menu(event_t *events, app_context_t *context);
 
 void runPlayer(event_t *events, app_context_t *context);

@@ -16,10 +16,12 @@
 #include "mp3Decoder.h"
 #include "fsl_uart.h"
 #include "debug_ifdefs.h"
+#include "fft.h"
+#include "HAL/delays.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
-
+#define USECS_SPECTROGRAM 250000U
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
@@ -50,15 +52,40 @@ enum {
 /*******************************************************************************
  * FUNCTION PROTOTYPES WITH FILE SCOPE
  ******************************************************************************/
+void adaptFFT(uint16_t *src, float32_t *dst, uint16_t cnt);
+void translateBinesToMatrix(float32_t *bines);
 /*******************************************************************************
  * VARIABLE DECLARATION WITH FILE SCOPE
  ******************************************************************************/
 static uint16_t u_buffer_1[MP3_DECODED_BUFFER_SIZE];
 static uint16_t u_buffer_2[MP3_DECODED_BUFFER_SIZE];
 static char packPath[MAX_PATH_LENGHT + 5];
+
+static uint8_t delay_id;
+static bool busy;
+static bool fft_samples_ready;
+
+static float32_t u_buffer_fft[4096 * 2];
+static float32_t buffer_fft_calculated[4096 * 2];
+static float32_t buffer_fft_calculated_mag[4096];
+static float32_t fft_8_bines[10];
+
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH GLOBAL SCOPE
  ******************************************************************************/
+void FSM_init() {
+	PIT_SetTimerPeriod(PIT, kPIT_Chnl_3,
+			USEC_TO_COUNT(USECS_SPECTROGRAM, CLOCK_GetFreq(kCLOCK_BusClk)));
+
+	/* Enable timer interrupts for channel 0 */
+	PIT_EnableInterrupts(PIT, kPIT_Chnl_3, kPIT_TimerInterruptEnable);
+
+	/* Enable at the NVIC */
+	EnableIRQ(PIT3_IRQn);
+
+//delay_id = delaysinitDelayBlockInterrupt(USECS_SPECTROGRAM,&busy);
+}
+
 void FSM_menu(event_t *ev, app_context_t *appContext) {
 
 	if (appContext->menuState == kAPP_MENU_MAIN) {
@@ -70,8 +97,8 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 #ifdef DEBUG_PRINTF_APP
 				printf("File System Explorer Menu\r\n");
 #else
-				UART_WriteBlocking(UART0, "00File System Explorer Menu\r\n",
-						30);
+				UART_WriteBlocking(UART0,
+						(uint8_t*) "00File System Explorer Menu\r\n", 30);
 #endif
 				break;
 
@@ -79,7 +106,8 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 #ifdef DEBUG_PRINTF_APP
 				printf("Equalizer Menu\r\n");
 #else
-				UART_WriteBlocking(UART0, "00Equalizer Menu\r\n", 19);
+				UART_WriteBlocking(UART0, (uint8_t*) "00Equalizer Menu\r\n",
+						19);
 
 #endif
 				break;
@@ -92,10 +120,12 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 				}
 #else
 				if (appContext->spectrogramEnable) {
-					UART_WriteBlocking(UART0, "00Spectrogram on\r\n", 19);
+					UART_WriteBlocking(UART0, (uint8_t*) "00Spectrogram on\r\n",
+							19);
 
 				} else {
-					UART_WriteBlocking(UART0, "00Spectrogram off\r\n", 20);
+					UART_WriteBlocking(UART0,
+							(uint8_t*) "00Spectrogram off\r\n", 20);
 				}
 #endif
 				break;
@@ -109,15 +139,16 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 #ifdef DEBUG_PRINTF_APP
 				printf("File System Explorer Menu\r\n");
 #else
-				UART_WriteBlocking(UART0, "00File System Explorer Menu\r\n",
-						30);
+				UART_WriteBlocking(UART0,
+						(uint8_t*) "00File System Explorer Menu\r\n", 30);
 #endif
 				break;
 			case EQ:
 #ifdef DEBUG_PRINTF_APP
 				printf("Equalizer Menu\r\n");
 #else
-				UART_WriteBlocking(UART0, "00Equalizer Menu\r\n", 19);
+				UART_WriteBlocking(UART0, (uint8_t*) "00Equalizer Menu\r\n",
+						19);
 #endif
 				break;
 			case SPECT:
@@ -129,10 +160,12 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 				}
 #else
 				if (appContext->spectrogramEnable) {
-					UART_WriteBlocking(UART0, "00Spectrogram on\r\n", 19);
+					UART_WriteBlocking(UART0, (uint8_t*) "00Spectrogram on\r\n",
+							19);
 
 				} else {
-					UART_WriteBlocking(UART0, "00Spectrogram off\r\n", 20);
+					UART_WriteBlocking(UART0,
+							(uint8_t*) "00Spectrogram off\r\n", 20);
 				}
 #endif
 				break;
@@ -158,8 +191,7 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 				packPath[i++] = '\r';
 				packPath[i++] = '\n';
 				packPath[i++] = '\0';
-				UART_WriteBlocking(UART0, packPath, i);
-
+				UART_WriteBlocking(UART0, (uint8_t*) packPath, i);
 
 #endif
 				appContext->menuState = kAPP_MENU_FILESYSTEM;
@@ -178,14 +210,16 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 #ifdef DEBUG_PRINTF_APP
 					printf("Spectrogram on\r\n");
 #else
-					UART_WriteBlocking(UART0, "00Spectrogram on\r\n", 19);
+					UART_WriteBlocking(UART0, (uint8_t*) "00Spectrogram on\r\n",
+							19);
 #endif
 				} else {
 					LEDMATRIX_Pause();
 #ifdef DEBUG_PRINTF_APP
 					printf("Spectrogram off\r\n");
 #else
-					UART_WriteBlocking(UART0, "00Spectrogram off\r\n", 20);
+					UART_WriteBlocking(UART0,
+							(uint8_t*) "00Spectrogram off\r\n", 20);
 #endif
 				}
 				break;
@@ -215,7 +249,7 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 				packPath[i++] = '\r';
 				packPath[i++] = '\n';
 				packPath[i++] = '\0';
-				UART_WriteBlocking(UART0, packPath, i);
+				UART_WriteBlocking(UART0, (uint8_t*) packPath, i);
 
 #endif
 			} else if (ev->btn_evs.prev_button) {
@@ -236,7 +270,7 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 				packPath[i++] = '\r';
 				packPath[i++] = '\n';
 				packPath[i++] = '\0';
-				UART_WriteBlocking(UART0, packPath, i);
+				UART_WriteBlocking(UART0, (uint8_t*) packPath, i);
 
 #endif
 			} else if (ev->btn_evs.enter_button) {
@@ -261,7 +295,7 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 				packPath[i++] = '\r';
 				packPath[i++] = '\n';
 				packPath[i++] = '\0';
-				UART_WriteBlocking(UART0, packPath, i);
+				UART_WriteBlocking(UART0, (uint8_t*) packPath, i);
 
 #endif
 			} else if (ev->btn_evs.back_button) {
@@ -283,7 +317,7 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 					packPath[i++] = '\r';
 					packPath[i++] = '\n';
 					packPath[i++] = '\0';
-					UART_WriteBlocking(UART0, packPath, i);
+					UART_WriteBlocking(UART0, (uint8_t*) packPath, i);
 #endif
 				} else {
 					appContext->menuState = kAPP_MENU_MAIN;
@@ -320,126 +354,127 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 #ifdef DEBUG_PRINTF_APP
 				printf("OFF preset\r\n");
 #else
-				UART_WriteBlocking(UART0, "11OFF\r\n", 8);
+				UART_WriteBlocking(UART0, (uint8_t*) "11OFF\r\n", 8);
 #endif
 				break;
 			case CLASSIC:
 #ifdef DEBUG_PRINTF_APP
 				printf("CLASSIC preset\r\n");
 #else
-				UART_WriteBlocking(UART0, "11CLASSIC\r\n", 12);
+				UART_WriteBlocking(UART0, (uint8_t*) "11CLASSIC\r\n", 12);
 #endif
 				break;
 			case CLUB:
 #ifdef DEBUG_PRINTF_APP
 							printf("CLUB preset\r\n");
 			#else
-				UART_WriteBlocking(UART0, "11CLUB\r\n", 9);
+				UART_WriteBlocking(UART0, (uint8_t*) "11CLUB\r\n", 9);
 #endif
 				break;
 			case DANCE:
 #ifdef DEBUG_PRINTF_APP
 				printf("DANCE preset\r\n");
 #else
-				UART_WriteBlocking(UART0, "11DANCE\r\n", 10);
+				UART_WriteBlocking(UART0, (uint8_t*) "11DANCE\r\n", 10);
 #endif
 				break;
 			case BASS:
 #ifdef DEBUG_PRINTF_APP
 				printf("BASS preset\r\n");
 #else
-				UART_WriteBlocking(UART0, "11BASS\r\n", 9);
+				UART_WriteBlocking(UART0, (uint8_t*) "11BASS\r\n", 9);
 #endif
 				break;
 			case BASS_AND_TREBLE:
 #ifdef DEBUG_PRINTF_APP
 				printf("BASS_AND_TREBLE preset\r\n");
 #else
-				UART_WriteBlocking(UART0, "11BASS_AND_TREBLE\r\n", 20);
+				UART_WriteBlocking(UART0, (uint8_t*) "11BASS_AND_TREBLE\r\n",
+						20);
 #endif
 				break;
 			case TREBLE:
 #ifdef DEBUG_PRINTF_APP
 				printf("TREBLE preset\r\n");
 #else
-				UART_WriteBlocking(UART0, "11TREBLE\r\n", 11);
+				UART_WriteBlocking(UART0, (uint8_t*) "11TREBLE\r\n", 11);
 #endif
 				break;
 			case HEADSET:
 #ifdef DEBUG_PRINTF_APP
 				printf("HEADSET preset\r\n");
 #else
-				UART_WriteBlocking(UART0, "11HEADSET\r\n", 12);
+				UART_WriteBlocking(UART0, (uint8_t*) "11HEADSET\r\n", 12);
 #endif
 				break;
 			case HALL:
 #ifdef DEBUG_PRINTF_APP
 				printf("HALL preset\r\n");
 #else
-				UART_WriteBlocking(UART0, "11HALL\r\n", 9);
+				UART_WriteBlocking(UART0, (uint8_t*) "11HALL\r\n", 9);
 #endif
 				break;
 			case LIVE:
 #ifdef DEBUG_PRINTF_APP
 				printf("LIVE preset\r\n");
 #else
-				UART_WriteBlocking(UART0, "11LIVE\r\n", 9);
+				UART_WriteBlocking(UART0, (uint8_t*) "11LIVE\r\n", 9);
 #endif
 				break;
 			case PARTY:
 #ifdef DEBUG_PRINTF_APP
 				printf("PARTY preset\r\n");
 #else
-				UART_WriteBlocking(UART0, "11PARTY\r\n", 10);
+				UART_WriteBlocking(UART0, (uint8_t*) "11PARTY\r\n", 10);
 #endif
 				break;
 			case POP:
 #ifdef DEBUG_PRINTF_APP
 				printf("POP preset\r\n");
 #else
-				UART_WriteBlocking(UART0, "11POP\r\n", 8);
+				UART_WriteBlocking(UART0, (uint8_t*) "11POP\r\n", 8);
 #endif
 				break;
 			case REGGAE:
 #ifdef DEBUG_PRINTF_APP
 				printf("REGGAE preset\r\n");
 #else
-				UART_WriteBlocking(UART0, "11REGGAE\r\n", 11);
+				UART_WriteBlocking(UART0, (uint8_t*) "11REGGAE\r\n", 11);
 #endif
 				break;
 			case ROCK:
 #ifdef DEBUG_PRINTF_APP
 				printf("ROCK preset\r\n");
 #else
-				UART_WriteBlocking(UART0, "11ROCK\r\n", 9);
+				UART_WriteBlocking(UART0, (uint8_t*) "11ROCK\r\n", 9);
 #endif
 				break;
 			case SKA:
 #ifdef DEBUG_PRINTF_APP
 				printf("SKA preset\r\n");
 #else
-				UART_WriteBlocking(UART0, "11SKA\r\n", 8);
+				UART_WriteBlocking(UART0, (uint8_t*) "11SKA\r\n", 8);
 #endif
 				break;
 			case SOFT:
 #ifdef DEBUG_PRINTF_APP
 				printf("SOFT preset\r\n");
 #else
-				UART_WriteBlocking(UART0, "11SOFT\r\n", 9);
+				UART_WriteBlocking(UART0, (uint8_t*) "11SOFT\r\n", 9);
 #endif
 				break;
 			case SOFT_ROCK:
 #ifdef DEBUG_PRINTF_APP
 				printf("SOFT_ROCK preset\r\n");
 #else
-				UART_WriteBlocking(UART0, "11SOFT_ROCK\r\n", 14);
+				UART_WriteBlocking(UART0, (uint8_t*) "11SOFT_ROCK\r\n", 14);
 #endif
 				break;
 			case TECHNO:
 #ifdef DEBUG_PRINTF_APP
 				printf("TECHNO preset\r\n");
 #else
-				UART_WriteBlocking(UART0, "11TECHNO\r\n", 11);
+				UART_WriteBlocking(UART0, (uint8_t*) "11TECHNO\r\n", 11);
 #endif
 				break;
 			default:
@@ -453,126 +488,127 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 #ifdef DEBUG_PRINTF_APP
 				printf("OFF preset\r\n");
 #else
-				UART_WriteBlocking(UART0, "11OFF\r\n", 8);
+				UART_WriteBlocking(UART0, (uint8_t*) "11OFF\r\n", 8);
 #endif
 				break;
 			case CLASSIC:
 #ifdef DEBUG_PRINTF_APP
 				printf("CLASSIC preset\r\n");
 #else
-				UART_WriteBlocking(UART0, "11CLASSIC\r\n", 12);
+				UART_WriteBlocking(UART0, (uint8_t*) "11CLASSIC\r\n", 12);
 #endif
 				break;
 			case CLUB:
 #ifdef DEBUG_PRINTF_APP
 							printf("CLUB preset\r\n");
 			#else
-				UART_WriteBlocking(UART0, "11CLUB\r\n", 9);
+				UART_WriteBlocking(UART0, (uint8_t*) "11CLUB\r\n", 9);
 #endif
 				break;
 			case DANCE:
 #ifdef DEBUG_PRINTF_APP
 				printf("DANCE preset\r\n");
 #else
-				UART_WriteBlocking(UART0, "11DANCE\r\n", 10);
+				UART_WriteBlocking(UART0, (uint8_t*) "11DANCE\r\n", 10);
 #endif
 				break;
 			case BASS:
 #ifdef DEBUG_PRINTF_APP
 				printf("BASS preset\r\n");
 #else
-				UART_WriteBlocking(UART0, "11BASS\r\n", 9);
+				UART_WriteBlocking(UART0, (uint8_t*) "11BASS\r\n", 9);
 #endif
 				break;
 			case BASS_AND_TREBLE:
 #ifdef DEBUG_PRINTF_APP
 				printf("BASS_AND_TREBLE preset\r\n");
 #else
-				UART_WriteBlocking(UART0, "11BASS_AND_TREBLE\r\n", 20);
+				UART_WriteBlocking(UART0, (uint8_t*) "11BASS_AND_TREBLE\r\n",
+						20);
 #endif
 				break;
 			case TREBLE:
 #ifdef DEBUG_PRINTF_APP
 				printf("TREBLE preset\r\n");
 #else
-				UART_WriteBlocking(UART0, "11TREBLE\r\n", 11);
+				UART_WriteBlocking(UART0, (uint8_t*) "11TREBLE\r\n", 11);
 #endif
 				break;
 			case HEADSET:
 #ifdef DEBUG_PRINTF_APP
 				printf("HEADSET preset\r\n");
 #else
-				UART_WriteBlocking(UART0, "11HEADSET\r\n", 12);
+				UART_WriteBlocking(UART0, (uint8_t*) "11HEADSET\r\n", 12);
 #endif
 				break;
 			case HALL:
 #ifdef DEBUG_PRINTF_APP
 				printf("HALL preset\r\n");
 #else
-				UART_WriteBlocking(UART0, "11HALL\r\n", 9);
+				UART_WriteBlocking(UART0, (uint8_t*) "11HALL\r\n", 9);
 #endif
 				break;
 			case LIVE:
 #ifdef DEBUG_PRINTF_APP
 				printf("LIVE preset\r\n");
 #else
-				UART_WriteBlocking(UART0, "11LIVE\r\n", 9);
+				UART_WriteBlocking(UART0, (uint8_t*) "11LIVE\r\n", 9);
 #endif
 				break;
 			case PARTY:
 #ifdef DEBUG_PRINTF_APP
 				printf("PARTY preset\r\n");
 #else
-				UART_WriteBlocking(UART0, "11PARTY\r\n", 10);
+				UART_WriteBlocking(UART0, (uint8_t*) "11PARTY\r\n", 10);
 #endif
 				break;
 			case POP:
 #ifdef DEBUG_PRINTF_APP
 				printf("POP preset\r\n");
 #else
-				UART_WriteBlocking(UART0, "11POP\r\n", 8);
+				UART_WriteBlocking(UART0, (uint8_t*) "11POP\r\n", 8);
 #endif
 				break;
 			case REGGAE:
 #ifdef DEBUG_PRINTF_APP
 				printf("REGGAE preset\r\n");
 #else
-				UART_WriteBlocking(UART0, "11REGGAE\r\n", 11);
+				UART_WriteBlocking(UART0, (uint8_t*) "11REGGAE\r\n", 11);
 #endif
 				break;
 			case ROCK:
 #ifdef DEBUG_PRINTF_APP
 				printf("ROCK preset\r\n");
 #else
-				UART_WriteBlocking(UART0, "11ROCK\r\n", 9);
+				UART_WriteBlocking(UART0, (uint8_t*) "11ROCK\r\n", 9);
 #endif
 				break;
 			case SKA:
 #ifdef DEBUG_PRINTF_APP
 				printf("SKA preset\r\n");
 #else
-				UART_WriteBlocking(UART0, "11SKA\r\n", 8);
+				UART_WriteBlocking(UART0, (uint8_t*) "11SKA\r\n", 8);
 #endif
 				break;
 			case SOFT:
 #ifdef DEBUG_PRINTF_APP
 				printf("SOFT preset\r\n");
 #else
-				UART_WriteBlocking(UART0, "11SOFT\r\n", 9);
+				UART_WriteBlocking(UART0, (uint8_t*) "11SOFT\r\n", 9);
 #endif
 				break;
 			case SOFT_ROCK:
 #ifdef DEBUG_PRINTF_APP
 				printf("SOFT_ROCK preset\r\n");
 #else
-				UART_WriteBlocking(UART0, "11SOFT_ROCK\r\n", 14);
+				UART_WriteBlocking(UART0, (uint8_t*) "11SOFT_ROCK\r\n", 14);
 #endif
 				break;
 			case TECHNO:
 #ifdef DEBUG_PRINTF_APP
 				printf("TECHNO preset\r\n");
 #else
-				UART_WriteBlocking(UART0, "11TECHNO\r\n", 11);
+				UART_WriteBlocking(UART0, (uint8_t*) "11TECHNO\r\n", 11);
 #endif
 				break;
 			default:
@@ -660,20 +696,20 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 #endif
 				break;
 			case SOFT:
-			#ifdef DEBUG_PRINTF_APP
+#ifdef DEBUG_PRINTF_APP
 							printf("SOFT preset Selected\r\n");
 			#endif
-							break;
+				break;
 			case SOFT_ROCK:
-			#ifdef DEBUG_PRINTF_APP
+#ifdef DEBUG_PRINTF_APP
 							printf("SOFT_ROCK preset Selected\r\n");
 			#endif
-							break;
+				break;
 			case TECHNO:
-			#ifdef DEBUG_PRINTF_APP
+#ifdef DEBUG_PRINTF_APP
 							printf("TECHNO preset Selected\r\n");
 			#endif
-							break;
+				break;
 
 			default:
 				break;
@@ -759,16 +795,83 @@ void runPlayer(event_t *events, app_context_t *appContext) {
 	} else if (appContext->playerContext.res == MP3DECODER_FILE_END) {
 		appContext->playerContext.songEnded = true;
 	}
+//	if(!(busy)){
+
+	//PIT_StartTimer(PIT, kPIT_Chnl_3);
+	if (appContext->playerContext.using_buffer_1) {
+		adaptFFT(u_buffer_1, u_buffer_fft, 512);
+	} else {
+		adaptFFT(u_buffer_2, u_buffer_fft, 512);
+	}
+	if (fft_samples_ready) {
+		fft_samples_ready=false;
+		fft(u_buffer_fft, buffer_fft_calculated, 1);
+		fftGetMag(buffer_fft_calculated, buffer_fft_calculated_mag);
+		fftMakeBines8(buffer_fft_calculated_mag, fft_8_bines);
+		translateBinesToMatrix(&(fft_8_bines[1]));
+//	char pijas[13]={0};
+//	pijas[0]='1';
+//	pijas[1]='2';
+//	for(int k=0;k<8;k++){
+//		pijas[k+2]=fft_8_bines[k] + '0';
+//	}
+//	pijas[10]='\r';
+//	pijas[11]='\n';
+//	pijas[12]='\0';
+//	UART_WriteBlocking(UART0, pijas, 13);
+//	}
+	}
 }
 
-char * GetPackPath(void){
+char* GetPackPath(void) {
 	return packPath;
 }
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH FILE SCOPE
  ******************************************************************************/
+void adaptFFT(uint16_t *src, float32_t *dst, uint16_t cnt) {
+	static uint16_t i = 0;
+	uint16_t j = 0;
+	for (j = 0; j < cnt; i++, j++) {
+		dst[i * 2] = src[j * 4] + 0.0f;
+	}
+	if (i == 4096) {
+		i = 0;
+		fft_samples_ready = true;
+	}
+}
 
+void translateBinesToMatrix(float32_t *bines) {
+	uint8_t i = 0, j = 0;
+	for (i = 0; i < 8; i++) {
+		for (j = 0; j < 8; j++) {
+			if (j < bines[i] + 1) {
+				if (j < 3) {
+					LEDMATRIX_SetLed(j, i, 0, 1, 0);
+				} else if (j < 6) {
+					LEDMATRIX_SetLed(j, i, 1, 0, 0);
+				} else {
+					LEDMATRIX_SetLed(j, i, 0, 0, 1);
+				}
+			} else {
+				LEDMATRIX_SetLed(j, i, 0, 0, 0);
+			}
+		}
+	}
+}
 /*******************************************************************************
  *						 INTERRUPTION ROUTINES
  ******************************************************************************/
+void PIT3_IRQHandler(void) {
+	/* Clear interrupt flag.*/
+	PIT_ClearStatusFlags(PIT, kPIT_Chnl_3, kPIT_TimerFlag);
 
+	busy = false;
+	PIT_StopTimer(PIT, kPIT_Chnl_3);
+	/* Added for, and affects, all PIT handlers. For CPU clock which is much larger than the IP bus clock,
+	 * CPU can run out of the interrupt handler before the interrupt flag being cleared, resulting in the
+	 * CPU's entering the handler again and again. Adding DSB can prevent the issue from happening.
+	 */
+	__DSB();
+
+}
