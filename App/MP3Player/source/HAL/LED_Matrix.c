@@ -168,6 +168,12 @@ void LEDMATRIX_Resume(void){
 	block = false;
 	pit_alt_pause = false;
 	pit_alt_pause_2 = false;
+	if(led_matrix[0].G[0] == LEDMATRIX_FTM_CNV_ON){
+		LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnV = LEDMATRIX_FTM_CNV_ON;
+	}
+	else{
+		LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnV = LEDMATRIX_FTM_CNV_OFF;
+	}
 	LEDMATRIX_Enable();
 	//LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnSC = (LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnSC
 	//	& ~FTM_CnSC_CHIE_MASK) | FTM_CnSC_CHIE(1);
@@ -213,7 +219,7 @@ void PIT1_IRQHandler(void) {
 	/* Clear interrupt flag.*/
 	PIT_ClearStatusFlags(PIT, kPIT_Chnl_1, kPIT_TimerFlag);
 	PIT_StopTimer(PIT, kPIT_Chnl_1);
-	if(pit_alt_pause_2){
+	if(!pit_alt_pause_2){
 		if(pit_alt_pause){
 			pit_alt_pause_2 = true;
 		}
