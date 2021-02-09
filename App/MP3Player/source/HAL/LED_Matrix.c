@@ -63,6 +63,8 @@ static void set_color_brightness(uint16_t *ptr, uint8_t brightness);
 static GRB_t led_matrix [LEDMATRIX_CANT_LEDS+LEDMATRIX_CANT_LEDS_ZERO];
 static uint16_t old_cnv;
 static bool pit_alt_pause;
+static bool pit_alt_pause_2;
+static bool block;
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH GLOBAL SCOPE
  ******************************************************************************/
@@ -155,26 +157,31 @@ void LEDMATRIX_Init(void){
 
 void LEDMATRIX_SetLed(uint8_t row, uint8_t col, uint8_t r, uint8_t g, uint8_t b){
 
+	if(!block){
 	set_color_brightness(led_matrix[LEDMATRIX_ROW_SIZE*row+col].G, g);
 	set_color_brightness(led_matrix[LEDMATRIX_ROW_SIZE*row+col].R, r);
 	set_color_brightness(led_matrix[LEDMATRIX_ROW_SIZE*row+col].B, b);
+	}
 }
 
 void LEDMATRIX_Resume(void){
+	block = false;
+	pit_alt_pause = false;
+	pit_alt_pause_2 = false;
 	LEDMATRIX_Enable();
-	//LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnV = old_cnv;
-	LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnSC = (LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnSC
-		& ~FTM_CnSC_CHIE_MASK) | FTM_CnSC_CHIE(1);
+	//LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnSC = (LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnSC
+	//	& ~FTM_CnSC_CHIE_MASK) | FTM_CnSC_CHIE(1);
 }
 
 void LEDMATRIX_Pause(void){
-	//old_cnv = LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnV;
-	LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnV = LEDMATRIX_FTM_CNV_OFF;
-	LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnSC = (LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnSC
-		& ~FTM_CnSC_CHIE_MASK) | FTM_CnSC_CHIE(0);
+	uint8_t i;
+	for(i = 0; i < LEDMATRIX_CANT_LEDS; i++){
+		set_color_brightness(led_matrix[i].R, 0);
+		set_color_brightness(led_matrix[i].G, 0);
+		set_color_brightness(led_matrix[i].B, 0);
+	}
+	block = true;
 	pit_alt_pause = true;
-	PIT_StartTimer(PIT, kPIT_Chnl_1);
-
 }
 
 void LEDMATRIX_Enable(void){
@@ -206,11 +213,10 @@ void PIT1_IRQHandler(void) {
 	/* Clear interrupt flag.*/
 	PIT_ClearStatusFlags(PIT, kPIT_Chnl_1, kPIT_TimerFlag);
 	PIT_StopTimer(PIT, kPIT_Chnl_1);
-	if(pit_alt_pause){
-		pit_alt_pause = false;
-		LEDMATRIX_Disable();
-	}
-	else{
+	if(pit_alt_pause_2){
+		if(pit_alt_pause){
+			pit_alt_pause_2 = true;
+		}
 		if(led_matrix[0].G[0] == LEDMATRIX_FTM_CNV_ON){
 			LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnV = LEDMATRIX_FTM_CNV_ON;
 		}
@@ -218,6 +224,10 @@ void PIT1_IRQHandler(void) {
 			LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnV = LEDMATRIX_FTM_CNV_OFF;
 		}
 		LEDMATRIX_Enable();
+	}
+	else{
+		LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnV = LEDMATRIX_FTM_CNV_ZERO;
+		LEDMATRIX_Disable();
 	}
 
 	/* Added for, and affects, all PIT handlers. For CPU clock which is much larger than the IP bus clock,
