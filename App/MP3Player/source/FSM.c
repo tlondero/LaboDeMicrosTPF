@@ -877,7 +877,8 @@ void adaptFFT(int16_t *src, float32_t *dst, uint16_t cnt) {
 		aux[j]=	applyfilter(src[j]);
 	}
 	for (j = 0; j < cnt; i++, j++) {
-				dst[i * 2] = aux[j * 4] + 0.0f;
+				dst[i * 2] = aux[j * 4] * sinf(PI *i/4096 ) + 0.0f; //HAnn window
+
 	}
 	if (i == 4096) {
 		i = 0;

@@ -98,10 +98,10 @@ void fftMakeBines8(float32_t *src, float32_t *dst) {
 			arm_max_f32(src+1100, 800, &maxValue, &index);
 			break;
 		case 6:
-			arm_max_f32(src+1900, 1000, &maxValue, &index);
+			arm_max_f32(src+1900, 1600, &maxValue, &index);
 			break;
 		case 7:
-			arm_max_f32(src+2900, 1196, &maxValue, &index);
+			arm_max_f32(src+2900, 1196-600, &maxValue, &index);
 			break;
 		default:
 			break;

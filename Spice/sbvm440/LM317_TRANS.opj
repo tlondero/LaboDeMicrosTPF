@@ -1,0 +1,97 @@
+(ExpressProject "LM317_TRANS"
+  (ProjectVersion "19981106")
+  (ProjectType "Analog or A/D Mixed Mode")
+  (Folder "Design Resources"
+    (Folder "Library"
+      (File ".\lm317_trans.olb"
+        (Type "Schematic Library")))
+    (NoModify)
+    (File "lm317_trans.dsn"
+      (Type "Schematic Design"))
+    (BuildFileAddedOrDeleted "x")
+    (CompileFileAddedOrDeleted "x")
+    (PSPICE_Regenerate_Netlist_Flag "FALSE")
+    (RootChangedForceReNetlist "x"))
+  (Folder "Outputs")
+  (Folder "PSpice Resources"
+    (Folder "Simulation Profiles"
+      (File.PSpice.{09528990-3187-11D2-BC7B-00A0C90CBF91}
+         ".\lm317_trans-pspicefiles\startup\trans.sim"
+        (DisplayName "STARTUP-TRANS")
+        (Type "PSpice Profile"))
+      (ActiveProfile ".\lm317_trans-pspicefiles\startup\trans.sim"))
+    (Folder "Model Libraries"
+      (Sort User)
+      (File ".\lm317_trans.lib"
+        (Type "PSpiceLibrary")
+        (DisplayName ".\lm317_trans.lib")))
+    (Folder "Stimulus Files"
+      (Sort User))
+    (Folder "Include Files"
+      (Sort User)))
+  (DefaultLibraryBrowseDirectory "library\PSpice")
+  (PartMRUSelector
+    (LM317_TRANS
+      (FullPartName "LM317_TRANS.Normal")
+      (LibraryName
+         "D:\PSPICE MODELS\LM317\ACTIVE_WORK_KARMIC\PSPICE\LM317_PSPICE_TRANS\LM317_TRANS.OLB")
+      (DeviceIndex "0"))
+    (LM317DCY_TRANS
+      (FullPartName "LM317DCY_TRANS.Normal")
+      (LibraryName "C:\USERS\X0191627\DESKTOP\LM317DCY_TRANS.OLB")
+      (DeviceIndex "0"))
+    (VPULSE
+      (FullPartName "VPULSE.Normal")
+      (LibraryName
+         "C:\CADENCE\SPB_16.2\TOOLS\CAPTURE\LIBRARY\PSPICE\DEMO\SOURCE.OLB")
+      (DeviceIndex "0"))
+    (S
+      (FullPartName "S.Normal")
+      (LibraryName
+         "C:\CADENCE\SPB_16.2\TOOLS\CAPTURE\LIBRARY\PSPICE\DEMO\ANALOG.OLB")
+      (DeviceIndex "0"))
+    (0
+      (LibraryName "C:\CADENCE\SPB_16.2\TOOLS\CAPTURE\LIBRARY\CAPSYM.OLB")
+      (DeviceIndex "0"))
+    (VDC
+      (FullPartName "VDC.Normal")
+      (LibraryName
+         "C:\CADENCE\SPB_16.2\TOOLS\CAPTURE\LIBRARY\PSPICE\SOURCE.OLB")
+      (DeviceIndex "0"))
+    (R
+      (FullPartName "R.Normal")
+      (LibraryName
+         "C:\CADENCE\SPB_16.0\TOOLS\CAPTURE\LIBRARY\PSPICE\ANALOG.OLB")
+      (DeviceIndex "0"))
+    (VAC
+      (FullPartName "VAC.Normal")
+      (LibraryName
+         "C:\CADENCE\SPB_16.0\TOOLS\CAPTURE\LIBRARY\PSPICE\SOURCE.OLB")
+      (DeviceIndex "0"))
+    (IPULSE
+      (FullPartName "IPULSE.Normal")
+      (LibraryName
+         "C:\CADENCE\SPB_16.2\TOOLS\CAPTURE\LIBRARY\PSPICE\SOURCE.OLB")
+      (DeviceIndex "0"))
+    (D_D
+      (FullPartName "D_D.Normal")
+      (LibraryName
+         "D:\PSPICE MODELS\INTERNALLIBRARIES\SB0204_DIODES\DIODES.OLB")
+      (DeviceIndex "0"))
+    (LMS1587A_ADJ_TRANS
+      (FullPartName "LMS1587A_ADJ_TRANS.Normal")
+      (LibraryName
+         "F:\LMS1587A_SERIES\LMS1587A_ADJ\ACTIVE_WORK_KARMIC\PSPICE\LMS1587A_ADJ_PSPICE_TRANS\LMS1587A_ADJ_TRANS.OLB")
+      (DeviceIndex "0")))
+  (MPSSessionName "x0191627")
+  (GlobalState
+    (FileView
+      (Select "Design Resources"))
+    (HierarchyView)
+    (Doc
+      (Type "COrCapturePMDoc")
+      (Frame
+        (Placement "44 2 3 -1 -1 -4 -23 0 200 0 300"))
+      (Tab 0)))
+  (LastUsedLibraryBrowseDirectory
+     "D:\PSpice Models\LM317\Active_Work_KarMic\PSPICE\LM317_PSPICE_TRANS"))
