@@ -12,7 +12,7 @@
 
 #include "fsl_pit.h"
 #include "fsl_uart.h"
-
+#include "fsl_rtc.h"
 #include "../HAL/SD_Detect_Wraper.h"
 #include "../HAL/DAC_Wrapper.h"
 #include "FS_explorer.h"
@@ -49,7 +49,7 @@ char* concat(const char *s1, const char *s2);
 int initDevice(void);
 void cbackin(void);
 void cbackout(void);
-
+void sendInitialDate(void);
 /**********************************************************************************************
  *                              VARIABLES WITH LOCAL SCOPE                                    *
  **********************************************************************************************/
@@ -57,7 +57,7 @@ void cbackout(void);
 static app_context_t appContext;
 static char volString[7];
 static char id3Buffer[ID3_MAX_FIELD_SIZE + 2];
-
+static rtc_datetime_t date;
 /**********************************************************************************************
  *                                         MAIN                                               *
  **********************************************************************************************/
@@ -303,6 +303,27 @@ int initDevice(void) {
 	/* FSM init */
 	FSM_init();
 	/*   */
+	/* rtc init */
+	rtc_config_t rtcConfig;
+    RTC_GetDefaultConfig(&rtcConfig);
+    RTC_Init(RTC, &rtcConfig);
+    RTC_SetClockSource(RTC);
+    /* Set a start date time and start RTC */
+       date.year   = 2021U;
+       date.month  = 2U;
+       date.day    = 22U;
+       date.hour   = 11U;
+       date.minute = 00U;
+       date.second = 00U;
+       /* RTC time counter has to be stopped before setting the date & time in the TSR register */
+       RTC_StopTimer(RTC);
+       RTC_SetDatetime(RTC, &date);
+       /* Enable at the NVIC */
+       EnableIRQ(RTC_IRQn);
+       /* Start the RTC time counter */
+       RTC_StartTimer(RTC);
+       sendInitialDate();
+
 #ifndef DEBUG_PRINTF_APP
 		UART_WriteBlocking(UART0, "10A\r\n", 6);
 #endif
@@ -567,4 +588,46 @@ void cbackout(void) {
 //	DAC_Wrapper_Clear_Next_Buffer();
 	UART_WriteBlocking(UART0, "07O\r\n", 6);
 #endif
+}
+
+
+void sendInitialDate(void){
+    char time_string[20];
+	time_string[0]='1';
+	time_string[1]='2';
+	time_string[6]='/';
+	time_string[9]='/';
+	time_string[14]=':';
+	time_string[17]='\r';
+	time_string[18]='\n';
+	time_string[19]='\0';
+	uint16_t aux_m, aux_c, aux_d, aux_u;
+	aux_m= (date.year / 1000);
+	time_string[2] = aux_m+'0';
+	aux_c= (date.year-aux_m*1000)/100;
+	time_string[3] = aux_c+'0';
+	aux_d=(date.year-aux_m*1000-aux_c*100)/10;
+	time_string[4] = aux_d+'0';
+	aux_u=date.year-aux_m*1000-aux_c*100-aux_d*10;
+	time_string[5] = aux_u+'0';//Year
+	aux_d=date.month/10;
+	time_string[7] = aux_d+'0';//Month
+	aux_u=date.month-aux_d*10;
+	time_string[8] = aux_u+'0';
+	aux_d=date.day/10;
+	time_string[10] = aux_d+'0';//Day
+	aux_u=date.day-aux_d*10;
+	time_string[11] = aux_u+'0';
+	aux_d=date.hour/10;
+	time_string[12] = aux_d+'0';//Hour
+	aux_u=date.hour-aux_d*10;
+	time_string[13] = aux_u+'0';
+	aux_d=date.minute/10;
+	time_string[15] = aux_d+'0';//Minute
+	aux_u=date.minute-aux_d*10;
+	time_string[16] = aux_u+'0';
+#ifndef DEBUG_PRINTF_APP
+	UART_WriteBlocking(UART0, (uint8_t*) time_string, 20);
+#endif
+
 }

@@ -107,8 +107,6 @@ void fftMakeBines8(float32_t *src, float32_t *dst) {
 			break;
 		}
 		dst[j] = maxValue;
-//		arm_max_f32(src+(SIZE/BINES)*j, (SIZE/BINES), &maxValue, &index);
-//		dst[j] = maxValue;
 		assignBines(&(dst[j]));
 	}
 

@@ -26,7 +26,7 @@ typedef enum {
 typedef enum {
 	kAPP_MENU_MAIN, kAPP_MENU_FILESYSTEM,
 
-	kAPP_MENU_EQUALIZER, kAPP_MENU_SPECTROGRAM
+	kAPP_MENU_EQUALIZER, kAPP_MENU_SPECTROGRAM,kAPP_MENU_DATE
 } menu_state_t;
 
 typedef struct {

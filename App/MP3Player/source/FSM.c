@@ -18,27 +18,27 @@
 #include "debug_ifdefs.h"
 #include "fft.h"
 #include "HAL/delays.h"
+#include "fsl_rtc.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
-#define USECS_SPECTROGRAM 250000U
-
+#define USECS_MIN 60000000U
 
 typedef float32_t REAL;
 #define NPOLE 2
 #define NZERO 2
-REAL acoeff[]={0.33336499651457274,-0.9428985937980157,1};
-REAL bcoeff[]={1,2,1};
-REAL gain=10.244159221308562;
-REAL xv[]={0,0,0};
-REAL yv[]={0,0,0};
+REAL acoeff[] = { 0.33336499651457274, -0.9428985937980157, 1 };
+REAL bcoeff[] = { 1, 2, 1 };
+REAL gain = 10.244159221308562;
+REAL xv[] = { 0, 0, 0 };
+REAL yv[] = { 0, 0, 0 };
 REAL applyfilter(REAL v);
 
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
 enum {
-	FS, EQ, SPECT, SUBMENU_CANT
+	FS, EQ, SPECT, DATE, SUBMENU_CANT
 };
 enum {
 	OFF,
@@ -61,6 +61,9 @@ enum {
 	TECHNO,
 	CANT_PRESETS
 };
+enum {
+	YEAR_D, MONTH_D, DAY_D, HOUR_D, MINUTE_D, SUB_MENU_D_CANT
+};
 /*******************************************************************************
  * FUNCTION PROTOTYPES WITH FILE SCOPE
  ******************************************************************************/
@@ -73,8 +76,8 @@ static uint16_t u_buffer_1[MP3_DECODED_BUFFER_SIZE];
 static uint16_t u_buffer_2[MP3_DECODED_BUFFER_SIZE];
 static char packPath[MAX_PATH_LENGHT + 5];
 
-static uint8_t delay_id;
-static bool busy;
+static rtc_datetime_t date;
+
 static bool fft_samples_ready;
 
 static float32_t u_buffer_fft[4096 * 2];
@@ -82,18 +85,29 @@ static float32_t buffer_fft_calculated[4096 * 2];
 static float32_t buffer_fft_calculated_mag[4096];
 static float32_t fft_8_bines[8];
 
+static char time_string[20];
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH GLOBAL SCOPE
  ******************************************************************************/
 void FSM_init() {
+	time_string[0]='1';
+	time_string[1]='2';
+	time_string[6]='/';
+	time_string[9]='/';
+	time_string[14]=':';
+	time_string[17]='\r';
+	time_string[18]='\n';
+	time_string[19]='\0';
+
 	PIT_SetTimerPeriod(PIT, kPIT_Chnl_3,
-			USEC_TO_COUNT(USECS_SPECTROGRAM, CLOCK_GetFreq(kCLOCK_BusClk)));
+			USEC_TO_COUNT(USECS_MIN, CLOCK_GetFreq(kCLOCK_BusClk)));
 
 	/* Enable timer interrupts for channel 0 */
 	PIT_EnableInterrupts(PIT, kPIT_Chnl_3, kPIT_TimerInterruptEnable);
 
 	/* Enable at the NVIC */
 	EnableIRQ(PIT3_IRQn);
+	PIT_StartTimer(PIT, kPIT_Chnl_3);
 
 //delay_id = delaysinitDelayBlockInterrupt(USECS_SPECTROGRAM,&busy);
 }
@@ -141,6 +155,14 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 				}
 #endif
 				break;
+			case DATE:
+#ifdef DEBUG_PRINTF_APP
+				printf("Date Menu\r\n");
+#else
+				UART_WriteBlocking(UART0, (uint8_t*) "00Date Menu\r\n", 14);
+
+#endif
+				break;
 			default:
 				break;
 			}
@@ -179,6 +201,14 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 					UART_WriteBlocking(UART0,
 							(uint8_t*) "00Spectrogram off\r\n", 20);
 				}
+#endif
+				break;
+			case DATE:
+#ifdef DEBUG_PRINTF_APP
+				printf("Date Menu\r\n");
+#else
+				UART_WriteBlocking(UART0, (uint8_t*) "00Date Menu\r\n", 14);
+
 #endif
 				break;
 			default:
@@ -234,6 +264,12 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 							(uint8_t*) "00Spectrogram off\r\n", 20);
 #endif
 				}
+				break;
+			case DATE:
+#ifdef DEBUG_PRINTF_APP
+				printf("Date Menu opened\r\n");
+#endif
+				appContext->menuState = kAPP_MENU_DATE;
 				break;
 			default:
 				break;
@@ -727,10 +763,232 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 				break;
 			}
 		} else if (ev->btn_evs.back_button) {
-			appContext->menuState = kAPP_MENU_MAIN;
+
 #ifdef DEBUG_PRINTF_APP
 			printf("Main menu\r\n");
 #endif
+		}
+	} else if (appContext->menuState == kAPP_MENU_DATE) {
+		uint16_t aux_m, aux_c, aux_d, aux_u;
+		static uint16_t y = 2021;
+		static uint8_t mo = 2;
+		static uint8_t d = 22;
+		static uint8_t h = 11;
+		static uint8_t min = 0;
+		static uint8_t men_index = 0;
+		char msg[10] = "13A2021\r\n";
+		if (ev->btn_evs.next_button) {
+			switch (men_index % SUB_MENU_D_CANT) {
+			case YEAR_D:
+				y++;
+#ifndef DEBUG_PRINTF_APP
+				msg[2] = 'A';
+
+				aux_m = y / 1000;
+				msg[3] = aux_m + '0';
+				aux_c = (y - aux_m * 1000) / 100;
+
+				msg[4] = aux_c + '0';
+				aux_d = (y - aux_m * 1000 - aux_c * 100) / 10;
+				msg[5] = aux_d + '0';
+				aux_u = (y - aux_m * 1000 - aux_c * 100 - aux_d * 10);
+				msg[6] = (aux_u) + '0';
+				msg[7] = '\r';
+				msg[8] = '\n';
+				msg[9] = '\0';
+				UART_WriteBlocking(UART0, (uint8_t*) msg, 10);
+#endif
+				break;
+			case MONTH_D:
+				if (mo < 12)
+					mo++;
+#ifndef DEBUG_PRINTF_APP
+				msg[2] = 'M';
+				aux_d = mo / 10;
+				msg[3] = aux_d + '0';
+				aux_u = (mo - aux_d * 10);
+				msg[4] = aux_u + '0';
+				msg[5] = '\r';
+				msg[6] = '\n';
+				msg[7] = '\0';
+				UART_WriteBlocking(UART0, (uint8_t*) msg, 8);
+#endif
+				break;
+			case DAY_D:
+				if (d < 31)
+					d++;
+#ifndef DEBUG_PRINTF_APP
+				msg[2] = 'D';
+				aux_d = d / 10;
+				msg[3] = aux_d + '0';
+				aux_u = (d - aux_d * 10);
+				msg[4] = aux_u + '0';
+				msg[5] = '\r';
+				msg[6] = '\n';
+				msg[7] = '\0';
+				UART_WriteBlocking(UART0, (uint8_t*) msg, 8);
+#endif
+				break;
+			case HOUR_D:
+				if (h < 24)
+					h++;
+#ifndef DEBUG_PRINTF_APP
+				msg[2] = 'H';
+				aux_d = h / 10;
+				msg[3] = aux_d + '0';
+				aux_u = (h - aux_d * 10);
+				msg[4] = aux_u + '0';
+				msg[5] = '\r';
+				msg[6] = '\n';
+				msg[7] = '\0';
+				UART_WriteBlocking(UART0, (uint8_t*) msg, 8);
+#endif
+				break;
+			case MINUTE_D:
+				if (min < 60)
+					min++;
+#ifndef DEBUG_PRINTF_APP
+				msg[2] = 'm';
+				aux_d = min / 10;
+				msg[3] = aux_d + '0';
+				aux_u = (min - aux_d * 10);
+				msg[4] = aux_u + '0';
+				msg[5] = '\r';
+				msg[6] = '\n';
+				msg[7] = '\0';
+				UART_WriteBlocking(UART0, (uint8_t*) msg, 8);
+#endif
+				break;
+			default:
+				break;
+			}
+		} else if (ev->btn_evs.prev_button) {
+			switch (men_index % SUB_MENU_D_CANT) {
+			case YEAR_D:
+				y--;
+#ifndef DEBUG_PRINTF_APP
+				msg[2] = 'A';
+				aux_m = y / 1000;
+				msg[3] = aux_m + '0';
+				aux_c = (y - aux_m * 1000) / 100;
+
+				msg[4] = aux_c + '0';
+				aux_d = (y - aux_m * 1000 - aux_c * 100) / 10;
+				msg[5] = aux_d + '0';
+				aux_u = (y - aux_m * 1000 - aux_c * 100 - aux_d * 10);
+				msg[6] = (aux_u) + '0';
+				msg[7] = '\r';
+				msg[8] = '\n';
+				msg[9] = '\0';
+				UART_WriteBlocking(UART0, (uint8_t*) msg, 10);
+#endif
+				break;
+			case MONTH_D:
+				if (mo > 1)
+					mo--;
+#ifndef DEBUG_PRINTF_APP
+				msg[2] = 'M';
+				aux_d = mo / 10;
+				msg[3] = aux_d + '0';
+				aux_u = (mo - aux_d * 10);
+				msg[4] = aux_u + '0';
+				msg[5] = '\r';
+				msg[6] = '\n';
+				msg[7] = '\0';
+				UART_WriteBlocking(UART0, (uint8_t*) msg, 8);
+#endif
+				break;
+			case DAY_D:
+				if (d > 1)
+					d--;
+#ifndef DEBUG_PRINTF_APP
+				msg[2] = 'D';
+				aux_d = d / 10;
+				msg[3] = aux_d + '0';
+				aux_u = (d - aux_d * 10);
+				msg[4] = aux_u + '0';
+				msg[5] = '\r';
+				msg[6] = '\n';
+				msg[7] = '\0';
+				UART_WriteBlocking(UART0, (uint8_t*) msg, 8);
+#endif
+				break;
+			case HOUR_D:
+				if (h > 0)
+					h--;
+#ifndef DEBUG_PRINTF_APP
+				msg[2] = 'H';
+				aux_d = h / 10;
+				msg[3] = aux_d + '0';
+				aux_u = (h - aux_d * 10);
+				msg[4] = aux_u + '0';
+				msg[5] = '\r';
+				msg[6] = '\n';
+				msg[7] = '\0';
+				UART_WriteBlocking(UART0, (uint8_t*) msg, 8);
+#endif
+				break;
+			case MINUTE_D:
+				if (min > 0)
+					min--;
+#ifndef DEBUG_PRINTF_APP
+				msg[2] = 'm';
+				aux_d = min / 10;
+				msg[3] = aux_d + '0';
+				aux_u = (min - aux_d * 10);
+				msg[4] = aux_u + '0';
+				msg[5] = '\r';
+				msg[6] = '\n';
+				msg[7] = '\0';
+				UART_WriteBlocking(UART0, (uint8_t*) msg, 8);
+#endif
+				break;
+			default:
+				break;
+			}
+		} else if (ev->btn_evs.enter_button) {
+			switch (men_index % SUB_MENU_D_CANT) {
+			case YEAR_D:
+				date.year = y;
+				break;
+			case MONTH_D:
+				date.month = mo;
+				break;
+			case DAY_D:
+				date.day = d;
+				break;
+			case HOUR_D:
+				date.hour = h;
+				break;
+			case MINUTE_D:
+				date.minute = min;
+				RTC_StopTimer(RTC);
+				RTC_SetDatetime(RTC, &date);
+				RTC_StartTimer(RTC);
+				appContext->menuState = kAPP_MENU_MAIN;
+				men_index=0;
+				break;
+			default:
+				break;
+			}
+			men_index++;
+		} else if (ev->btn_evs.back_button) {
+			if((men_index %SUB_MENU_D_CANT) != YEAR_D)
+				men_index--;
+			switch (men_index % SUB_MENU_D_CANT) {
+			case YEAR_D:
+				appContext->menuState = kAPP_MENU_MAIN;
+				break;
+			case MONTH_D:
+			case DAY_D:
+			case HOUR_D:
+			case MINUTE_D:
+				men_index--;
+				break;
+			default:
+				break;
+			}
+//			appContext->menuState = kAPP_MENU_MAIN;
 		}
 	}
 }
@@ -740,7 +998,7 @@ uint16_t* getbuffer1(void) {
 }
 
 void runPlayer(event_t *events, app_context_t *appContext) {
-	char pijas[13]={0};
+
 	if (appContext->playerContext.songPaused) {
 		DAC_Wrapper_Clear_Data_Array();
 		DAC_Wrapper_Clear_Next_Buffer();
@@ -782,20 +1040,14 @@ void runPlayer(event_t *events, app_context_t *appContext) {
 						MP3_DECODED_BUFFER_SIZE,
 						&(appContext->playerContext.sampleCount));
 
-				adaptFFT((int16_t*)u_buffer_2, u_buffer_fft, 512);
+				adaptFFT((int16_t*) u_buffer_2, u_buffer_fft, 512);
 				if (fft_samples_ready) {
 					fft_samples_ready = false;
 					fft(u_buffer_fft, buffer_fft_calculated, 1);
 					fftGetMag(buffer_fft_calculated, buffer_fft_calculated_mag);
 					fftMakeBines8(buffer_fft_calculated_mag, fft_8_bines);
 					translateBinesToMatrix(&(fft_8_bines[0]));
-//					for(int k=0;k<8;k++){
-//						pijas[k]=fft_8_bines[k] + '0';
-//					}
-//					pijas[10-2]='\r';
-//					pijas[11-2]='\n';
-//					pijas[12-2]='\0';
-//					UART_WriteBlocking(UART0, pijas, 13);
+
 				}
 
 				MP3_Adapt_Signal((int16_t*) u_buffer_2, u_buffer_2,
@@ -813,21 +1065,14 @@ void runPlayer(event_t *events, app_context_t *appContext) {
 						MP3_DECODED_BUFFER_SIZE,
 						&(appContext->playerContext.sampleCount));
 
-
-				adaptFFT((int16_t*)u_buffer_1, u_buffer_fft, 512);
+				adaptFFT((int16_t*) u_buffer_1, u_buffer_fft, 512);
 				if (fft_samples_ready) {
 					fft_samples_ready = false;
 					fft(u_buffer_fft, buffer_fft_calculated, 1);
 					fftGetMag(buffer_fft_calculated, buffer_fft_calculated_mag);
 					fftMakeBines8(buffer_fft_calculated_mag, fft_8_bines);
 					translateBinesToMatrix(&(fft_8_bines[0]));
-//					for(int k=0;k<8;k++){
-//						pijas[k]=fft_8_bines[k] + '0';
-//					}
-//					pijas[10-2]='\r';
-//					pijas[11-2]='\n';
-//					pijas[12-2]='\0';
-//					UART_WriteBlocking(UART0, pijas, 13);
+
 				}
 
 				MP3_Adapt_Signal((int16_t*) u_buffer_1, u_buffer_1,
@@ -841,24 +1086,6 @@ void runPlayer(event_t *events, app_context_t *appContext) {
 	} else if (appContext->playerContext.res == MP3DECODER_FILE_END) {
 		appContext->playerContext.songEnded = true;
 	}
-//	if(!(busy)){
-
-	//PIT_StartTimer(PIT, kPIT_Chnl_3);
-//	if (appContext->playerContext.using_buffer_1) {
-//		adaptFFT(u_buffer_1, u_buffer_fft, 512);
-//	} else {
-//		adaptFFT(u_buffer_2, u_buffer_fft, 512);
-//	}
-//	if (fft_samples_ready) {
-//		fft_samples_ready = false;
-//		fft(u_buffer_fft, buffer_fft_calculated, 1);
-//		fftGetMag(buffer_fft_calculated, buffer_fft_calculated_mag);
-//		fftMakeBines8(buffer_fft_calculated_mag, fft_8_bines);
-//		translateBinesToMatrix(&(fft_8_bines[0]));
-
-
-
-//	}
 
 }
 
@@ -870,14 +1097,14 @@ char* GetPackPath(void) {
  ******************************************************************************/
 void adaptFFT(int16_t *src, float32_t *dst, uint16_t cnt) {
 	static uint16_t i = 0;
-	int16_t aux[2048]={0};
+	int16_t aux[2048] = { 0 };
 	uint16_t j = 0;
-	for(j=0;j<2048;j++){
+	for (j = 0; j < 2048; j++) {
 //		aux[j]= src[j];
-		aux[j]=	applyfilter(src[j]);
+		aux[j] = applyfilter(src[j]);
 	}
 	for (j = 0; j < cnt; i++, j++) {
-				dst[i * 2] = aux[j * 4] * sinf(PI *i/4096 ) + 0.0f; //HAnn window
+		dst[i * 2] = aux[j * 4] * sinf(PI * i / 4096) + 0.0f; //HAnn window
 
 	}
 	if (i == 4096) {
@@ -892,14 +1119,14 @@ void translateBinesToMatrix(float32_t *bines) {
 		for (j = 0; j < 8; j++) {
 			if (j < bines[i] + 1) {
 				if (j < 3) {
-					if(bines[j] == 0){
+					if (bines[j] == 0) {
 						LEDMATRIX_SetLed(j, i, 0, 0, 0);
 					}
-					LEDMATRIX_SetLed(j-1, i, 0, 1, 0);
+					LEDMATRIX_SetLed(j - 1, i, 0, 1, 0);
 				} else if (j < 6) {
-					LEDMATRIX_SetLed(j-1, i, 1, 0, 0);
+					LEDMATRIX_SetLed(j - 1, i, 1, 0, 0);
 				} else {
-					LEDMATRIX_SetLed(j-1, i, 0, 0, 1);
+					LEDMATRIX_SetLed(j - 1, i, 0, 0, 1);
 				}
 			} else {
 				LEDMATRIX_SetLed(j, i, 0, 0, 0);
@@ -908,20 +1135,24 @@ void translateBinesToMatrix(float32_t *bines) {
 	}
 }
 
-
-
-
-REAL applyfilter(REAL v)
-{
-    int i;
-    REAL out=0;
-    for (i=0; i<NZERO; i++) {xv[i]=xv[i+1];}
-    xv[NZERO] = v/gain;
-    for (i=0; i<NPOLE; i++) {yv[i]=yv[i+1];}
-    for (i=0; i<=NZERO; i++) {out+=xv[i]*bcoeff[i];}
-    for (i=0; i<NPOLE; i++) {out-=yv[i]*acoeff[i];}
-    yv[NPOLE]=out;
-    return out;
+REAL applyfilter(REAL v) {
+	int i;
+	REAL out = 0;
+	for (i = 0; i < NZERO; i++) {
+		xv[i] = xv[i + 1];
+	}
+	xv[NZERO] = v / gain;
+	for (i = 0; i < NPOLE; i++) {
+		yv[i] = yv[i + 1];
+	}
+	for (i = 0; i <= NZERO; i++) {
+		out += xv[i] * bcoeff[i];
+	}
+	for (i = 0; i < NPOLE; i++) {
+		out -= yv[i] * acoeff[i];
+	}
+	yv[NPOLE] = out;
+	return out;
 }
 
 /*******************************************************************************
@@ -930,9 +1161,42 @@ REAL applyfilter(REAL v)
 void PIT3_IRQHandler(void) {
 	/* Clear interrupt flag.*/
 	PIT_ClearStatusFlags(PIT, kPIT_Chnl_3, kPIT_TimerFlag);
+	RTC_GetDatetime(RTC, &date);
+	uint16_t aux_m, aux_c, aux_d, aux_u;
+	aux_m= (date.year / 1000);
+	time_string[2] = aux_m+'0';
+	aux_c= (date.year-aux_m*1000)/100;
+	time_string[3] = aux_c+'0';
+	aux_d=(date.year-aux_m*1000-aux_c*100)/10;
+	time_string[4] = aux_d+'0';
+	aux_u=date.year-aux_m*1000-aux_c*100-aux_d*10;
+	time_string[5] = aux_u+'0';//Year
 
-	busy = false;
-	PIT_StopTimer(PIT, kPIT_Chnl_3);
+
+	aux_d=date.month/10;
+	time_string[7] = aux_d+'0';//Month
+	aux_u=date.month-aux_d*10;
+	time_string[8] = aux_u+'0';
+
+
+	aux_d=date.day/10;
+	time_string[10] = aux_d+'0';//Day
+	aux_u=date.day-aux_d*10;
+	time_string[11] = aux_u+'0';
+
+	aux_d=date.hour/10;
+	time_string[12] = aux_d+'0';//Hour
+	aux_u=date.hour-aux_d*10;
+	time_string[13] = aux_u+'0';
+
+	aux_d=date.minute/10;
+	time_string[15] = aux_d+'0';//Minute
+	aux_u=date.minute-aux_d*10;
+	time_string[16] = aux_u+'0';
+
+#ifndef DEBUG_PRINTF_APP
+	UART_WriteBlocking(UART0, (uint8_t*) time_string, 20);
+#endif
 	/* Added for, and affects, all PIT handlers. For CPU clock which is much larger than the IP bus clock,
 	 * CPU can run out of the interrupt handler before the interrupt flag being cleared, resulting in the
 	 * CPU's entering the handler again and again. Adding DSB can prevent the issue from happening.
