@@ -99,6 +99,8 @@ int main(void) {
 		/***************/
 		case kAPP_STATE_OFF:
 			switchOffKinetis(); /* Turn off */
+		    RTC_GetDatetime(RTC, &date);
+			sendInitialDate();
 			switchAppState(appContext.appState, kAPP_STATE_IDDLE); /* Go back to IDDLE */
 			break;
 
@@ -592,6 +594,7 @@ void cbackout(void) {
 
 
 void sendInitialDate(void){
+	SDMMC_OSADelay(100U);
     char time_string[20];
 	time_string[0]='1';
 	time_string[1]='2';
@@ -629,5 +632,7 @@ void sendInitialDate(void){
 #ifndef DEBUG_PRINTF_APP
 	UART_WriteBlocking(UART0, (uint8_t*) time_string, 20);
 #endif
+	SDMMC_OSADelay(100U);
+
 
 }

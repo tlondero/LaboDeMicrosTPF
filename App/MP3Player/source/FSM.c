@@ -768,7 +768,7 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 				break;
 			}
 		} else if (ev->btn_evs.back_button) {
-
+			appContext->menuState = kAPP_MENU_MAIN;
 #ifdef DEBUG_PRINTF_APP
 			printf("Main menu\r\n");
 #endif
@@ -835,7 +835,7 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 #endif
 				break;
 			case HOUR_D:
-				if (h < 24)
+				if (h < 23)
 					h++;
 #ifndef DEBUG_PRINTF_APP
 				msg[2] = 'H';
@@ -850,7 +850,7 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 #endif
 				break;
 			case MINUTE_D:
-				if (min < 60)
+				if (min < 59)
 					min++;
 #ifndef DEBUG_PRINTF_APP
 				msg[2] = 'm';
@@ -978,8 +978,7 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 			}
 			men_index++;
 		} else if (ev->btn_evs.back_button) {
-			if((men_index %SUB_MENU_D_CANT) != YEAR_D)
-				men_index--;
+
 			switch (men_index % SUB_MENU_D_CANT) {
 			case YEAR_D:
 				appContext->menuState = kAPP_MENU_MAIN;
