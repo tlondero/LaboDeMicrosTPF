@@ -241,9 +241,9 @@ void PIT1_IRQHandler(void) {
 	PIT_ClearStatusFlags(PIT, kPIT_Chnl_1, kPIT_TimerFlag);
 	PIT_StopTimer(PIT, kPIT_Chnl_1);
 	animCount++;
-	if (animCount == (200/LEDMATRIX_PIT_PERIOD_MS)-1){
+	if (animCount == (50/LEDMATRIX_PIT_PERIOD_MS)-1){
 		animCount = 0;
-		if(playAnim){
+		if(playAnim && !blocked){
 			cb();
 		}
 	}
