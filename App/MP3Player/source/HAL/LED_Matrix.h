@@ -62,4 +62,10 @@ void LEDMATRIX_Pause(void);
 
 void LEDMATRIX_Resume(void);
 
+void LEDMATRIX_SetCb(void* cb_);
+
+void LEDMATRIX_EnableAnimation(void);
+
+void LEDMATRIX_DisableAnimation(void);
+
 #endif /* LED_MATRIX_H_ */

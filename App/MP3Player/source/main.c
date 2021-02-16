@@ -32,7 +32,7 @@
 /**********************************************************************************************
  *                                    TYPEDEFS AND ENUMS                                      *
  **********************************************************************************************/
-
+typedef enum {ANIM_M, ANIM_A, ANIM_G, ANIM_T}anim_state;
 /**********************************************************************************************
  *                        FUNCTION DECLARATION WITH LOCAL SCOPE                               *
  **********************************************************************************************/
@@ -48,6 +48,7 @@ void prepareForSwitchOff(void);
 char* concat(const char *s1, const char *s2);
 int initDevice(void);
 void cbackin(void);
+void runAnimation(void);
 void cbackout(void);
 void sendInitialDate(void);
 /**********************************************************************************************
@@ -58,6 +59,7 @@ static app_context_t appContext;
 static char volString[7];
 static char id3Buffer[ID3_MAX_FIELD_SIZE + 2];
 static rtc_datetime_t date;
+static uint8_t animState;
 /**********************************************************************************************
  *                                         MAIN                                               *
  **********************************************************************************************/
@@ -66,17 +68,6 @@ int main(void) {
 
 	initDevice(); /* Init device */
 
-	//Debug, dejar porque no jode..
-	LEDMATRIX_SetLed(1, 2, 0, 0, 10);
-	LEDMATRIX_SetLed(1, 5, 0, 0, 10);
-	LEDMATRIX_SetLed(4, 1, 0, 0, 10);
-	LEDMATRIX_SetLed(5, 2, 0, 0, 10);
-	LEDMATRIX_SetLed(5, 3, 0, 0, 10);
-	LEDMATRIX_SetLed(5, 4, 0, 0, 10);
-	LEDMATRIX_SetLed(5, 5, 0, 0, 10);
-	LEDMATRIX_SetLed(4, 6, 0, 0, 10);
-	LEDMATRIX_Enable();
-	LEDMATRIX_Pause();
 	/*vol string initialize*/
 	volString[0] = '0';
 	volString[1] = '9';
@@ -144,6 +135,7 @@ printf("[App] Volume increased, set to: %d\n", appContext.volume);
 				UART_WriteBlocking(UART0, volString, 7);
 #endif
 			}
+
 			runMenu(&ev, &appContext); /* Run menu in background */
 			break;
 
@@ -292,6 +284,10 @@ int initDevice(void) {
 	SDWRAPPER_SetInterruptEnable(false);
 	/* Led matrix */
 	LEDMATRIX_Init(); //PIT, DMA, DMAMUX, FTM
+	LEDMATRIX_SetCb(runAnimation);
+	LEDMATRIX_EnableAnimation();
+	LEDMATRIX_Enable();
+	LEDMATRIX_Pause();
 	/* Init event handlers */
 	EVHANDLER_InitHandlers();
 
@@ -336,6 +332,7 @@ int initDevice(void) {
 
 void switchAppState(app_state_t current, app_state_t target) {
 
+	LEDMATRIX_CleanDisplay();
 	switch (target) {
 	case kAPP_STATE_OFF: /* Can come from IDDLE or PLAYING */
 #ifndef DEBUG_PRINTF_APP
@@ -356,13 +353,14 @@ void switchAppState(app_state_t current, app_state_t target) {
 		break;
 	case kAPP_STATE_IDDLE: /* Can come from OFF or PLAYING */
 		if (current == kAPP_STATE_OFF) {
+			LEDMATRIX_EnableAnimation();
 #ifndef DEBUG_PRINTF_APP
 			UART_WriteBlocking(UART0, "10P\r\n", 6);
 #endif
 			prepareForSwitchOn();
 			appContext.appState = target;
 		} else if (current == kAPP_STATE_PLAYING) {
-			//TODO: Stop player, spectrogram..
+			LEDMATRIX_EnableAnimation();
 			DAC_Wrapper_Sleep();
 			appContext.playerContext.firstDacTransmition = true;
 			appContext.appState = target;
@@ -370,8 +368,8 @@ void switchAppState(app_state_t current, app_state_t target) {
 		break;
 	case kAPP_STATE_PLAYING:
 		if ((current == kAPP_STATE_IDDLE) || (current == kAPP_STATE_PLAYING)) {
-			//TODO: Spectrogram...
-
+			LEDMATRIX_DisableAnimation();
+			LEDMATRIX_CleanDisplay();
 			if (!appContext.playerContext.songResumed) {
 
 				resetPlayerContext();
@@ -503,6 +501,190 @@ void switchAppState(app_state_t current, app_state_t target) {
 
 void runMenu(event_t *events, app_context_t *context) {
 	FSM_menu(events, context);
+}
+
+void runAnimation(void){
+	switch(animState){
+	case 0: //M
+		LEDMATRIX_SetLed(1, 6, 1, 1, 0);
+		LEDMATRIX_SetLed(2, 6, 1, 1, 0);
+		LEDMATRIX_SetLed(3, 6, 1, 1, 0);
+		LEDMATRIX_SetLed(4, 6, 1, 1, 0);
+		LEDMATRIX_SetLed(5, 6, 1, 1, 0);
+		LEDMATRIX_SetLed(6, 6, 1, 1, 0);
+
+		LEDMATRIX_SetLed(5, 5, 1, 1, 0);
+		LEDMATRIX_SetLed(4, 4, 1, 1, 0);
+		LEDMATRIX_SetLed(4, 3, 1, 1, 0);
+		LEDMATRIX_SetLed(5, 2, 1, 1, 0);
+
+		LEDMATRIX_SetLed(1, 1, 1, 1, 0);
+		LEDMATRIX_SetLed(2, 1, 1, 1, 0);
+		LEDMATRIX_SetLed(3, 1, 1, 1, 0);
+		LEDMATRIX_SetLed(4, 1, 1, 1, 0);
+		LEDMATRIX_SetLed(5, 1, 1, 1, 0);
+		LEDMATRIX_SetLed(6, 1, 1, 1, 0);
+		break;
+	case 1:	//OFF
+		LEDMATRIX_SetLed(1, 6, 0, 0, 0);
+		LEDMATRIX_SetLed(2, 6, 0, 0, 0);
+		LEDMATRIX_SetLed(3, 6, 0, 0, 0);
+		LEDMATRIX_SetLed(4, 6, 0, 0, 0);
+		LEDMATRIX_SetLed(5, 6, 0, 0, 0);
+		LEDMATRIX_SetLed(6, 6, 0, 0, 0);
+
+		LEDMATRIX_SetLed(5, 5, 0, 0, 0);
+		LEDMATRIX_SetLed(4, 4, 0, 0, 0);
+		LEDMATRIX_SetLed(4, 3, 0, 0, 0);
+		LEDMATRIX_SetLed(5, 2, 0, 0, 0);
+
+		LEDMATRIX_SetLed(1, 1, 0, 0, 0);
+		LEDMATRIX_SetLed(2, 1, 0, 0, 0);
+		LEDMATRIX_SetLed(3, 1, 0, 0, 0);
+		LEDMATRIX_SetLed(4, 1, 0, 0, 0);
+		LEDMATRIX_SetLed(5, 1, 0, 0, 0);
+		LEDMATRIX_SetLed(6, 1, 0, 0, 0);
+		break;
+	case 2: //A
+		LEDMATRIX_SetLed(1, 1, 0, 1, 1);
+		LEDMATRIX_SetLed(2, 1, 0, 1, 1);
+		LEDMATRIX_SetLed(3, 1, 0, 1, 1);
+		LEDMATRIX_SetLed(4, 1, 0, 1, 1);
+
+		LEDMATRIX_SetLed(1, 6, 0, 1, 1);
+		LEDMATRIX_SetLed(2, 6, 0, 1, 1);
+		LEDMATRIX_SetLed(3, 6, 0, 1, 1);
+		LEDMATRIX_SetLed(4, 6, 0, 1, 1);
+
+		LEDMATRIX_SetLed(3, 5, 0, 1, 1);
+		LEDMATRIX_SetLed(3, 4, 0, 1, 1);
+		LEDMATRIX_SetLed(3, 3, 0, 1, 1);
+		LEDMATRIX_SetLed(3, 2, 0, 1, 1);
+
+		LEDMATRIX_SetLed(5, 5, 0, 1, 1);
+		LEDMATRIX_SetLed(6, 4, 0, 1, 1);
+		LEDMATRIX_SetLed(6, 3, 0, 1, 1);
+		LEDMATRIX_SetLed(5, 2, 0, 1, 1);
+		break;
+	case 3: //OFF
+		LEDMATRIX_SetLed(1, 1, 0, 0, 0);
+		LEDMATRIX_SetLed(2, 1, 0, 0, 0);
+		LEDMATRIX_SetLed(3, 1, 0, 0, 0);
+		LEDMATRIX_SetLed(4, 1, 0, 0, 0);
+
+		LEDMATRIX_SetLed(1, 6, 0, 0, 0);
+		LEDMATRIX_SetLed(2, 6, 0, 0, 0);
+		LEDMATRIX_SetLed(3, 6, 0, 0, 0);
+		LEDMATRIX_SetLed(4, 6, 0, 0, 0);
+
+		LEDMATRIX_SetLed(3, 5, 0, 0, 0);
+		LEDMATRIX_SetLed(3, 4, 0, 0, 0);
+		LEDMATRIX_SetLed(3, 3, 0, 0, 0);
+		LEDMATRIX_SetLed(3, 2, 0, 0, 0);
+
+		LEDMATRIX_SetLed(5, 5, 0, 0, 0);
+		LEDMATRIX_SetLed(6, 4, 0, 0, 0);
+		LEDMATRIX_SetLed(6, 3, 0, 0, 0);
+		LEDMATRIX_SetLed(5, 2, 0, 0, 0);
+		break;
+	case 4: //G
+		LEDMATRIX_SetLed(1, 5, 1, 0, 1);
+		LEDMATRIX_SetLed(1, 4, 1, 0, 1);
+		LEDMATRIX_SetLed(1, 3, 1, 0, 1);
+		LEDMATRIX_SetLed(1, 2, 1, 0, 1);
+		LEDMATRIX_SetLed(1, 1, 1, 0, 1);
+
+		LEDMATRIX_SetLed(6, 6, 1, 0, 1);
+		LEDMATRIX_SetLed(5, 6, 1, 0, 1);
+		LEDMATRIX_SetLed(4, 6, 1, 0, 1);
+		LEDMATRIX_SetLed(3, 6, 1, 0, 1);
+		LEDMATRIX_SetLed(2, 6, 1, 0, 1);
+		LEDMATRIX_SetLed(1, 6, 1, 0, 1);
+
+		LEDMATRIX_SetLed(6, 5, 1, 0, 1);
+		LEDMATRIX_SetLed(6, 4, 1, 0, 1);
+		LEDMATRIX_SetLed(6, 3, 1, 0, 1);
+		LEDMATRIX_SetLed(6, 2, 1, 0, 1);
+		LEDMATRIX_SetLed(6, 1, 1, 0, 1);
+
+		LEDMATRIX_SetLed(2, 1, 1, 0, 1);
+
+		LEDMATRIX_SetLed(3, 1, 1, 0, 1);
+		LEDMATRIX_SetLed(3, 2, 1, 0, 1);
+		LEDMATRIX_SetLed(3, 3, 1, 0, 1);
+		LEDMATRIX_SetLed(3, 4, 1, 0, 1);
+		break;
+	case 5: //OFF
+		LEDMATRIX_SetLed(1, 5, 0, 0, 0);
+		LEDMATRIX_SetLed(1, 4, 0, 0, 0);
+		LEDMATRIX_SetLed(1, 3, 0, 0, 0);
+		LEDMATRIX_SetLed(1, 2, 0, 0, 0);
+		LEDMATRIX_SetLed(1, 1, 0, 0, 0);
+
+		LEDMATRIX_SetLed(6, 6, 0, 0, 0);
+		LEDMATRIX_SetLed(5, 6, 0, 0, 0);
+		LEDMATRIX_SetLed(4, 6, 0, 0, 0);
+		LEDMATRIX_SetLed(3, 6, 0, 0, 0);
+		LEDMATRIX_SetLed(2, 6, 0, 0, 0);
+		LEDMATRIX_SetLed(1, 6, 0, 0, 0);
+
+		LEDMATRIX_SetLed(6, 5, 0, 0, 0);
+		LEDMATRIX_SetLed(6, 4, 0, 0, 0);
+		LEDMATRIX_SetLed(6, 3, 0, 0, 0);
+		LEDMATRIX_SetLed(6, 2, 0, 0, 0);
+		LEDMATRIX_SetLed(6, 1, 0, 0, 0);
+
+		LEDMATRIX_SetLed(2, 1, 0, 0, 0);
+
+		LEDMATRIX_SetLed(3, 1, 0, 0, 0);
+		LEDMATRIX_SetLed(3, 2, 0, 0, 0);
+		LEDMATRIX_SetLed(3, 3, 0, 0, 0);
+		LEDMATRIX_SetLed(3, 4, 0, 0, 0);
+		break;
+	case 6: //T
+		LEDMATRIX_SetLed(6, 6, 0, 0, 5);
+		LEDMATRIX_SetLed(6, 5, 0, 0, 5);
+		LEDMATRIX_SetLed(6, 4, 0, 0, 5);
+		LEDMATRIX_SetLed(6, 3, 0, 0, 5);
+		LEDMATRIX_SetLed(6, 2, 0, 0, 5);
+		LEDMATRIX_SetLed(6, 1, 0, 0, 5);
+
+		LEDMATRIX_SetLed(5, 4, 0, 0, 5);
+		LEDMATRIX_SetLed(4, 4, 0, 0, 5);
+		LEDMATRIX_SetLed(3, 4, 0, 0, 5);
+		LEDMATRIX_SetLed(2, 4, 0, 0, 5);
+		LEDMATRIX_SetLed(1, 4, 0, 0, 5);
+
+		LEDMATRIX_SetLed(5, 3, 0, 0, 5);
+		LEDMATRIX_SetLed(4, 3, 0, 0, 5);
+		LEDMATRIX_SetLed(3, 3, 0, 0, 5);
+		LEDMATRIX_SetLed(2, 3, 0, 0, 5);
+		LEDMATRIX_SetLed(1, 3, 0, 0, 5);
+		break;
+	case 7: //OFF
+		LEDMATRIX_SetLed(6, 6, 0, 0, 0);
+		LEDMATRIX_SetLed(6, 5, 0, 0, 0);
+		LEDMATRIX_SetLed(6, 4, 0, 0, 0);
+		LEDMATRIX_SetLed(6, 3, 0, 0, 0);
+		LEDMATRIX_SetLed(6, 2, 0, 0, 0);
+		LEDMATRIX_SetLed(6, 1, 0, 0, 0);
+
+		LEDMATRIX_SetLed(5, 4, 0, 0, 0);
+		LEDMATRIX_SetLed(4, 4, 0, 0, 0);
+		LEDMATRIX_SetLed(3, 4, 0, 0, 0);
+		LEDMATRIX_SetLed(2, 4, 0, 0, 0);
+		LEDMATRIX_SetLed(1, 4, 0, 0, 0);
+
+		LEDMATRIX_SetLed(5, 3, 0, 0, 0);
+		LEDMATRIX_SetLed(4, 3, 0, 0, 0);
+		LEDMATRIX_SetLed(3, 3, 0, 0, 0);
+		LEDMATRIX_SetLed(2, 3, 0, 0, 0);
+		LEDMATRIX_SetLed(1, 3, 0, 0, 0);
+		break;
+	case 8: //OFF
+		break;
+	}
+	animState = (++animState)%9;
 }
 
 char* concat(const char *s1, const char *s2) {
