@@ -970,6 +970,7 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 				RTC_StopTimer(RTC);
 				RTC_SetDatetime(RTC, &date);
 				RTC_StartTimer(RTC);
+				UART_WriteBlocking(UART0, (uint8_t*) "13O\r\n", 6);
 				appContext->menuState = kAPP_MENU_MAIN;
 				men_index=0;
 				break;
