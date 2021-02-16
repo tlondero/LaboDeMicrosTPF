@@ -217,6 +217,7 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 		} else if (ev->btn_evs.enter_button) {
 			switch (index % SUBMENU_CANT) {
 			case FS:
+				if(SDWRAPPER_getSDInserted()){
 				appContext->currentFile = FSEXP_exploreFS(FSEXP_ROOT_DIR);
 #ifdef DEBUG_PRINTF_APP
 				printf("File System Explorer Menu opened\r\n");
@@ -237,6 +238,10 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 
 #endif
 				appContext->menuState = kAPP_MENU_FILESYSTEM;
+				}
+				else{
+					UART_WriteBlocking(UART0, "06\r\n", 5);
+				}
 				break;
 
 			case EQ:
