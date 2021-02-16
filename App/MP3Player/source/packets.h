@@ -51,6 +51,17 @@
  *									"ROCK"
  *									"JAZZ"
  *									"CLASICO"
+ *									...
+ *
+ *  '12' TIME UPDATE -> formato: AAAA/MM/DDHH:mm
+ *
+ *
+ *  '13' TIME SET -> opciones:  A
+ *								M
+ *								D
+ *								H
+ *								m
+ *								O
  *
  * */
 

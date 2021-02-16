@@ -106,7 +106,7 @@ int main(void) {
 				}
 			} else if (ev.btn_evs.off_on_button) {
 				switchAppState(appContext.appState, kAPP_STATE_OFF);
-			} else if (ev.btn_evs.pause_play_button) {
+			} else if (ev.btn_evs.pause_play_button && appContext.playerContext.songActive) {
 				appContext.playerContext.songResumed = true;
 				switchAppState(appContext.appState, kAPP_STATE_PLAYING);
 #ifdef DEBUG_PRINTF_APP
@@ -347,7 +347,7 @@ void switchAppState(app_state_t current, app_state_t target) {
 			DAC_Wrapper_Clear_Data_Array();
 			DAC_Wrapper_Clear_Next_Buffer();
 			DAC_Wrapper_Sleep();
-			appContext.playerContext.firstDacTransmition = true;
+			resetAppContext();
 			prepareForSwitchOff();
 			appContext.appState = target;
 
@@ -375,6 +375,8 @@ void switchAppState(app_state_t current, app_state_t target) {
 			if (!appContext.playerContext.songResumed) {
 
 				resetPlayerContext();
+
+				appContext.playerContext.songActive = true;
 
 				char *songName = FSEXP_getMP3Path();
 				MP3LoadFile(&songName[1]);
@@ -679,6 +681,7 @@ void resetPlayerContext(void) {
 	appContext.playerContext.sr_ = kMP3_44100Hz;
 	appContext.playerContext.ch_ = kMP3_Stereo;
 	appContext.playerContext.using_buffer_1 = true;
+	appContext.playerContext.songActive = false;
 }
 
 void switchOffKinetis(void) {
