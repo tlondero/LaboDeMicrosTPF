@@ -24,6 +24,7 @@
 #include "FSM.h"
 #include "general.h"
 #include "../HAL/LED_Matrix.h"
+//#include "equalizer.h"
 
 /**********************************************************************************************
  *                                          DEFINES                                           *
@@ -270,6 +271,7 @@ int initDevice(void) {
 	LED_GREEN_INIT(LOGIC_LED_OFF);
 #endif
 
+
 	/* Init sub-drivers */
 	pit_config_t pit_config;
 	PIT_GetDefaultConfig(&pit_config);
@@ -281,6 +283,8 @@ int initDevice(void) {
 	/* Init Helix MP3 Decoder */
 	MP3DecoderInit();
 
+	/*Init equalizer*/
+	//init_equalizer();
 	/* Init DAC */
 	DAC_Wrapper_Init();		//Init DMAMUX, EDMA, PDB, DAC
 	DAC_Wrapper_Loop(false);

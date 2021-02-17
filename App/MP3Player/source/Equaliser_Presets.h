@@ -15,7 +15,7 @@
  ******************************************************************************/
 
 #define BAND_PASS_NUMBER    10
-#define FILTERS_NUMBER      18
+#define FILTERS_NUMBER      10
 
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS

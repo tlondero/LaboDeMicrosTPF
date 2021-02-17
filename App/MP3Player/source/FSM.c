@@ -1053,6 +1053,9 @@ void runPlayer(event_t *events, app_context_t *appContext) {
 					translateBinesToMatrix(&(fft_8_bines[0]));
 
 				}
+				//TODO
+				//Modificar u_buffer_1
+				equalize_frame(u_buffer_1, u_buffer_1);
 
 				MP3_Adapt_Signal((int16_t*) u_buffer_2, u_buffer_2,
 						appContext->playerContext.sampleCount,
@@ -1078,6 +1081,9 @@ void runPlayer(event_t *events, app_context_t *appContext) {
 					translateBinesToMatrix(&(fft_8_bines[0]));
 
 				}
+				//TODO
+				//Modificar u_buffer_1
+				equalize_frame(u_buffer_1, u_buffer_1);
 
 				MP3_Adapt_Signal((int16_t*) u_buffer_1, u_buffer_1,
 						appContext->playerContext.sampleCount,
