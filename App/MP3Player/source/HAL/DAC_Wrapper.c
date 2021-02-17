@@ -20,6 +20,8 @@
 
 #define PDB_COUNT					17
 
+#define DAC_NULL_SIZE				2
+
 #define PDB_BASEADDR         		PDB0
 #define PDB_MODULUS_VALUE      		PDB_COUNT
 #define PDB_DELAY_VALUE        		0U
@@ -70,9 +72,9 @@ uint16_t (*nextBuffer);	//Cuando cambio a un segundo buffer y necesito avisar de
 
 bool nextBufferLoad = false;	//Muestra si hay un siguiente buffer
 
-uint16_t nullData[DAC_USED_BUFFER_SIZE] = { 0U };//Array vacio para enviar al dac
+uint16_t nullData[DAC_NULL_SIZE] = { 0U };	//Array vacio para enviar al dac
 
-bool loopBufferActive = true;//Determina si al finalizar un periodo se repite el buffer o no se manda nada mas
+bool loopBufferActive = true;	//Determina si al finalizar un periodo se repite el buffer o no se manda nada mas
 
 bool nullArrayOn = true;
 
@@ -134,7 +136,7 @@ void DAC_Wrapper_Set_Next_Buffer(void *forcedBackUp) {
 void DAC_Wrapper_Clear_Data_Array(void) {
 	g_dacDataArray = (uint16_t*) nullData;
 	nullArrayOn = true;
-	sizeOf = DAC_USED_BUFFER_SIZE;
+	sizeOf = DAC_NULL_SIZE;
 }
 
 void DAC_Wrapper_Clear_Next_Buffer(void) {
