@@ -5,7 +5,7 @@
  *      Author: mrtbuntu
  */
 #include <equalizer.h>
-#include <filters_coefs.h>
+#include "filters_coefs.h"
 #include <stdio.h>
 #include <math.h>
 static eq_config config;
@@ -30,13 +30,13 @@ static arm_fir_instance_f32 S;
 /*********FIR assembly************/
 static float32_t filter[NUM_TAPS];
 static float32_t temp_filter[NUM_TAPS];
-static float32_t gain[EQ_NUM_OF_FILTERS];
+static float32_t gain[EQ_NUM_OF_FILTERS] = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
 /*********FIR assembly************/
 
 void init_equalizer() {
 
-	config.cant_filters=EQ_NUM_OF_FILTERS;
-	config.filters=eqFirCoeffs32;
+	config.cant_filters = EQ_NUM_OF_FILTERS;
+	config.filters = eqFirCoeffs32;
 	config.filter_gains = gain;
 	/* Call FIR init function to initialize the instance structure. */
 	arm_fir_init_f32(&S, NUM_TAPS, (float32_t*) &filter[0], &firStateF32[0],
@@ -45,7 +45,7 @@ void init_equalizer() {
 
 }
 
-void change_gains(float *filter_gains){
+void change_gains(float *filter_gains) {
 	config.filter_gains = filter_gains;
 }
 
@@ -71,18 +71,18 @@ static float32_t backup_input[NUM_SAMPLES];
 static float32_t inputF32[NUM_SAMPLES];
 static float32_t outputF32[NUM_SAMPLES];
 
-void int16_to_f32(int16_t *input16, float32_t *input32, int num){
+void int16_to_f32(int16_t *input16, float32_t *input32, int num) {
 	int i = 0;
-	for(i=0; i<num; i++){
-		inputF32[i] = (float32_t)input16[i];
+	for (i = 0; i < num; i++) {
+		inputF32[i] = (float32_t) input16[i];
 	}
 
 }
 
-void f32_to_int16(float32_t *outputF32, int16_t *output16, int num){
+void f32_to_int16(float32_t *outputF32, int16_t *output16, int num) {
 	int i = 0;
-	for(i=0; i<num; i++){
-		output16[i] = (int16_t)outputF32[i];
+	for (i = 0; i < num; i++) {
+		output16[i] = (int16_t) outputF32[i];
 	}
 
 }
@@ -94,8 +94,8 @@ void equalize_frame(int16_t *input16, int16_t *output16) {
 	int i;
 	arm_copy_f32(inputF32, backup_input, NUM_SAMPLES);
 	for (i = 0; i < numBlocks; i++) {
-		arm_fir_f32(&S, backup_input + (i * blockSize), outputF32 + (i * blockSize),
-				blockSize);
+		arm_fir_f32(&S, backup_input + (i * blockSize),
+				outputF32 + (i * blockSize), blockSize);
 	}
 
 	f32_to_int16(outputF32, output16, NUM_SAMPLES);

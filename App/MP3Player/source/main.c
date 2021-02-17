@@ -277,7 +277,7 @@ int initDevice(void) {
 	MP3DecoderInit();
 
 	/*Init equalizer*/
-	//init_equalizer();
+	init_equalizer();
 	/* Init DAC */
 	DAC_Wrapper_Init();		//Init DMAMUX, EDMA, PDB, DAC
 	DAC_Wrapper_Loop(false);
