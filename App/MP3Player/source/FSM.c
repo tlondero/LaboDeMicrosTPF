@@ -970,6 +970,7 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 				RTC_StopTimer(RTC);
 				RTC_SetDatetime(RTC, &date);
 				RTC_StartTimer(RTC);
+				UART_WriteBlocking(UART0, (uint8_t*) "13O\r\n", 6);
 				appContext->menuState = kAPP_MENU_MAIN;
 				men_index=0;
 				break;
@@ -1128,15 +1129,15 @@ void translateBinesToMatrix(float32_t *bines) {
 	for (i = 0; i < 8; i++) {
 		for (j = 0; j < 8; j++) {
 			if (j < bines[i] + 1) {
-				if (j < 3) {
+				if (j < 4) {
 					if (bines[j] == 0) {
 						LEDMATRIX_SetLed(j, i, 0, 0, 0);
 					}
-					LEDMATRIX_SetLed(j - 1, i, 0, 1, 0);
-				} else if (j < 6) {
-					LEDMATRIX_SetLed(j - 1, i, 1, 0, 0);
+					LEDMATRIX_SetLed(j - 1, i, 0, 5, 0);
+				} else if (j < 7) {
+					LEDMATRIX_SetLed(j - 1, i, 1, 1, 0);
 				} else {
-					LEDMATRIX_SetLed(j - 1, i, 0, 0, 1);
+					LEDMATRIX_SetLed(j - 1, i, 5, 0, 0);
 				}
 			} else {
 				LEDMATRIX_SetLed(j, i, 0, 0, 0);

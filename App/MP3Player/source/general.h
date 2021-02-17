@@ -34,6 +34,7 @@ typedef struct {
 	bool songPaused;
 	bool songResumed;
 	bool songEnded;
+	bool songActive;
 	mp3_decoder_result_t res;
 	uint16_t sr_;	//Default config 4 mp3 stereo
 	uint8_t ch_;

@@ -33,7 +33,7 @@
 /**********************************************************************************************
  *                                    TYPEDEFS AND ENUMS                                      *
  **********************************************************************************************/
-
+typedef enum {ANIM_OFF, ANIM_YELLOW, ANIM_CYAN, ANIM_VIOLET, ANIM_BLUE, ANIM_GREEN}anim_state;
 /**********************************************************************************************
  *                        FUNCTION DECLARATION WITH LOCAL SCOPE                               *
  **********************************************************************************************/
@@ -49,6 +49,7 @@ void prepareForSwitchOff(void);
 char* concat(const char *s1, const char *s2);
 int initDevice(void);
 void cbackin(void);
+void runAnimation(void);
 void cbackout(void);
 void sendInitialDate(void);
 /**********************************************************************************************
@@ -59,6 +60,8 @@ static app_context_t appContext;
 static char volString[7];
 static char id3Buffer[ID3_MAX_FIELD_SIZE + 2];
 static rtc_datetime_t date;
+static uint8_t animState;
+static uint8_t aniMatrix[8][8*8];
 /**********************************************************************************************
  *                                         MAIN                                               *
  **********************************************************************************************/
@@ -67,17 +70,6 @@ int main(void) {
 
 	initDevice(); /* Init device */
 
-	//Debug, dejar porque no jode..
-	LEDMATRIX_SetLed(1, 2, 0, 0, 10);
-	LEDMATRIX_SetLed(1, 5, 0, 0, 10);
-	LEDMATRIX_SetLed(4, 1, 0, 0, 10);
-	LEDMATRIX_SetLed(5, 2, 0, 0, 10);
-	LEDMATRIX_SetLed(5, 3, 0, 0, 10);
-	LEDMATRIX_SetLed(5, 4, 0, 0, 10);
-	LEDMATRIX_SetLed(5, 5, 0, 0, 10);
-	LEDMATRIX_SetLed(4, 6, 0, 0, 10);
-	LEDMATRIX_Enable();
-	LEDMATRIX_Pause();
 	/*vol string initialize*/
 	volString[0] = '0';
 	volString[1] = '9';
@@ -115,7 +107,7 @@ int main(void) {
 				}
 			} else if (ev.btn_evs.off_on_button) {
 				switchAppState(appContext.appState, kAPP_STATE_OFF);
-			} else if (ev.btn_evs.pause_play_button) {
+			} else if (ev.btn_evs.pause_play_button && appContext.playerContext.songActive) {
 				appContext.playerContext.songResumed = true;
 				switchAppState(appContext.appState, kAPP_STATE_PLAYING);
 #ifdef DEBUG_PRINTF_APP
@@ -145,6 +137,7 @@ printf("[App] Volume increased, set to: %d\n", appContext.volume);
 				UART_WriteBlocking(UART0, volString, 7);
 #endif
 			}
+
 			runMenu(&ev, &appContext); /* Run menu in background */
 			break;
 
@@ -296,6 +289,11 @@ int initDevice(void) {
 	SDWRAPPER_SetInterruptEnable(false);
 	/* Led matrix */
 	LEDMATRIX_Init(); //PIT, DMA, DMAMUX, FTM
+	LEDMATRIX_SetCb(runAnimation);
+	LEDMATRIX_EnableAnimation();
+	LEDMATRIX_Enable();
+	LEDMATRIX_Pause();
+	initAnimation();
 	/* Init event handlers */
 	EVHANDLER_InitHandlers();
 
@@ -340,6 +338,7 @@ int initDevice(void) {
 
 void switchAppState(app_state_t current, app_state_t target) {
 
+	LEDMATRIX_CleanDisplay();
 	switch (target) {
 	case kAPP_STATE_OFF: /* Can come from IDDLE or PLAYING */
 #ifndef DEBUG_PRINTF_APP
@@ -352,7 +351,7 @@ void switchAppState(app_state_t current, app_state_t target) {
 			DAC_Wrapper_Clear_Data_Array();
 			DAC_Wrapper_Clear_Next_Buffer();
 			DAC_Wrapper_Sleep();
-			appContext.playerContext.firstDacTransmition = true;
+			resetAppContext();
 			prepareForSwitchOff();
 			appContext.appState = target;
 
@@ -360,13 +359,14 @@ void switchAppState(app_state_t current, app_state_t target) {
 		break;
 	case kAPP_STATE_IDDLE: /* Can come from OFF or PLAYING */
 		if (current == kAPP_STATE_OFF) {
+			LEDMATRIX_EnableAnimation();
 #ifndef DEBUG_PRINTF_APP
 			UART_WriteBlocking(UART0, "10P\r\n", 6);
 #endif
 			prepareForSwitchOn();
 			appContext.appState = target;
 		} else if (current == kAPP_STATE_PLAYING) {
-			//TODO: Stop player, spectrogram..
+			LEDMATRIX_EnableAnimation();
 			DAC_Wrapper_Sleep();
 			appContext.playerContext.firstDacTransmition = true;
 			appContext.appState = target;
@@ -374,11 +374,13 @@ void switchAppState(app_state_t current, app_state_t target) {
 		break;
 	case kAPP_STATE_PLAYING:
 		if ((current == kAPP_STATE_IDDLE) || (current == kAPP_STATE_PLAYING)) {
-			//TODO: Spectrogram...
-
+			LEDMATRIX_DisableAnimation();
+			LEDMATRIX_CleanDisplay();
 			if (!appContext.playerContext.songResumed) {
 
 				resetPlayerContext();
+
+				appContext.playerContext.songActive = true;
 
 				char *songName = FSEXP_getMP3Path();
 				MP3LoadFile(&songName[1]);
@@ -509,6 +511,161 @@ void runMenu(event_t *events, app_context_t *context) {
 	FSM_menu(events, context);
 }
 
+void initAnimation(void){
+
+	//Vacio
+	/*
+	 *
+	 */
+
+	//Squiggly_1
+	aniMatrix[1][7+8*6] = ANIM_GREEN;
+	aniMatrix[1][6+8*6] = ANIM_GREEN;
+	aniMatrix[1][5+8*6] = ANIM_GREEN;
+	aniMatrix[1][4+8*6] = ANIM_GREEN;
+	aniMatrix[2][3+8*6] = ANIM_GREEN;
+	aniMatrix[3][3+8*6] = ANIM_GREEN;
+	aniMatrix[4][2+8*6] = ANIM_GREEN;
+	aniMatrix[5][2+8*6] = ANIM_GREEN;
+	aniMatrix[6][1+8*6] = ANIM_GREEN;
+	aniMatrix[6][0+8*6] = ANIM_GREEN;
+
+	//Squiggly_2
+	aniMatrix[6][7+8*5] = ANIM_GREEN;
+	aniMatrix[5][6+8*5] = ANIM_GREEN;
+	aniMatrix[4][6+8*5] = ANIM_GREEN;
+	aniMatrix[3][5+8*5] = ANIM_GREEN;
+	aniMatrix[2][5+8*5] = ANIM_GREEN;
+	aniMatrix[1][4+8*5] = ANIM_GREEN;
+	aniMatrix[1][3+8*5] = ANIM_GREEN;
+	aniMatrix[1][2+8*5] = ANIM_GREEN;
+	aniMatrix[2][1+8*5] = ANIM_GREEN;
+	aniMatrix[3][0+8*5] = ANIM_GREEN;
+
+	//Squiggly_3
+	aniMatrix[4][7+8*4] = ANIM_GREEN;
+	aniMatrix[4][6+8*4] = ANIM_GREEN;
+	aniMatrix[3][5+8*4] = ANIM_GREEN;
+	aniMatrix[2][4+8*4] = ANIM_GREEN;
+	aniMatrix[1][3+8*4] = ANIM_GREEN;
+	aniMatrix[1][2+8*4] = ANIM_GREEN;
+	aniMatrix[1][1+8*4] = ANIM_GREEN;
+	aniMatrix[1][0+8*4] = ANIM_GREEN;
+
+	//M
+	aniMatrix[1][6+8*3] = ANIM_YELLOW;
+	aniMatrix[2][6+8*3] = ANIM_YELLOW;
+	aniMatrix[3][6+8*3] = ANIM_YELLOW;
+	aniMatrix[4][6+8*3] = ANIM_YELLOW;
+	aniMatrix[5][6+8*3] = ANIM_YELLOW;
+	aniMatrix[6][6+8*3] = ANIM_YELLOW;
+	aniMatrix[5][5+8*3] = ANIM_YELLOW;
+	aniMatrix[4][4+8*3] = ANIM_YELLOW;
+	aniMatrix[4][3+8*3] = ANIM_YELLOW;
+	aniMatrix[5][2+8*3] = ANIM_YELLOW;
+	aniMatrix[1][1+8*3] = ANIM_YELLOW;
+	aniMatrix[2][1+8*3] = ANIM_YELLOW;
+	aniMatrix[3][1+8*3] = ANIM_YELLOW;
+	aniMatrix[4][1+8*3] = ANIM_YELLOW;
+	aniMatrix[5][1+8*3] = ANIM_YELLOW;
+	aniMatrix[6][1+8*3] = ANIM_YELLOW;
+
+	//A
+	aniMatrix[1][1+8*2] = ANIM_CYAN;
+	aniMatrix[2][1+8*2] = ANIM_CYAN;
+	aniMatrix[3][1+8*2] = ANIM_CYAN;
+	aniMatrix[4][1+8*2] = ANIM_CYAN;
+	aniMatrix[1][6+8*2] = ANIM_CYAN;
+	aniMatrix[2][6+8*2] = ANIM_CYAN;
+	aniMatrix[3][6+8*2] = ANIM_CYAN;
+	aniMatrix[4][6+8*2] = ANIM_CYAN;
+	aniMatrix[3][5+8*2] = ANIM_CYAN;
+	aniMatrix[3][4+8*2] = ANIM_CYAN;
+	aniMatrix[3][3+8*2] = ANIM_CYAN;
+	aniMatrix[3][2+8*2] = ANIM_CYAN;
+	aniMatrix[5][5+8*2] = ANIM_CYAN;
+	aniMatrix[6][4+8*2] = ANIM_CYAN;
+	aniMatrix[6][3+8*2] = ANIM_CYAN;
+	aniMatrix[5][2+8*2] = ANIM_CYAN;
+
+	//G
+	aniMatrix[1][5+8*1] = ANIM_VIOLET;
+	aniMatrix[1][4+8*1] = ANIM_VIOLET;
+	aniMatrix[1][3+8*1] = ANIM_VIOLET;
+	aniMatrix[1][2+8*1] = ANIM_VIOLET;
+	aniMatrix[1][1+8*1] = ANIM_VIOLET;
+	aniMatrix[6][6+8*1] = ANIM_VIOLET;
+	aniMatrix[5][6+8*1] = ANIM_VIOLET;
+	aniMatrix[4][6+8*1] = ANIM_VIOLET;
+	aniMatrix[3][6+8*1] = ANIM_VIOLET;
+	aniMatrix[2][6+8*1] = ANIM_VIOLET;
+	aniMatrix[1][6+8*1] = ANIM_VIOLET;
+	aniMatrix[6][5+8*1] = ANIM_VIOLET;
+	aniMatrix[6][4+8*1] = ANIM_VIOLET;
+	aniMatrix[6][3+8*1] = ANIM_VIOLET;
+	aniMatrix[6][2+8*1] = ANIM_VIOLET;
+	aniMatrix[6][1+8*1] = ANIM_VIOLET;
+	aniMatrix[2][1+8*1] = ANIM_VIOLET;
+	aniMatrix[3][1+8*1] = ANIM_VIOLET;
+	aniMatrix[3][2+8*1] = ANIM_VIOLET;
+	aniMatrix[3][3+8*1] = ANIM_VIOLET;
+	aniMatrix[3][4+8*1] = ANIM_VIOLET;
+
+	//T
+	aniMatrix[6][6+8*0] = ANIM_BLUE;
+	aniMatrix[6][5+8*0] = ANIM_BLUE;
+	aniMatrix[6][4+8*0] = ANIM_BLUE;
+	aniMatrix[6][3+8*0] = ANIM_BLUE;
+	aniMatrix[6][2+8*0] = ANIM_BLUE;
+	aniMatrix[6][1+8*0] = ANIM_BLUE;
+	aniMatrix[5][4+8*0] = ANIM_BLUE;
+	aniMatrix[4][4+8*0] = ANIM_BLUE;
+	aniMatrix[3][4+8*0] = ANIM_BLUE;
+	aniMatrix[2][4+8*0] = ANIM_BLUE;
+	aniMatrix[1][4+8*0] = ANIM_BLUE;
+	aniMatrix[5][3+8*0] = ANIM_BLUE;
+	aniMatrix[4][3+8*0] = ANIM_BLUE;
+	aniMatrix[3][3+8*0] = ANIM_BLUE;
+	aniMatrix[2][3+8*0] = ANIM_BLUE;
+	aniMatrix[1][3+8*0] = ANIM_BLUE;
+
+}
+
+void runAnimation(void){
+	uint16_t hor, vert;
+	if(animState == 0){
+		animState = 63;
+	}
+	else{
+		animState--;
+	}
+	for(hor = 0; hor < 8; hor++){
+		for(vert = 0; vert < 8; vert++){
+			switch(aniMatrix[vert][hor+animState]){
+			case ANIM_OFF:
+				LEDMATRIX_SetLed(vert, hor, 0, 0, 0);
+				break;
+			case ANIM_YELLOW:
+				LEDMATRIX_SetLed(vert, hor, 1, 1, 0);
+				break;
+			case ANIM_CYAN:
+				LEDMATRIX_SetLed(vert, hor, 0, 1, 1);
+				break;
+			case ANIM_VIOLET:
+				LEDMATRIX_SetLed(vert, hor, 1, 0, 1);
+				break;
+			case ANIM_BLUE:
+				LEDMATRIX_SetLed(vert, hor, 0, 0, 5);
+				break;
+			case ANIM_GREEN:
+				LEDMATRIX_SetLed(vert, hor, 0, 5, 0);
+				break;
+			default: break;
+			}
+		}
+	}
+}
+
 char* concat(const char *s1, const char *s2) {
 	char *result = malloc(strlen(s1) + strlen(s2) + 1); // +1 for the null-terminator
 	strcpy(result, s1);
@@ -547,6 +704,7 @@ void resetPlayerContext(void) {
 	appContext.playerContext.sr_ = kMP3_44100Hz;
 	appContext.playerContext.ch_ = kMP3_Stereo;
 	appContext.playerContext.using_buffer_1 = true;
+	appContext.playerContext.songActive = false;
 }
 
 void switchOffKinetis(void) {

@@ -53,6 +53,7 @@ typedef struct{
 	uint16_t R[8];
 	uint16_t B[8];
 }GRB_t;
+typedef void(*cb_t)(void);
 /*******************************************************************************
  * FUNCTION PROTOTYPES WITH FILE SCOPE
  ******************************************************************************/
@@ -63,6 +64,10 @@ static void set_color_brightness(uint16_t *ptr, uint8_t brightness);
 static GRB_t led_matrix [LEDMATRIX_CANT_LEDS+LEDMATRIX_CANT_LEDS_ZERO];
 static uint16_t old_cnv;
 static bool pit_alt_pause;
+static bool blocked;
+static uint16_t animCount;
+static cb_t cb;
+static bool playAnim;
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH GLOBAL SCOPE
  ******************************************************************************/
@@ -154,26 +159,35 @@ void LEDMATRIX_Init(void){
 }
 
 void LEDMATRIX_SetLed(uint8_t row, uint8_t col, uint8_t r, uint8_t g, uint8_t b){
-
-	set_color_brightness(led_matrix[LEDMATRIX_ROW_SIZE*row+col].G, g);
-	set_color_brightness(led_matrix[LEDMATRIX_ROW_SIZE*row+col].R, r);
-	set_color_brightness(led_matrix[LEDMATRIX_ROW_SIZE*row+col].B, b);
+	if(!blocked){
+		set_color_brightness(led_matrix[LEDMATRIX_ROW_SIZE*row+col].G, g);
+		set_color_brightness(led_matrix[LEDMATRIX_ROW_SIZE*row+col].R, r);
+		set_color_brightness(led_matrix[LEDMATRIX_ROW_SIZE*row+col].B, b);
+	}
 }
 
 void LEDMATRIX_Resume(void){
-	LEDMATRIX_Enable();
-	//LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnV = old_cnv;
-	LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnSC = (LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnSC
-		& ~FTM_CnSC_CHIE_MASK) | FTM_CnSC_CHIE(1);
+	//LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnV = LEDMATRIX_FTM_CNV_OFF;
+	//LEDMATRIX_Enable();
+	//LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnSC = (LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnSC
+	//	& ~FTM_CnSC_CHIE_MASK) | FTM_CnSC_CHIE(1);
+	blocked = false;
 }
 
 void LEDMATRIX_Pause(void){
 	//old_cnv = LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnV;
-	LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnV = LEDMATRIX_FTM_CNV_OFF;
-	LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnSC = (LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnSC
-		& ~FTM_CnSC_CHIE_MASK) | FTM_CnSC_CHIE(0);
-	pit_alt_pause = true;
-	PIT_StartTimer(PIT, kPIT_Chnl_1);
+	uint8_t i;
+	for(i = 0; i < LEDMATRIX_CANT_LEDS; i++){
+		set_color_brightness(led_matrix[i].R, 0);
+		set_color_brightness(led_matrix[i].G, 0);
+		set_color_brightness(led_matrix[i].B, 0);
+	}
+	blocked = true;
+	//LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnSC = (LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnSC
+	//	& ~FTM_CnSC_CHIE_MASK) | FTM_CnSC_CHIE(0);
+	//LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnV = LEDMATRIX_FTM_CNV_OFF;
+	//pit_alt_pause = true;
+	//PIT_StartTimer(PIT, kPIT_Chnl_1);
 
 }
 
@@ -186,6 +200,26 @@ void LEDMATRIX_Disable(void){
 	LEDMATRIX_FTM_BASE->SC &= ~FTM_SC_CLKS(0x01);
 }
 
+void LEDMATRIX_SetCb(void* cb_){
+	cb = cb_;
+}
+
+void LEDMATRIX_EnableAnimation(void){
+	playAnim = true;
+}
+
+void LEDMATRIX_DisableAnimation(void){
+	playAnim = false;
+}
+
+void LEDMATRIX_CleanDisplay(void){
+	uint8_t i;
+	for(i = 0; i < LEDMATRIX_CANT_LEDS; i++){
+		set_color_brightness(led_matrix[i].R, 0);
+		set_color_brightness(led_matrix[i].G, 0);
+		set_color_brightness(led_matrix[i].B, 0);
+	}
+}
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH FILE SCOPE
  ******************************************************************************/
@@ -206,8 +240,16 @@ void PIT1_IRQHandler(void) {
 	/* Clear interrupt flag.*/
 	PIT_ClearStatusFlags(PIT, kPIT_Chnl_1, kPIT_TimerFlag);
 	PIT_StopTimer(PIT, kPIT_Chnl_1);
+	animCount++;
+	if (animCount == (50/LEDMATRIX_PIT_PERIOD_MS)-1){
+		animCount = 0;
+		if(playAnim && !blocked){
+			cb();
+		}
+	}
 	if(pit_alt_pause){
 		pit_alt_pause = false;
+		LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnV = LEDMATRIX_FTM_CNV_ZERO;
 		LEDMATRIX_Disable();
 	}
 	else{
