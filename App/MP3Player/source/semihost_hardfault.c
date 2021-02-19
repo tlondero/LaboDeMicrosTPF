@@ -59,7 +59,7 @@
 
 __attribute__((naked))
 void HardFault_Handler(void){
-	printContextData();
+//	printContextData();
     __asm(  ".syntax unified\n"
         // Check which stack is in use
             "MOVS   R0, #4  \n"

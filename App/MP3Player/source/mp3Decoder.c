@@ -73,6 +73,10 @@ void readID3Tag(void);
 static void copyDataAndMovePointer(void);
 void copyFrameInfo(mp3_decoder_frame_data_t *mp3_data, MP3FrameInfo *helix_data);
 void resetContextData(void);
+
+#ifdef DEBUG_PRINTF_INFO
+void printContextData(void)
+#endif
 /*******************************************************************************
  * STATIC VARIABLES AND CONST VARIABLES WITH FILE LEVEL SCOPE
  ******************************************************************************/
@@ -170,7 +174,7 @@ mp3_decoder_result_t MP3GetDecodedFrame(short *outBuffer, uint16_t bufferSize,
 			}
 
 			MP3FrameInfo nextFrameInfo;
-			int err = MP3GetNextFrameInfo(context_data.Decoder, &nextFrameInfo,
+			MP3GetNextFrameInfo(context_data.Decoder, &nextFrameInfo,
 					context_data.encoded_frame_buffer + context_data.top_index);
 
 
@@ -178,10 +182,9 @@ mp3_decoder_result_t MP3GetDecodedFrame(short *outBuffer, uint16_t bufferSize,
 			uint8_t *decPointer = context_data.encoded_frame_buffer
 					+ context_data.top_index;
 			int bytesLeft = context_data.bottom_index - context_data.top_index;
-			int res = MP3Decode(context_data.Decoder, &decPointer, &(bytesLeft),
-					outBuffer, MP3DECODER_MODE_NORMAL);
 
-			if (res == ERR_MP3_NONE) // if decoding successful
+			if ((MP3Decode(context_data.Decoder, &decPointer, &(bytesLeft),
+					outBuffer, MP3DECODER_MODE_NORMAL)) == ERR_MP3_NONE) // if decoding successful
 					{
 				uint16_t decodedBytes = context_data.bottom_index
 						- context_data.top_index - bytesLeft;
@@ -208,7 +211,7 @@ mp3_decoder_result_t MP3GetDecodedFrame(short *outBuffer, uint16_t bufferSize,
 	return ret;
 
 }
-
+#ifdef DEBUG_PRINTF_INFO
 void printContextData(void) {
 	printf("Bottom index %d\r\n", context_data.bottom_index);
 	printf("Top index %d\r\n", context_data.top_index);
@@ -216,7 +219,7 @@ void printContextData(void) {
 	printf("Dir ptr %p\r\n", file.dir_ptr);
 	printf("f ptr %p\r\n", file.fptr);
 }
-
+#endif
 /*******************************************************************************
  *******************************************************************************
  LOCAL FUNCTION DEFINITIONS
@@ -282,7 +285,7 @@ uint16_t readFile(void *buf, uint16_t cnt) {
 }
 
 //ID3
-void readID3Tag(void) {
+void readID3Tag(void){
 
 	if (has_ID3_tag(mp3File)) {
 		context_data.has_ID3_Tag = true;
@@ -320,24 +323,8 @@ void copyDataAndMovePointer() {
 	uint16_t bytes_read;
 
 	// Fill buffer with info in mp3 file
-#ifdef DEBUG_ALAN
-    uint8_t auxbuff[5000];
-    if (MP3_FRAME_BUFFER_BYTES - context_data.bottom_index > 0){
-    	if(context_data.bottom_index == 0){
-    	    uint8_t* dst = context_data.encoded_frame_buffer + context_data.bottom_index;
-    		bytes_read = readFile(dst, (MP3_FRAME_BUFFER_BYTES - context_data.bottom_index));
-    		// Update bottom_index pointer
-    		context_data.bottom_index += bytes_read;
-    	}
-    	else{
-    	    uint8_t* dst = auxbuff;
-    		bytes_read = readFile(dst, (MP3_FRAME_BUFFER_BYTES - context_data.bottom_index));
-    		memmove(context_data.encoded_frame_buffer + context_data.bottom_index, auxbuff, MP3_FRAME_BUFFER_BYTES - context_data.bottom_index);
-    		context_data.bottom_index += bytes_read;
-    	}
-    }
-#endif
-#ifndef DEBUG_ALAN
+
+
 	uint8_t *dst = context_data.encoded_frame_buffer
 			+ context_data.bottom_index;
 	if (MP3_FRAME_BUFFER_BYTES - context_data.bottom_index > 0) {
@@ -346,13 +333,14 @@ void copyDataAndMovePointer() {
 		// Update bottom_index pointer
 		context_data.bottom_index += bytes_read;
 	}
-#endif
 
-	if (bytes_read == 0) {
 #ifdef DEBUG_PRINTF_APP
+	if (bytes_read == 0) {
+
 		printf("[App] File was read completely.\n");
-#endif
+
 	}
+#endif
 
 #ifdef DEBUG_PRINTF_INFO
     printf("Read %d bytes from file. Head = %d - Bottom = %d\n", bytes_read, context_data.top_index, context_data.bottom_index);
