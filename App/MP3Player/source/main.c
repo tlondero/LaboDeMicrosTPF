@@ -225,6 +225,8 @@ printf("[App] Volume decreased, set to: %d\n", appContext.volume);
 			break;
 
 		default:
+			switchAppState(appContext.appState, kAPP_STATE_OFF);
+			printf("error");
 			break;
 		}
 	}

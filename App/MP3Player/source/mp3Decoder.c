@@ -20,7 +20,9 @@
  ******************************************************************************/
 
 #define MP3DECODER_MODE_NORMAL  0
-#define MP3_FRAME_BUFFER_BYTES  (10240)//6913            // MP3 buffer size (in bytes)
+//#define MP3_FRAME_BUFFER_BYTES  (10240)//6913            // MP3 buffer size (in bytes)
+#define MP3_FRAME_BUFFER_BYTES  (6913)//6913            // MP3 buffer size (in bytes)
+
 #define DEFAULT_ID3_FIELD       "Unknown"
 #define MAX_DEPTH       3
 static FIL file __attribute__((aligned((8U))));	// MP3 file
