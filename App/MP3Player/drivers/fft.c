@@ -56,14 +56,14 @@ void fftInit(cfft_size_t size) {
 }
 
 void fft(float32_t *inputF32, float32_t *outputF32, bool doBitReverse) {
-	memcpy(outputF32, inputF32,
-			2 * fftInstanceToSize(fftInstance) * sizeof(float32_t)); // Copying input array to preserve it.
+	//memcpy(outputF32, inputF32,
+	//		2 * fftInstanceToSize(fftInstance) * sizeof(float32_t)); // Copying input array to preserve it.
 	arm_cfft_f32(fftInstance, outputF32, false, doBitReverse);
 }
 
 void icfft(float32_t *inputF32, float32_t *outputF32, bool doBitReverse) {
-	memcpy(outputF32, inputF32,
-			fftInstanceToSize(fftInstance) * 2 * sizeof(float32_t)); // Copying input array to preserve it.
+	//memcpy(outputF32, inputF32,
+	//		fftInstanceToSize(fftInstance) * 2 * sizeof(float32_t)); // Copying input array to preserve it.
 	arm_cfft_f32(fftInstance, outputF32, true, doBitReverse);
 }
 
@@ -74,38 +74,37 @@ void fftGetMag(float32_t *inputF32, float32_t *outputF32) {
 void fftMakeBines8(float32_t *src, float32_t *dst) {
 	float32_t maxValue=0;
 	uint32_t index=0;
-	arm_max_f32(src, SIZE, &maxValue, &index);
 
+		for (int j = 0; j < BINES; j++) {
+				switch(j){
+				case 0:
+					arm_max_f32(src, 32, &maxValue, &index);
+					break;
+				case 1:
+					arm_max_f32(src+32, 32, &maxValue, &index);
+					break;
+				case 2:
+					arm_max_f32(src+64, 32, &maxValue, &index);
+					break;
+				case 3:
+					arm_max_f32(src+96, 32, &maxValue, &index);
+					break;
+				case 4:
+					arm_max_f32(src+128, 32, &maxValue, &index);
+					break;
+				case 5:
+					arm_max_f32(src+160, 32, &maxValue, &index);
+					break;
+				case 6:
+					arm_max_f32(src+192, 32, &maxValue, &index);
+					break;
+				case 7:
+					arm_max_f32(src+224, 32, &maxValue, &index);
+					break;
+				default:
+					break;
+				}
 
-	for (int j = 0; j < BINES; j++) {
-		switch(j){
-		case 0:
-			arm_max_f32(src, 40, &maxValue, &index);
-			break;
-		case 1:
-			arm_max_f32(src+40, 60, &maxValue, &index);
-			break;
-		case 2:
-			arm_max_f32(src+100, 100, &maxValue, &index);
-			break;
-		case 3:
-			arm_max_f32(src+200, 300, &maxValue, &index);
-			break;
-		case 4:
-			arm_max_f32(src+500, 600, &maxValue, &index);
-			break;
-		case 5:
-			arm_max_f32(src+1100, 800, &maxValue, &index);
-			break;
-		case 6:
-			arm_max_f32(src+1900, 1600, &maxValue, &index);
-			break;
-		case 7:
-			arm_max_f32(src+2900, 1196-600, &maxValue, &index);
-			break;
-		default:
-			break;
-		}
 		dst[j] = maxValue;
 		assignBines(&(dst[j]));
 	}

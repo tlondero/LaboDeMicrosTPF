@@ -264,7 +264,6 @@ int initDevice(void) {
 
 #ifdef APP_KINETIS_LEDS
 	/* Init kinetis ON/OFF leds */
-	LED_RED_INIT(LOGIC_LED_ON);
 	LED_GREEN_INIT(LOGIC_LED_OFF);
 #endif
 
@@ -302,7 +301,7 @@ int initDevice(void) {
 	EVHANDLER_InitHandlers();
 
 	/* Init FFT */
-	fftInit(CFFT_4096);
+	fftInit(CFFT_256);
 
 	/* Reset app context */
 	resetAppContext();

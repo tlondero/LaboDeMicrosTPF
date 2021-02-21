@@ -80,11 +80,9 @@ static char packPath[MAX_PATH_LENGHT + 5];
 
 static rtc_datetime_t date;
 
-static bool fft_samples_ready;
-
-static float32_t u_buffer_fft[4096 * 2];
-static float32_t buffer_fft_calculated[4096 * 2];
-static float32_t buffer_fft_calculated_mag[4096];
+#define FFT_LEN 256
+static float32_t u_buffer_fft[FFT_LEN * 2];
+static float32_t buffer_fft_calculated_mag[FFT_LEN];
 static float32_t fft_8_bines[8];
 
 static char time_string[20];
@@ -1059,18 +1057,14 @@ void runPlayer(event_t *events, app_context_t *appContext) {
 						MP3_DECODED_BUFFER_SIZE,
 						&(appContext->playerContext.sampleCount));
 
-				//TODO
-				adaptFFT((int16_t*) u_buffer_2, u_buffer_fft, 512);
-				if (fft_samples_ready) {
-					fft_samples_ready = false;
-					fft(u_buffer_fft, buffer_fft_calculated, 1);
-					fftGetMag(buffer_fft_calculated, buffer_fft_calculated_mag);
+				equalize_frame((int16_t *)u_buffer_2, (int16_t *)u_buffer_2);
+
+//TODO
+					adaptFFT((int16_t *)u_buffer_2, u_buffer_fft, FFT_LEN);
+					fft(u_buffer_fft, u_buffer_fft, 1);
+					fftGetMag(u_buffer_fft, u_buffer_fft);
 					fftMakeBines8(buffer_fft_calculated_mag, fft_8_bines);
 					translateBinesToMatrix(&(fft_8_bines[0]));
-
-				}
-
-				equalize_frame(u_buffer_2, u_buffer_2);
 
 				MP3_Adapt_Signal((int16_t*) u_buffer_2, u_buffer_2,
 						appContext->playerContext.sampleCount,
@@ -1087,18 +1081,16 @@ void runPlayer(event_t *events, app_context_t *appContext) {
 						MP3_DECODED_BUFFER_SIZE,
 						&(appContext->playerContext.sampleCount));
 
-				//TODO
-				adaptFFT((int16_t*) u_buffer_1, u_buffer_fft, 512);
-				if (fft_samples_ready) {
-					fft_samples_ready = false;
-					fft(u_buffer_fft, buffer_fft_calculated, 1);
-					fftGetMag(buffer_fft_calculated, buffer_fft_calculated_mag);
-					fftMakeBines8(buffer_fft_calculated_mag, fft_8_bines);
-					translateBinesToMatrix(&(fft_8_bines[0]));
+				equalize_frame((int16_t *)u_buffer_1, (int16_t *)u_buffer_1);
 
-				}
+				adaptFFT((int16_t *)u_buffer_1, u_buffer_fft, FFT_LEN);
+				fft(u_buffer_fft, u_buffer_fft, 1);
+				fftGetMag(u_buffer_fft, u_buffer_fft);
+				fftMakeBines8(u_buffer_fft, fft_8_bines);
+				translateBinesToMatrix(&(fft_8_bines[0]));
 
-				equalize_frame(u_buffer_1, u_buffer_1);
+//TODO
+
 
 				MP3_Adapt_Signal((int16_t*) u_buffer_1, u_buffer_1,
 						appContext->playerContext.sampleCount,
@@ -1121,20 +1113,11 @@ char* GetPackPath(void) {
  * FUNCTION DEFINITIONS WITH FILE SCOPE
  ******************************************************************************/
 void adaptFFT(int16_t *src, float32_t *dst, uint16_t cnt) {
-	static uint16_t i = 0;
-	int16_t aux[2048] = { 0 };
+	uint16_t i = 0;
 	uint16_t j = 0;
-	for (j = 0; j < 2048; j++) {
-//		aux[j]= src[j];
-		aux[j] = applyfilter(src[j]);
-	}
 	for (j = 0; j < cnt; i++, j++) {
-		dst[i * 2] = aux[j * 4] * sinf(PI * i / 4096) + 0.0f; //HAnn window
-
-	}
-	if (i == 4096) {
-		i = 0;
-		fft_samples_ready = true;
+		dst[2*i+1] = 0;
+		dst[i * 2] = src[i] * sinf(PI * i / FFT_LEN) + 0.0f; //HAnn window
 	}
 }
 

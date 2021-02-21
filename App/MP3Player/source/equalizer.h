@@ -23,5 +23,6 @@ typedef struct eq_config_{
 }eq_config;
 
 void init_equalizer(void);
+void equalize_frame(int16_t *input16, int16_t *output16);
 void recalculate_filter(void);
 #endif /* EQUALIZER_H_ */
