@@ -19,6 +19,7 @@
 #include "fft.h"
 #include "HAL/delays.h"
 #include "fsl_rtc.h"
+#include "equalizer.h"
 #include "Equaliser_Presets.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
@@ -109,8 +110,6 @@ void FSM_init() {
 	/* Enable at the NVIC */
 	EnableIRQ(PIT3_IRQn);
 	PIT_StartTimer(PIT, kPIT_Chnl_3);
-
-//delay_id = delaysinitDelayBlockInterrupt(USECS_SPECTROGRAM,&busy);
 }
 
 void FSM_menu(event_t *ev, app_context_t *appContext) {
@@ -681,9 +680,6 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 #ifdef DEBUG_PRINTF_APP
 				printf("CLASSIC preset Selected\r\n");
 #endif
-				/*
-				 *TODO ADD PRESETS HERE
-				 * */
 				equalizer_change_effect(eq_clasic_db);
 				break;
 			case CLUB:
@@ -1063,7 +1059,8 @@ void runPlayer(event_t *events, app_context_t *appContext) {
 						MP3_DECODED_BUFFER_SIZE,
 						&(appContext->playerContext.sampleCount));
 
-				/*adaptFFT((int16_t*) u_buffer_2, u_buffer_fft, 512);
+				//TODO
+				adaptFFT((int16_t*) u_buffer_2, u_buffer_fft, 512);
 				if (fft_samples_ready) {
 					fft_samples_ready = false;
 					fft(u_buffer_fft, buffer_fft_calculated, 1);
@@ -1071,9 +1068,8 @@ void runPlayer(event_t *events, app_context_t *appContext) {
 					fftMakeBines8(buffer_fft_calculated_mag, fft_8_bines);
 					translateBinesToMatrix(&(fft_8_bines[0]));
 
-				}*/
-				//TODO
-				//Modificar u_buffer_1
+				}
+
 				equalize_frame(u_buffer_2, u_buffer_2);
 
 				MP3_Adapt_Signal((int16_t*) u_buffer_2, u_buffer_2,
@@ -1091,7 +1087,8 @@ void runPlayer(event_t *events, app_context_t *appContext) {
 						MP3_DECODED_BUFFER_SIZE,
 						&(appContext->playerContext.sampleCount));
 
-				/*adaptFFT((int16_t*) u_buffer_1, u_buffer_fft, 512);
+				//TODO
+				adaptFFT((int16_t*) u_buffer_1, u_buffer_fft, 512);
 				if (fft_samples_ready) {
 					fft_samples_ready = false;
 					fft(u_buffer_fft, buffer_fft_calculated, 1);
@@ -1099,9 +1096,8 @@ void runPlayer(event_t *events, app_context_t *appContext) {
 					fftMakeBines8(buffer_fft_calculated_mag, fft_8_bines);
 					translateBinesToMatrix(&(fft_8_bines[0]));
 
-				}*/
-				//TODO
-				//Modificar u_buffer_1
+				}
+
 				equalize_frame(u_buffer_1, u_buffer_1);
 
 				MP3_Adapt_Signal((int16_t*) u_buffer_1, u_buffer_1,
