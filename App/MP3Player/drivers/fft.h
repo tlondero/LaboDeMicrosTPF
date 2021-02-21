@@ -1,7 +1,7 @@
 /***************************************************************************//**
   @file fft.c
   @brief performs the FFT algorithm with the DSP library funcionts
-  @author G. Lambertucci, T. Londero M. Rodriguez, A. Melachupa
+  @author MAGT
  ******************************************************************************/
 
 

@@ -53,10 +53,10 @@
  *									"CLASICO"
  *									...
  *
- *  '12' TIME UPDATE -> formato: AAAA/MM/DDHH:mm
+ *  '12' TIME UPDATE -> formato: AAAA/MM/DDHH:mm						--> listo
  *
  *
- *  '13' TIME SET -> opciones:  A
+ *  '13' TIME SET -> opciones:  A										--> listo
  *								M
  *								D
  *								H

@@ -1056,7 +1056,7 @@ void runPlayer(event_t *events, app_context_t *appContext) {
 				}
 				//TODO
 				//Modificar u_buffer_1
-				equalize_frame(u_buffer_1, u_buffer_1);
+				equalize_frame(u_buffer_2, u_buffer_2);
 
 				MP3_Adapt_Signal((int16_t*) u_buffer_2, u_buffer_2,
 						appContext->playerContext.sampleCount,
