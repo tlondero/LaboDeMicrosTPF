@@ -17,8 +17,8 @@
 typedef struct eq_config_{
 	int cant_filters;
 	int num_taps;
-	const float32_t *filters;
-	float32_t *filter_gains;
+	float32_t *filters;
+	int16_t *filter_gains;
 
 }eq_config;
 

@@ -24,7 +24,8 @@
 #include "FSM.h"
 #include "general.h"
 #include "../HAL/LED_Matrix.h"
-//#include "equalizer.h"
+
+#include "equalizer.h"
 
 /**********************************************************************************************
  *                                          DEFINES                                           *

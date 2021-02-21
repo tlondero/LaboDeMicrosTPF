@@ -19,6 +19,7 @@
 #include "fft.h"
 #include "HAL/delays.h"
 #include "fsl_rtc.h"
+#include "Equaliser_Presets.h"
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
@@ -674,6 +675,7 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 #ifdef DEBUG_PRINTF_APP
 				printf("OFF preset Selected\r\n");
 #endif
+				equalizer_change_effect(eq_off_db);
 				break;
 			case CLASSIC:
 #ifdef DEBUG_PRINTF_APP
@@ -682,88 +684,104 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 				/*
 				 *TODO ADD PRESETS HERE
 				 * */
+				equalizer_change_effect(eq_clasic_db);
 				break;
 			case CLUB:
 #ifdef DEBUG_PRINTF_APP
 				printf("CLUB preset Selected\r\n");
 #endif
+				equalizer_change_effect(eq_club_db);
 				break;
 			case DANCE:
 #ifdef DEBUG_PRINTF_APP
 				printf("DANCE preset Selected\r\n");
 #endif
+				equalizer_change_effect(eq_dance_db);
 				break;
 			case BASS:
 #ifdef DEBUG_PRINTF_APP
 				printf("BASS preset Selected\r\n");
 #endif
+				equalizer_change_effect(eq_bass_db);
 				break;
 			case BASS_AND_TREBLE:
 #ifdef DEBUG_PRINTF_APP
 				printf("BASS_AND_TREBLE preset Selected\r\n");
 #endif
+				equalizer_change_effect(eq_bass_and_treble_db);
 				break;
 			case TREBLE:
 #ifdef DEBUG_PRINTF_APP
 				printf("TREBLE preset Selected\r\n");
 #endif
+				equalizer_change_effect(eq_trable_db);
 				break;
 			case HEADSET:
 #ifdef DEBUG_PRINTF_APP
 				printf("HEADSET preset Selected\r\n");
 #endif
+				equalizer_change_effect(eq_headset_db);
 				break;
 			case HALL:
 #ifdef DEBUG_PRINTF_APP
 				printf("HALL preset Selected\r\n");
 #endif
+				equalizer_change_effect(eq_hall_db);
 				break;
 			case LIVE:
 #ifdef DEBUG_PRINTF_APP
 				printf("LIVE preset Selected\r\n");
 #endif
+				equalizer_change_effect(eq_live_db);
 				break;
 			case PARTY:
 #ifdef DEBUG_PRINTF_APP
 				printf("PARTY preset Selected\r\n");
 #endif
+				equalizer_change_effect(eq_party_db);
 				break;
 			case POP:
 #ifdef DEBUG_PRINTF_APP
 				printf("POP preset Selected\r\n");
 #endif
+				equalizer_change_effect(eq_pop_db);
 				break;
 			case REGGAE:
 #ifdef DEBUG_PRINTF_APP
 				printf("REGGAE preset Selected\r\n");
 #endif
+				equalizer_change_effect(eq_reggae_db);
 				break;
 			case ROCK:
 #ifdef DEBUG_PRINTF_APP
 				printf("ROCK preset Selected\r\n");
 #endif
+				equalizer_change_effect(eq_rock_db);
 				break;
 			case SKA:
 #ifdef DEBUG_PRINTF_APP
 				printf("SKA preset Selected\r\n");
 #endif
+				equalizer_change_effect(eq_ska_db);
 				break;
 			case SOFT:
 #ifdef DEBUG_PRINTF_APP
 							printf("SOFT preset Selected\r\n");
 			#endif
+				equalizer_change_effect(eq_soft_db);
 				break;
 			case SOFT_ROCK:
 #ifdef DEBUG_PRINTF_APP
 							printf("SOFT_ROCK preset Selected\r\n");
 			#endif
+				equalizer_change_effect(eq_soft_rock_db);
 				break;
 			case TECHNO:
 #ifdef DEBUG_PRINTF_APP
 							printf("TECHNO preset Selected\r\n");
 			#endif
+				equalizer_change_effect(eq_techno_db);
 				break;
-
 			default:
 				break;
 			}
@@ -1045,7 +1063,7 @@ void runPlayer(event_t *events, app_context_t *appContext) {
 						MP3_DECODED_BUFFER_SIZE,
 						&(appContext->playerContext.sampleCount));
 
-				adaptFFT((int16_t*) u_buffer_2, u_buffer_fft, 512);
+				/*adaptFFT((int16_t*) u_buffer_2, u_buffer_fft, 512);
 				if (fft_samples_ready) {
 					fft_samples_ready = false;
 					fft(u_buffer_fft, buffer_fft_calculated, 1);
@@ -1053,7 +1071,7 @@ void runPlayer(event_t *events, app_context_t *appContext) {
 					fftMakeBines8(buffer_fft_calculated_mag, fft_8_bines);
 					translateBinesToMatrix(&(fft_8_bines[0]));
 
-				}
+				}*/
 				//TODO
 				//Modificar u_buffer_1
 				equalize_frame(u_buffer_2, u_buffer_2);
@@ -1073,7 +1091,7 @@ void runPlayer(event_t *events, app_context_t *appContext) {
 						MP3_DECODED_BUFFER_SIZE,
 						&(appContext->playerContext.sampleCount));
 
-				adaptFFT((int16_t*) u_buffer_1, u_buffer_fft, 512);
+				/*adaptFFT((int16_t*) u_buffer_1, u_buffer_fft, 512);
 				if (fft_samples_ready) {
 					fft_samples_ready = false;
 					fft(u_buffer_fft, buffer_fft_calculated, 1);
@@ -1081,7 +1099,7 @@ void runPlayer(event_t *events, app_context_t *appContext) {
 					fftMakeBines8(buffer_fft_calculated_mag, fft_8_bines);
 					translateBinesToMatrix(&(fft_8_bines[0]));
 
-				}
+				}*/
 				//TODO
 				//Modificar u_buffer_1
 				equalize_frame(u_buffer_1, u_buffer_1);

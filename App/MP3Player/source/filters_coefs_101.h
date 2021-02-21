@@ -1,5 +1,5 @@
 #define NUM_TAPS 101
-#define EQ_NUM_OF_FILTERS 8//10
+#define EQ_NUM_OF_FILTERS 10
 #include "arm_math.h"
 
 static const float32_t eqFirCoeffs32[EQ_NUM_OF_FILTERS][NUM_TAPS]={
