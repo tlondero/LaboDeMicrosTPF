@@ -19,7 +19,7 @@
 #define SIZE 4096
 
 //#define div 30U
-#define div 1200U
+#define div 200U
 
 #define BIN8 168513740U/div
 #define BIN7 56851374U/div
@@ -77,32 +77,31 @@ void fftGetMag(float32_t *inputF32, float32_t *outputF32) {
 void fftMakeBines8(float32_t *src, float32_t *dst) {
 	float32_t maxValue=0;
 	uint32_t index=0;
-
 		for (int j = 0; j < BINES; j++) {
 				switch(j){
 				case 0:
-					arm_max_f32(src, 32/2, &maxValue, &index);
+					arm_max_f32(src, 3, &maxValue, &index);
 					break;
 				case 1:
-					arm_max_f32(src+32/2, 32/2, &maxValue, &index);
+					arm_max_f32(src+3, 4, &maxValue, &index);
 					break;
 				case 2:
-					arm_max_f32(src+64/2, 32/2, &maxValue, &index);
+					arm_max_f32(src+6, 6, &maxValue, &index);
 					break;
 				case 3:
-					arm_max_f32(src+96/2, 32/2, &maxValue, &index);
+					arm_max_f32(src+12, 19, &maxValue, &index);
 					break;
 				case 4:
-					arm_max_f32(src+128/2, 32/2, &maxValue, &index);
+					arm_max_f32(src+19, 12, &maxValue, &index);
 					break;
 				case 5:
-					arm_max_f32(src+160/2, 32/2, &maxValue, &index);
+					arm_max_f32(src+31, 37, &maxValue, &index);
 					break;
 				case 6:
-					arm_max_f32(src+192/2, 32/2, &maxValue, &index);
+					arm_max_f32(src+69, 118, &maxValue, &index);
 					break;
 				case 7:
-					arm_max_f32(src+224/2, 32/2, &maxValue, &index);
+					arm_max_f32(src+198, 25, &maxValue, &index);
 					break;
 				default:
 					break;
