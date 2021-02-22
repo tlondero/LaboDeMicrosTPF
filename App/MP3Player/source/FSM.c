@@ -1124,16 +1124,16 @@ void adaptFFT(int16_t *src, float32_t *dst, uint16_t cnt) {
 }
 
 void translateBinesToMatrix(float32_t *bines) {
-	uint8_t i = 0, j = 0;
-	for (i = 0; i < 8; i++) {
+	int8_t i = 0, j = 0;
+	for (i = 7; i > -1; i--) {
 		for (j = 0; j < 8; j++) {
-			if (j < bines[i] + 1) {
+			if (j < bines[7-i] + 1) {
 				if (j < 4) {
-					if (bines[j] == 0) {
+					if (bines[7-i] == 0) {
 						LEDMATRIX_SetLed(j, i, 0, 0, 0);
 					}
 					LEDMATRIX_SetLed(j - 1, i, 0, 5, 0);
-				} else if (j < 7) {
+				} else if (j < 6) {
 					LEDMATRIX_SetLed(j - 1, i, 1, 1, 0);
 				} else {
 					LEDMATRIX_SetLed(j - 1, i, 5, 0, 0);
