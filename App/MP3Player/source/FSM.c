@@ -1062,7 +1062,7 @@ void runPlayer(event_t *events, app_context_t *appContext) {
 //TODO
 					adaptFFT((int16_t *)u_buffer_2, u_buffer_fft, FFT_LEN);
 					fft(u_buffer_fft, u_buffer_fft, 1);
-					fftGetMag(u_buffer_fft, u_buffer_fft);
+					fftGetMag(u_buffer_fft, buffer_fft_calculated_mag);
 					fftMakeBines8(buffer_fft_calculated_mag, fft_8_bines);
 					translateBinesToMatrix(&(fft_8_bines[0]));
 
@@ -1085,8 +1085,8 @@ void runPlayer(event_t *events, app_context_t *appContext) {
 
 				adaptFFT((int16_t *)u_buffer_1, u_buffer_fft, FFT_LEN);
 				fft(u_buffer_fft, u_buffer_fft, 1);
-				fftGetMag(u_buffer_fft, u_buffer_fft);
-				fftMakeBines8(u_buffer_fft, fft_8_bines);
+				fftGetMag(u_buffer_fft, buffer_fft_calculated_mag);
+				fftMakeBines8(buffer_fft_calculated_mag, fft_8_bines);
 				translateBinesToMatrix(&(fft_8_bines[0]));
 
 //TODO

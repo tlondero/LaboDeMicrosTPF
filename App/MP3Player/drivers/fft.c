@@ -18,14 +18,17 @@
 #define BINES 8
 #define SIZE 4096
 
-#define BIN8 168513740U
-#define BIN7 56851374U
-#define BIN6 4851374U
-#define BIN5 2300000U
-#define BIN4 1638400U
-#define BIN3  909600U
-#define BIN2  409600U
-#define BIN1  209600U
+//#define div 30U
+#define div 1200U
+
+#define BIN8 168513740U/div
+#define BIN7 56851374U/div
+#define BIN6 4851374U/div
+#define BIN5 2300000U/div
+#define BIN4 1638400U/div
+#define BIN3  909600U/div
+#define BIN2  409600U/div
+#define BIN1  209600U/div
 
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
@@ -78,33 +81,32 @@ void fftMakeBines8(float32_t *src, float32_t *dst) {
 		for (int j = 0; j < BINES; j++) {
 				switch(j){
 				case 0:
-					arm_max_f32(src, 32, &maxValue, &index);
+					arm_max_f32(src, 32/2, &maxValue, &index);
 					break;
 				case 1:
-					arm_max_f32(src+32, 32, &maxValue, &index);
+					arm_max_f32(src+32/2, 32/2, &maxValue, &index);
 					break;
 				case 2:
-					arm_max_f32(src+64, 32, &maxValue, &index);
+					arm_max_f32(src+64/2, 32/2, &maxValue, &index);
 					break;
 				case 3:
-					arm_max_f32(src+96, 32, &maxValue, &index);
+					arm_max_f32(src+96/2, 32/2, &maxValue, &index);
 					break;
 				case 4:
-					arm_max_f32(src+128, 32, &maxValue, &index);
+					arm_max_f32(src+128/2, 32/2, &maxValue, &index);
 					break;
 				case 5:
-					arm_max_f32(src+160, 32, &maxValue, &index);
+					arm_max_f32(src+160/2, 32/2, &maxValue, &index);
 					break;
 				case 6:
-					arm_max_f32(src+192, 32, &maxValue, &index);
+					arm_max_f32(src+192/2, 32/2, &maxValue, &index);
 					break;
 				case 7:
-					arm_max_f32(src+224, 32, &maxValue, &index);
+					arm_max_f32(src+224/2, 32/2, &maxValue, &index);
 					break;
 				default:
 					break;
 				}
-
 		dst[j] = maxValue;
 		assignBines(&(dst[j]));
 	}

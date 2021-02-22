@@ -755,6 +755,8 @@ void cbackout(void) {
 //	DAC_Wrapper_Clear_Next_Buffer();
 	UART_WriteBlocking(UART0, (uint8_t*)"07O\r\n", 6);
 #endif
+
+	resetAppContext();
 }
 
 
