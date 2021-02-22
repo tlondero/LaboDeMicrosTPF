@@ -41,7 +41,7 @@ static int16_t eq_club_db[BAND_PASS_NUMBER] = { 0, 0, 110, 80, 80, 80, 50, 0, 0,
 
 static int16_t eq_dance_db[BAND_PASS_NUMBER] = { 130, 110, 50, 0, 0, -70, -110, -110, 0, 0 };
 
-static int16_t eq_bass_db[BAND_PASS_NUMBER] = { 110, 180, 180, 150, 30, -70, -70, -150, -180, -180 };
+static int16_t eq_bass_db[BAND_PASS_NUMBER] = { 150, 190, 190, 180, 15, -90, -90, -180, -190, -190 };
 
 static int16_t eq_bass_and_treble_db[BAND_PASS_NUMBER] = { 79, 80, 0, -150, -100, 20, 79, 111, 119, 119 };
 
