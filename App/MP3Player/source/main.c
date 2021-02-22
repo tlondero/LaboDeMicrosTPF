@@ -341,6 +341,10 @@ void switchAppState(app_state_t current, app_state_t target) {
 #ifndef DEBUG_PRINTF_APP
 		UART_WriteBlocking(UART0, (uint8_t*) "10A\r\n", 6);
 #endif
+		if(appContext.spectrogramEnable){
+			appContext.spectrogramEnable = false;
+			LEDMATRIX_Pause();
+		}
 		if (current == kAPP_STATE_IDDLE) {
 			prepareForSwitchOff();
 			appContext.appState = target;
