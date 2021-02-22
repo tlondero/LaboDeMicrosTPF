@@ -80,7 +80,7 @@ static char packPath[MAX_PATH_LENGHT + 5];
 
 static rtc_datetime_t date;
 
-#define FFT_LEN 256
+#define FFT_LEN 512
 static float32_t u_buffer_fft[FFT_LEN * 2];
 static float32_t buffer_fft_calculated_mag[FFT_LEN];
 static float32_t fft_8_bines[8];

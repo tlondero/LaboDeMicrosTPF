@@ -1,1 +1,4 @@
 CMSIS_DSP_LIB.pdf -> https://www.nxp.com/docs/en/application-note/AN4489.pdf
+ID3 TAG LIB ->https://github.com/t413/read_ID3_info
+Helix Lib -> https://www.helixcommunity.org/projects/datatype/mp3dec
+File System: http://elm-chan.org/fsw/ff/00index_e.html

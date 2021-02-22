@@ -109,6 +109,6 @@ void equalize_frame(int16_t *input16, int16_t *output16) {
 
 	int16_to_f32(input16, inputF32, NUM_SAMPLES);
 	arm_conv_f32(inputF32, NUM_SAMPLES, filter, NUM_TAPS, outputF32);
-	f32_to_int16(outputF32 + 52, output16, NUM_SAMPLES);
+	f32_to_int16(outputF32 + 50, output16, NUM_SAMPLES);
 }
 

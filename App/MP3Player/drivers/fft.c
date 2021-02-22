@@ -16,19 +16,19 @@
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 #define BINES 8
-#define SIZE 4096
+
 
 //#define div 30U
-#define div 200U
+#define div 2
 
-#define BIN8 168513740U/div
-#define BIN7 56851374U/div
-#define BIN6 4851374U/div
-#define BIN5 2300000U/div
-#define BIN4 1638400U/div
-#define BIN3  909600U/div
-#define BIN2  409600U/div
-#define BIN1  209600U/div
+#define BIN8 (uint32_t)(168513740U/div)
+#define BIN7 (uint32_t)(56851374U/div)
+#define BIN6 (uint32_t)(4851374U/div)
+#define BIN5 (uint32_t)(2300000U/div)
+#define BIN4 (uint32_t)(1638400U/div)
+#define BIN3 (uint32_t)( 909600U/div)
+#define BIN2 (uint32_t)( 409600U/div)
+#define BIN1  (uint32_t)(209600U/div)
 
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
@@ -80,28 +80,28 @@ void fftMakeBines8(float32_t *src, float32_t *dst) {
 		for (int j = 0; j < BINES; j++) {
 				switch(j){
 				case 0:
-					arm_max_f32(src, 3, &maxValue, &index);
+					arm_max_f32(src, 2, &maxValue, &index);
 					break;
 				case 1:
-					arm_max_f32(src+3, 4, &maxValue, &index);
+					arm_max_f32(src+2, 5, &maxValue, &index);
 					break;
 				case 2:
-					arm_max_f32(src+6, 6, &maxValue, &index);
+					arm_max_f32(src+7, 8, &maxValue, &index);
 					break;
 				case 3:
-					arm_max_f32(src+12, 19, &maxValue, &index);
+					arm_max_f32(src+15, 24, &maxValue, &index);
 					break;
 				case 4:
-					arm_max_f32(src+19, 12, &maxValue, &index);
+					arm_max_f32(src+39, 70, &maxValue, &index);
 					break;
 				case 5:
-					arm_max_f32(src+31, 37, &maxValue, &index);
+					arm_max_f32(src+109, 110, &maxValue, &index);
 					break;
 				case 6:
-					arm_max_f32(src+69, 118, &maxValue, &index);
+					arm_max_f32(src+219, 270, &maxValue, &index);
 					break;
 				case 7:
-					arm_max_f32(src+198, 25, &maxValue, &index);
+					arm_max_f32(src+489, 15, &maxValue, &index);
 					break;
 				default:
 					break;

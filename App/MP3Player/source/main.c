@@ -65,7 +65,7 @@ static char volString[7];
 static char id3Buffer[ID3_MAX_FIELD_SIZE + 2];
 static rtc_datetime_t date;
 static uint8_t animState;
-static uint8_t aniMatrix[8][8 * 8];
+static uint8_t aniMatrix[8][8 * 9];
 /**********************************************************************************************
  *                                         MAIN                                               *
  **********************************************************************************************/
@@ -296,7 +296,7 @@ int initDevice(void) {
 	EVHANDLER_InitHandlers();
 
 	/* Init FFT */
-	fftInit(CFFT_256);
+	fftInit(CFFT_512);
 
 	/* Reset app context */
 	resetAppContext();
@@ -330,7 +330,7 @@ int initDevice(void) {
 	UART_WriteBlocking(UART0, (uint8_t*) "10A\r\n", 6);
 #endif
 
-	return true; //TODO agregar verificaciones al resto de los inits
+	return true;
 }
 
 void switchAppState(app_state_t current, app_state_t target) {
@@ -519,121 +519,116 @@ void runMenu(event_t *events, app_context_t *context) {
 
 void initAnimation(void) {
 
-	//Vacio
-	/*
-	 *
-	 */
-
 	//Squiggly_1
-	aniMatrix[1][7 + 8 * 6] = ANIM_GREEN;
-	aniMatrix[1][6 + 8 * 6] = ANIM_GREEN;
-	aniMatrix[1][5 + 8 * 6] = ANIM_GREEN;
-	aniMatrix[1][4 + 8 * 6] = ANIM_GREEN;
-	aniMatrix[2][3 + 8 * 6] = ANIM_GREEN;
-	aniMatrix[3][3 + 8 * 6] = ANIM_GREEN;
-	aniMatrix[4][2 + 8 * 6] = ANIM_GREEN;
-	aniMatrix[5][2 + 8 * 6] = ANIM_GREEN;
-	aniMatrix[6][1 + 8 * 6] = ANIM_GREEN;
-	aniMatrix[6][0 + 8 * 6] = ANIM_GREEN;
+	aniMatrix[1][7 + 8 * 7] = ANIM_GREEN;
+	aniMatrix[1][6 + 8 * 7] = ANIM_GREEN;
+	aniMatrix[1][5 + 8 * 7] = ANIM_GREEN;
+	aniMatrix[1][4 + 8 * 7] = ANIM_GREEN;
+	aniMatrix[2][3 + 8 * 7] = ANIM_GREEN;
+	aniMatrix[3][3 + 8 * 7] = ANIM_GREEN;
+	aniMatrix[4][2 + 8 * 7] = ANIM_GREEN;
+	aniMatrix[5][2 + 8 * 7] = ANIM_GREEN;
+	aniMatrix[6][1 + 8 * 7] = ANIM_GREEN;
+	aniMatrix[6][0 + 8 * 7] = ANIM_GREEN;
 
 	//Squiggly_2
-	aniMatrix[6][7 + 8 * 5] = ANIM_GREEN;
-	aniMatrix[5][6 + 8 * 5] = ANIM_GREEN;
-	aniMatrix[4][6 + 8 * 5] = ANIM_GREEN;
-	aniMatrix[3][5 + 8 * 5] = ANIM_GREEN;
-	aniMatrix[2][5 + 8 * 5] = ANIM_GREEN;
-	aniMatrix[1][4 + 8 * 5] = ANIM_GREEN;
-	aniMatrix[1][3 + 8 * 5] = ANIM_GREEN;
-	aniMatrix[1][2 + 8 * 5] = ANIM_GREEN;
-	aniMatrix[2][1 + 8 * 5] = ANIM_GREEN;
-	aniMatrix[3][0 + 8 * 5] = ANIM_GREEN;
+	aniMatrix[6][7 + 8 * 6] = ANIM_GREEN;
+	aniMatrix[5][6 + 8 * 6] = ANIM_GREEN;
+	aniMatrix[4][6 + 8 * 6] = ANIM_GREEN;
+	aniMatrix[3][5 + 8 * 6] = ANIM_GREEN;
+	aniMatrix[2][5 + 8 * 6] = ANIM_GREEN;
+	aniMatrix[1][4 + 8 * 6] = ANIM_GREEN;
+	aniMatrix[1][3 + 8 * 6] = ANIM_GREEN;
+	aniMatrix[1][2 + 8 * 6] = ANIM_GREEN;
+	aniMatrix[2][1 + 8 * 6] = ANIM_GREEN;
+	aniMatrix[3][0 + 8 * 6] = ANIM_GREEN;
 
 	//Squiggly_3
-	aniMatrix[4][7 + 8 * 4] = ANIM_GREEN;
-	aniMatrix[4][6 + 8 * 4] = ANIM_GREEN;
-	aniMatrix[3][5 + 8 * 4] = ANIM_GREEN;
-	aniMatrix[2][4 + 8 * 4] = ANIM_GREEN;
-	aniMatrix[1][3 + 8 * 4] = ANIM_GREEN;
-	aniMatrix[1][2 + 8 * 4] = ANIM_GREEN;
-	aniMatrix[1][1 + 8 * 4] = ANIM_GREEN;
-	aniMatrix[1][0 + 8 * 4] = ANIM_GREEN;
+	aniMatrix[4][7 + 8 * 5] = ANIM_GREEN;
+	aniMatrix[4][6 + 8 * 5] = ANIM_GREEN;
+	aniMatrix[3][5 + 8 * 5] = ANIM_GREEN;
+	aniMatrix[2][4 + 8 * 5] = ANIM_GREEN;
+	aniMatrix[1][3 + 8 * 5] = ANIM_GREEN;
+	aniMatrix[1][2 + 8 * 5] = ANIM_GREEN;
+	aniMatrix[1][1 + 8 * 5] = ANIM_GREEN;
+	aniMatrix[1][0 + 8 * 5] = ANIM_GREEN;
 
 	//M
-	aniMatrix[1][6 + 8 * 3] = ANIM_YELLOW;
-	aniMatrix[2][6 + 8 * 3] = ANIM_YELLOW;
-	aniMatrix[3][6 + 8 * 3] = ANIM_YELLOW;
-	aniMatrix[4][6 + 8 * 3] = ANIM_YELLOW;
-	aniMatrix[5][6 + 8 * 3] = ANIM_YELLOW;
-	aniMatrix[6][6 + 8 * 3] = ANIM_YELLOW;
-	aniMatrix[5][5 + 8 * 3] = ANIM_YELLOW;
-	aniMatrix[4][4 + 8 * 3] = ANIM_YELLOW;
-	aniMatrix[4][3 + 8 * 3] = ANIM_YELLOW;
-	aniMatrix[5][2 + 8 * 3] = ANIM_YELLOW;
-	aniMatrix[1][1 + 8 * 3] = ANIM_YELLOW;
-	aniMatrix[2][1 + 8 * 3] = ANIM_YELLOW;
-	aniMatrix[3][1 + 8 * 3] = ANIM_YELLOW;
-	aniMatrix[4][1 + 8 * 3] = ANIM_YELLOW;
-	aniMatrix[5][1 + 8 * 3] = ANIM_YELLOW;
-	aniMatrix[6][1 + 8 * 3] = ANIM_YELLOW;
+	aniMatrix[1][6 + 8 * 4] = ANIM_YELLOW;
+	aniMatrix[2][6 + 8 * 4] = ANIM_YELLOW;
+	aniMatrix[3][6 + 8 * 4] = ANIM_YELLOW;
+	aniMatrix[4][6 + 8 * 4] = ANIM_YELLOW;
+	aniMatrix[5][6 + 8 * 4] = ANIM_YELLOW;
+	aniMatrix[6][6 + 8 * 4] = ANIM_YELLOW;
+	aniMatrix[5][5 + 8 * 4] = ANIM_YELLOW;
+	aniMatrix[4][4 + 8 * 4] = ANIM_YELLOW;
+	aniMatrix[4][3 + 8 * 4] = ANIM_YELLOW;
+	aniMatrix[5][2 + 8 * 4] = ANIM_YELLOW;
+	aniMatrix[1][1 + 8 * 4] = ANIM_YELLOW;
+	aniMatrix[2][1 + 8 * 4] = ANIM_YELLOW;
+	aniMatrix[3][1 + 8 * 4] = ANIM_YELLOW;
+	aniMatrix[4][1 + 8 * 4] = ANIM_YELLOW;
+	aniMatrix[5][1 + 8 * 4] = ANIM_YELLOW;
+	aniMatrix[6][1 + 8 * 4] = ANIM_YELLOW;
 
 	//A
-	aniMatrix[1][1 + 8 * 2] = ANIM_CYAN;
-	aniMatrix[2][1 + 8 * 2] = ANIM_CYAN;
-	aniMatrix[3][1 + 8 * 2] = ANIM_CYAN;
-	aniMatrix[4][1 + 8 * 2] = ANIM_CYAN;
-	aniMatrix[1][6 + 8 * 2] = ANIM_CYAN;
-	aniMatrix[2][6 + 8 * 2] = ANIM_CYAN;
-	aniMatrix[3][6 + 8 * 2] = ANIM_CYAN;
-	aniMatrix[4][6 + 8 * 2] = ANIM_CYAN;
-	aniMatrix[3][5 + 8 * 2] = ANIM_CYAN;
-	aniMatrix[3][4 + 8 * 2] = ANIM_CYAN;
-	aniMatrix[3][3 + 8 * 2] = ANIM_CYAN;
-	aniMatrix[3][2 + 8 * 2] = ANIM_CYAN;
-	aniMatrix[5][5 + 8 * 2] = ANIM_CYAN;
-	aniMatrix[6][4 + 8 * 2] = ANIM_CYAN;
-	aniMatrix[6][3 + 8 * 2] = ANIM_CYAN;
-	aniMatrix[5][2 + 8 * 2] = ANIM_CYAN;
+	aniMatrix[1][1 + 8 * 3] = ANIM_CYAN;
+	aniMatrix[2][1 + 8 * 3] = ANIM_CYAN;
+	aniMatrix[3][1 + 8 * 3] = ANIM_CYAN;
+	aniMatrix[4][1 + 8 * 3] = ANIM_CYAN;
+	aniMatrix[1][6 + 8 * 3] = ANIM_CYAN;
+	aniMatrix[2][6 + 8 * 3] = ANIM_CYAN;
+	aniMatrix[3][6 + 8 * 3] = ANIM_CYAN;
+	aniMatrix[4][6 + 8 * 3] = ANIM_CYAN;
+	aniMatrix[3][5 + 8 * 3] = ANIM_CYAN;
+	aniMatrix[3][4 + 8 * 3] = ANIM_CYAN;
+	aniMatrix[3][3 + 8 * 3] = ANIM_CYAN;
+	aniMatrix[3][2 + 8 * 3] = ANIM_CYAN;
+	aniMatrix[5][5 + 8 * 3] = ANIM_CYAN;
+	aniMatrix[6][4 + 8 * 3] = ANIM_CYAN;
+	aniMatrix[6][3 + 8 * 3] = ANIM_CYAN;
+	aniMatrix[5][2 + 8 * 3] = ANIM_CYAN;
 
 	//G
-	aniMatrix[1][5 + 8 * 1] = ANIM_VIOLET;
-	aniMatrix[1][4 + 8 * 1] = ANIM_VIOLET;
-	aniMatrix[1][3 + 8 * 1] = ANIM_VIOLET;
-	aniMatrix[1][2 + 8 * 1] = ANIM_VIOLET;
-	aniMatrix[1][1 + 8 * 1] = ANIM_VIOLET;
-	aniMatrix[6][6 + 8 * 1] = ANIM_VIOLET;
-	aniMatrix[5][6 + 8 * 1] = ANIM_VIOLET;
-	aniMatrix[4][6 + 8 * 1] = ANIM_VIOLET;
-	aniMatrix[3][6 + 8 * 1] = ANIM_VIOLET;
-	aniMatrix[2][6 + 8 * 1] = ANIM_VIOLET;
-	aniMatrix[1][6 + 8 * 1] = ANIM_VIOLET;
-	aniMatrix[6][5 + 8 * 1] = ANIM_VIOLET;
-	aniMatrix[6][4 + 8 * 1] = ANIM_VIOLET;
-	aniMatrix[6][3 + 8 * 1] = ANIM_VIOLET;
-	aniMatrix[6][2 + 8 * 1] = ANIM_VIOLET;
-	aniMatrix[6][1 + 8 * 1] = ANIM_VIOLET;
-	aniMatrix[2][1 + 8 * 1] = ANIM_VIOLET;
-	aniMatrix[3][1 + 8 * 1] = ANIM_VIOLET;
-	aniMatrix[3][2 + 8 * 1] = ANIM_VIOLET;
-	aniMatrix[3][3 + 8 * 1] = ANIM_VIOLET;
-	aniMatrix[3][4 + 8 * 1] = ANIM_VIOLET;
+	aniMatrix[1][5 + 8 * 2] = ANIM_VIOLET;
+	aniMatrix[1][4 + 8 * 2] = ANIM_VIOLET;
+	aniMatrix[1][3 + 8 * 2] = ANIM_VIOLET;
+	aniMatrix[1][2 + 8 * 2] = ANIM_VIOLET;
+	aniMatrix[1][1 + 8 * 2] = ANIM_VIOLET;
+	aniMatrix[6][6 + 8 * 2] = ANIM_VIOLET;
+	aniMatrix[5][6 + 8 * 2] = ANIM_VIOLET;
+	aniMatrix[4][6 + 8 * 2] = ANIM_VIOLET;
+	aniMatrix[3][6 + 8 * 2] = ANIM_VIOLET;
+	aniMatrix[2][6 + 8 * 2] = ANIM_VIOLET;
+	aniMatrix[1][6 + 8 * 2] = ANIM_VIOLET;
+	aniMatrix[6][5 + 8 * 2] = ANIM_VIOLET;
+	aniMatrix[6][4 + 8 * 2] = ANIM_VIOLET;
+	aniMatrix[6][3 + 8 * 2] = ANIM_VIOLET;
+	aniMatrix[6][2 + 8 * 2] = ANIM_VIOLET;
+	aniMatrix[6][1 + 8 * 2] = ANIM_VIOLET;
+	aniMatrix[2][1 + 8 * 2] = ANIM_VIOLET;
+	aniMatrix[3][1 + 8 * 2] = ANIM_VIOLET;
+	aniMatrix[3][2 + 8 * 2] = ANIM_VIOLET;
+	aniMatrix[3][3 + 8 * 2] = ANIM_VIOLET;
+	aniMatrix[3][4 + 8 * 2] = ANIM_VIOLET;
 
 	//T
-	aniMatrix[6][6 + 8 * 0] = ANIM_BLUE;
-	aniMatrix[6][5 + 8 * 0] = ANIM_BLUE;
-	aniMatrix[6][4 + 8 * 0] = ANIM_BLUE;
-	aniMatrix[6][3 + 8 * 0] = ANIM_BLUE;
-	aniMatrix[6][2 + 8 * 0] = ANIM_BLUE;
-	aniMatrix[6][1 + 8 * 0] = ANIM_BLUE;
-	aniMatrix[5][4 + 8 * 0] = ANIM_BLUE;
-	aniMatrix[4][4 + 8 * 0] = ANIM_BLUE;
-	aniMatrix[3][4 + 8 * 0] = ANIM_BLUE;
-	aniMatrix[2][4 + 8 * 0] = ANIM_BLUE;
-	aniMatrix[1][4 + 8 * 0] = ANIM_BLUE;
-	aniMatrix[5][3 + 8 * 0] = ANIM_BLUE;
-	aniMatrix[4][3 + 8 * 0] = ANIM_BLUE;
-	aniMatrix[3][3 + 8 * 0] = ANIM_BLUE;
-	aniMatrix[2][3 + 8 * 0] = ANIM_BLUE;
-	aniMatrix[1][3 + 8 * 0] = ANIM_BLUE;
+	aniMatrix[6][6 + 8 * 1] = ANIM_BLUE;
+	aniMatrix[6][5 + 8 * 1] = ANIM_BLUE;
+	aniMatrix[6][4 + 8 * 1] = ANIM_BLUE;
+	aniMatrix[6][3 + 8 * 1] = ANIM_BLUE;
+	aniMatrix[6][2 + 8 * 1] = ANIM_BLUE;
+	aniMatrix[6][1 + 8 * 1] = ANIM_BLUE;
+	aniMatrix[5][4 + 8 * 1] = ANIM_BLUE;
+	aniMatrix[4][4 + 8 * 1] = ANIM_BLUE;
+	aniMatrix[3][4 + 8 * 1] = ANIM_BLUE;
+	aniMatrix[2][4 + 8 * 1] = ANIM_BLUE;
+	aniMatrix[1][4 + 8 * 1] = ANIM_BLUE;
+	aniMatrix[5][3 + 8 * 1] = ANIM_BLUE;
+	aniMatrix[4][3 + 8 * 1] = ANIM_BLUE;
+	aniMatrix[3][3 + 8 * 1] = ANIM_BLUE;
+	aniMatrix[2][3 + 8 * 1] = ANIM_BLUE;
+	aniMatrix[1][3 + 8 * 1] = ANIM_BLUE;
 
 }
 
