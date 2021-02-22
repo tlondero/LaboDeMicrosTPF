@@ -47,7 +47,7 @@ static int16_t gain_off[EQ_NUM_OF_FILTERS] = { 0, 0, 0, 0 , 0, 0, 0, 0, 0, 0};
  ** ------------------------------------------------------------------- */
 void init_equalizer(void) {
 	config.cant_filters = EQ_NUM_OF_FILTERS;
-	config.filters = eqFirCoeffs32;
+	config.filters = (float32_t *)eqFirCoeffs32;
 	config.filter_gains = gain_off;
 	/* Call FIR init function to initialize the instance structure. */
 	/*	arm_fir_init_f32(&S, NUM_TAPS, (float32_t*) &filter[0], &firStateF32[0],

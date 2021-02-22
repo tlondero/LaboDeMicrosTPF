@@ -86,6 +86,8 @@ static float32_t buffer_fft_calculated_mag[FFT_LEN];
 static float32_t fft_8_bines[8];
 
 static char time_string[20];
+
+bool eqSelectOff = true;
 /*******************************************************************************
  * FUNCTION DEFINITIONS WITH GLOBAL SCOPE
  ******************************************************************************/
@@ -194,7 +196,6 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 				if (appContext->spectrogramEnable) {
 					UART_WriteBlocking(UART0, (uint8_t*) "00Spectrogram on\r\n",
 							19);
-
 				} else {
 					UART_WriteBlocking(UART0,
 							(uint8_t*) "00Spectrogram off\r\n", 20);
@@ -206,7 +207,6 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 				printf("Date Menu\r\n");
 #else
 				UART_WriteBlocking(UART0, (uint8_t*) "00Date Menu\r\n", 14);
-
 #endif
 				break;
 			default:
@@ -666,12 +666,14 @@ void FSM_menu(event_t *ev, app_context_t *appContext) {
 				break;
 			}
 		} else if (ev->btn_evs.enter_button) {
+			eqSelectOff = false;
 			switch (index % CANT_PRESETS) {
 			//OFF,CLASSIC,CLUB,DANCE,BASS,BASS_AND_TREBLE , TREBLE, HEADSET,HALL,LIVE,PARTY,POP,REGGAE,ROCK,SKA,SOFT,SOFT_ROCK,TECHNO
 			case OFF:
 #ifdef DEBUG_PRINTF_APP
 				printf("OFF preset Selected\r\n");
 #endif
+				eqSelectOff = true;
 				equalizer_change_effect(eq_off_db);
 				break;
 			case CLASSIC:
@@ -1057,14 +1059,15 @@ void runPlayer(event_t *events, app_context_t *appContext) {
 						MP3_DECODED_BUFFER_SIZE,
 						&(appContext->playerContext.sampleCount));
 
-				equalize_frame((int16_t *)u_buffer_2, (int16_t *)u_buffer_2);
+				if (!eqSelectOff) {
+					equalize_frame((int16_t *)u_buffer_2, (int16_t *)u_buffer_2);
+				}
 
-//TODO
-					adaptFFT((int16_t *)u_buffer_2, u_buffer_fft, FFT_LEN);
-					fft(u_buffer_fft, u_buffer_fft, 1);
-					fftGetMag(u_buffer_fft, buffer_fft_calculated_mag);
-					fftMakeBines8(buffer_fft_calculated_mag, fft_8_bines);
-					translateBinesToMatrix(&(fft_8_bines[0]));
+				adaptFFT((int16_t *)u_buffer_2, u_buffer_fft, FFT_LEN);
+				fft(u_buffer_fft, u_buffer_fft, 1);
+				fftGetMag(u_buffer_fft, buffer_fft_calculated_mag);
+				fftMakeBines8(buffer_fft_calculated_mag, fft_8_bines);
+				translateBinesToMatrix(&(fft_8_bines[0]));
 
 				MP3_Adapt_Signal((int16_t*) u_buffer_2, u_buffer_2,
 						appContext->playerContext.sampleCount,
@@ -1081,16 +1084,15 @@ void runPlayer(event_t *events, app_context_t *appContext) {
 						MP3_DECODED_BUFFER_SIZE,
 						&(appContext->playerContext.sampleCount));
 
-				equalize_frame((int16_t *)u_buffer_1, (int16_t *)u_buffer_1);
+				if(!eqSelectOff){
+					equalize_frame((int16_t *)u_buffer_1, (int16_t *)u_buffer_1);
+				}
 
 				adaptFFT((int16_t *)u_buffer_1, u_buffer_fft, FFT_LEN);
 				fft(u_buffer_fft, u_buffer_fft, 1);
 				fftGetMag(u_buffer_fft, buffer_fft_calculated_mag);
 				fftMakeBines8(buffer_fft_calculated_mag, fft_8_bines);
 				translateBinesToMatrix(&(fft_8_bines[0]));
-
-//TODO
-
 
 				MP3_Adapt_Signal((int16_t*) u_buffer_1, u_buffer_1,
 						appContext->playerContext.sampleCount,
