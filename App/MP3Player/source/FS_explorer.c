@@ -159,7 +159,6 @@ char* FSEXP_getNext(){
 		uint8_t i = 0;
 		while (i < NAME_LIST_SIZE) {
 			error = f_readdir(&data.directory, &data.fileInformation);
-			/* To the end. */
 			if ((error != FR_OK) || (data.fileInformation.fname[0U] == 0U)) {
 				data.directory_finished = true;
 				data.page_finished = data.page_counter;

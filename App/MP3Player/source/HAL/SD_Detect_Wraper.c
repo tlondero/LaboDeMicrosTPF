@@ -61,10 +61,8 @@ bool SDWRAPPER_Init(cback inserted_callback, cback extracted_callback){
 		//////////////////////////////////////////////////////////////
 		//         				PIT CONFIGURATION
 		//////////////////////////////////////////////////////////////
-		//PIT_GetDefaultConfig(&pitConfig);
 
-		/* Init pit module */
-		//PIT_Init(PIT, &pitConfig);
+
 
 		/* Set timer period for channel 0 */
 		PIT_SetTimerPeriod(PIT, kPIT_Chnl_0,

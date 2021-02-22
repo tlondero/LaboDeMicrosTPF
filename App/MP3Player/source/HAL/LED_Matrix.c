@@ -29,7 +29,7 @@
 /*MEM*/
 #define LEDMATRIX_CANT_LEDS 64
 #define LEDMATRIX_CANT_LEDS_ZERO 0
-#define LEDMATRIX_MAT_SIZE ((LEDMATRIX_CANT_LEDS+LEDMATRIX_CANT_LEDS_ZERO)*8*3*2)//+(1*2) //(64 LEDS+10LEDS en zero para reset) * 8BITS * 3 COLORES * 2bytes (CNV son 16 bits)
+#define LEDMATRIX_MAT_SIZE ((LEDMATRIX_CANT_LEDS+LEDMATRIX_CANT_LEDS_ZERO)*8*3*2)////(64 LEDS+10LEDS en zero para reset) * 8BITS * 3 COLORES * 2bytes (CNV son 16 bits)
 #define LEDMATRIX_ROW_SIZE 8
 
 /*PIT*/
@@ -167,15 +167,11 @@ void LEDMATRIX_SetLed(uint8_t row, uint8_t col, uint8_t r, uint8_t g, uint8_t b)
 }
 
 void LEDMATRIX_Resume(void){
-	//LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnV = LEDMATRIX_FTM_CNV_OFF;
-	//LEDMATRIX_Enable();
-	//LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnSC = (LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnSC
-	//	& ~FTM_CnSC_CHIE_MASK) | FTM_CnSC_CHIE(1);
 	blocked = false;
 }
 
 void LEDMATRIX_Pause(void){
-	//old_cnv = LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnV;
+
 	uint8_t i;
 	for(i = 0; i < LEDMATRIX_CANT_LEDS; i++){
 		set_color_brightness(led_matrix[i].R, 0);
@@ -183,11 +179,7 @@ void LEDMATRIX_Pause(void){
 		set_color_brightness(led_matrix[i].B, 0);
 	}
 	blocked = true;
-	//LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnSC = (LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnSC
-	//	& ~FTM_CnSC_CHIE_MASK) | FTM_CnSC_CHIE(0);
-	//LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnV = LEDMATRIX_FTM_CNV_OFF;
-	//pit_alt_pause = true;
-	//PIT_StartTimer(PIT, kPIT_Chnl_1);
+
 
 }
 
@@ -196,7 +188,6 @@ void LEDMATRIX_Enable(void){
 }
 
 void LEDMATRIX_Disable(void){
-	//LEDMATRIX_FTM_BASE->CONTROLS[LEDMATRIX_FTM_CHANNEL].CnV = LEDMATRIX_FTM_CNV_ZERO;
 	LEDMATRIX_FTM_BASE->SC &= ~FTM_SC_CLKS(0x01);
 }
 

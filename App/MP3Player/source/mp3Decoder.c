@@ -20,7 +20,7 @@
  ******************************************************************************/
 
 #define MP3DECODER_MODE_NORMAL  0
-//#define MP3_FRAME_BUFFER_BYTES  (10240)//6913            // MP3 buffer size (in bytes)
+
 #define MP3_FRAME_BUFFER_BYTES  (6913)//6913            // MP3 buffer size (in bytes)
 
 #define DEFAULT_ID3_FIELD       "Unknown"
@@ -160,8 +160,6 @@ mp3_decoder_result_t MP3GetDecodedFrame(short *outBuffer, uint16_t bufferSize,
 				context_data.bottom_index = context_data.bottom_index
 						- context_data.top_index;
 				context_data.top_index = 0;
-
-
 			}
 			copyDataAndMovePointer();
 
@@ -178,8 +176,6 @@ mp3_decoder_result_t MP3GetDecodedFrame(short *outBuffer, uint16_t bufferSize,
 			MP3FrameInfo nextFrameInfo;
 			MP3GetNextFrameInfo(context_data.Decoder, &nextFrameInfo,
 					context_data.encoded_frame_buffer + context_data.top_index);
-
-
 			// decode a frame
 			uint8_t *decPointer = context_data.encoded_frame_buffer
 					+ context_data.top_index;
@@ -339,7 +335,7 @@ void copyDataAndMovePointer() {
 #ifdef DEBUG_PRINTF_APP
 	if (bytes_read == 0) {
 
-		printf("[App] File was read completely.\n");
+		printf("File was read completely.\n");
 
 	}
 #endif

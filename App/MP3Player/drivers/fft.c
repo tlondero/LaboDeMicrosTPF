@@ -1,7 +1,7 @@
 /***************************************************************************//**
  @file fft.c
  @brief performs the FFT algorithm with the DSP library funcionts
- @author G. Lambertucci, T. Londero M. Rodriguez, A. Melachupa
+ @author MAGT
  ******************************************************************************/
 
 /*******************************************************************************
@@ -18,7 +18,6 @@
 #define BINES 8
 
 
-//#define div 30U
 #define div 2
 
 #define BIN8 (uint32_t)(168513740U/div)
@@ -59,14 +58,10 @@ void fftInit(cfft_size_t size) {
 }
 
 void fft(float32_t *inputF32, float32_t *outputF32, bool doBitReverse) {
-	//memcpy(outputF32, inputF32,
-	//		2 * fftInstanceToSize(fftInstance) * sizeof(float32_t)); // Copying input array to preserve it.
 	arm_cfft_f32(fftInstance, outputF32, false, doBitReverse);
 }
 
 void icfft(float32_t *inputF32, float32_t *outputF32, bool doBitReverse) {
-	//memcpy(outputF32, inputF32,
-	//		fftInstanceToSize(fftInstance) * 2 * sizeof(float32_t)); // Copying input array to preserve it.
 	arm_cfft_f32(fftInstance, outputF32, true, doBitReverse);
 }
 

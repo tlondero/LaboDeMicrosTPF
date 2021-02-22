@@ -2,7 +2,7 @@
  * spectrum_tools.c
  *
  *  Created on: Feb 7, 2021
- *      Author: mrtbuntu
+ *      Author: MAGT
  */
 #include <equalizer.h>
 #include <arm_const_structs.h>

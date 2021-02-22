@@ -1,7 +1,7 @@
 /***************************************************************************//**
- @file     FileName.h
+ @file     general.h
  @brief	///
- @author   Guido Lambertucci
+ @author   MAGT
  ******************************************************************************/
 #ifndef GENERAL_H_
 #define GENERAL_H_
