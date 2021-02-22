@@ -751,11 +751,10 @@ void cbackout(void) {
 #ifdef DEBUG_PRINTF_APP
 	printf("[App] SD Card removed.\r\n");
 #else
-//	DAC_Wrapper_Clear_Data_Array();
-//	DAC_Wrapper_Clear_Next_Buffer();
 	UART_WriteBlocking(UART0, (uint8_t*)"07O\r\n", 6);
 #endif
-
+	DAC_Wrapper_Clear_Data_Array();
+	DAC_Wrapper_Clear_Next_Buffer();
 	resetAppContext();
 }
 
