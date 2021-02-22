@@ -341,7 +341,7 @@ void switchAppState(app_state_t current, app_state_t target) {
 #ifndef DEBUG_PRINTF_APP
 		UART_WriteBlocking(UART0, (uint8_t*) "10A\r\n", 6);
 #endif
-		if(appContext.spectrogramEnable){
+		if (appContext.spectrogramEnable) {
 			appContext.spectrogramEnable = false;
 			LEDMATRIX_Pause();
 		}
@@ -404,7 +404,7 @@ void switchAppState(app_state_t current, app_state_t target) {
 
 				if (MP3GetTagData(&appContext.playerContext.ID3Data)) {
 					SDK_DelayAtLeastUs(100U * 1000U,
-							SDK_DEVICE_MAXIMUM_CPU_CLOCK_FREQUENCY);
+					SDK_DEVICE_MAXIMUM_CPU_CLOCK_FREQUENCY);
 					uint8_t i = 0;
 					while (appContext.playerContext.ID3Data.title[i] != '\0') {
 						i++;
@@ -418,7 +418,7 @@ void switchAppState(app_state_t current, app_state_t target) {
 					UART_WriteBlocking(UART0, (uint8_t*) id3Buffer, i + 2);
 
 					SDK_DelayAtLeastUs(100U * 1000U,
-							SDK_DEVICE_MAXIMUM_CPU_CLOCK_FREQUENCY);
+					SDK_DEVICE_MAXIMUM_CPU_CLOCK_FREQUENCY);
 
 					i = 0;
 
@@ -434,7 +434,7 @@ void switchAppState(app_state_t current, app_state_t target) {
 					UART_WriteBlocking(UART0, (uint8_t*) id3Buffer, i + 2);
 
 					SDK_DelayAtLeastUs(100U * 1000U,
-							SDK_DEVICE_MAXIMUM_CPU_CLOCK_FREQUENCY);
+					SDK_DEVICE_MAXIMUM_CPU_CLOCK_FREQUENCY);
 
 					i = 0;
 
@@ -450,7 +450,7 @@ void switchAppState(app_state_t current, app_state_t target) {
 					UART_WriteBlocking(UART0, (uint8_t*) id3Buffer, i + 2);
 
 					SDK_DelayAtLeastUs(100U * 1000U,
-							SDK_DEVICE_MAXIMUM_CPU_CLOCK_FREQUENCY);
+					SDK_DEVICE_MAXIMUM_CPU_CLOCK_FREQUENCY);
 
 					i = 0;
 
@@ -466,7 +466,7 @@ void switchAppState(app_state_t current, app_state_t target) {
 					UART_WriteBlocking(UART0, (uint8_t*) id3Buffer, i + 2);
 
 					SDK_DelayAtLeastUs(100U * 1000U,
-							SDK_DEVICE_MAXIMUM_CPU_CLOCK_FREQUENCY);
+					SDK_DEVICE_MAXIMUM_CPU_CLOCK_FREQUENCY);
 
 					i = 0;
 
@@ -482,7 +482,7 @@ void switchAppState(app_state_t current, app_state_t target) {
 					UART_WriteBlocking(UART0, (uint8_t*) id3Buffer, i + 2);
 
 					SDK_DelayAtLeastUs(100U * 1000U,
-							SDK_DEVICE_MAXIMUM_CPU_CLOCK_FREQUENCY);
+					SDK_DEVICE_MAXIMUM_CPU_CLOCK_FREQUENCY);
 				}
 #endif
 
@@ -741,7 +741,11 @@ void cbackin(void) {
 #else
 	UART_WriteBlocking(UART0, (uint8_t*) "07I\r\n", 6);
 #endif
-
+	if (appContext.spectrogramEnable) {
+		appContext.spectrogramEnable = false;
+		LEDMATRIX_Pause();
+	}
+	resetAppContext();
 }
 
 void cbackout(void) {
